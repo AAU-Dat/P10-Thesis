@@ -1,3 +1,4 @@
 # Added this file to include the out folder in the repository, despite being otherwise empty
 *
 !.gitignore
+!main.pdf
