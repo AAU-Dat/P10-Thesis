@@ -1,0 +1,27 @@
+%! Author = Runge
+%! Date = 29-12-2023
+
+% Preamble
+\documentclass[english,a4paper,compsoc,journal]{IEEEtran}
+\overfullrule=10pt
+\frenchspacing
+
+% Packages
+\input{setup/preamble}
+\input{setup/acronyms}
+\input{setup/title}
+
+% Document
+\begin{document}
+    \maketitle
+    \input{sections/00-abstract}
+    \input{sections/01-introduction}
+
+    \printglossary[type=\acronymtype]
+
+    \printbibliography
+
+    \appendices % You can use \appendix if you only have a single appendix
+    \input{sections/aa-appendix}
+
+\end{document}

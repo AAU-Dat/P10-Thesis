@@ -1,0 +1,60 @@
+%! Author = Runge
+%! Date = 29-12-2023
+
+% Packages
+\RequirePackage{setup/clrscode4e}
+\usepackage{microtype}
+\usepackage{mathtools, thm-restate}
+\usepackage{stix2}
+\usepackage{amsmath, amsthm}
+\usepackage{booktabs}
+\usepackage{tikz}
+
+% Packages with options set
+\usepackage[hidelinks]{hyperref}
+\usepackage[textsize=small,obeyDraft]{todonotes}
+\usepackage[newfloat, outputdir=../out]{minted}
+\usepackage[backend=biber,
+    bibencoding=utf8,
+    maxbibnames=20,
+    style=ieee,
+    citestyle=numeric-comp,
+    url=false
+]{biblatex}
+\usepackage[acronym]{glossaries}
+
+% Hyperlink and PDF properties
+\usepackage{orcidlink}
+\makeatletter
+\hypersetup{%
+    plainpages=false,%
+    pdftitle=\@title,%
+    pdfauthor={Sebastian Aaholm, Lars Emanuel Hansen, Daniel Runge Petersen},%
+    pdflang={en-GB},%
+    pdfsubject={Semester project at Aalborg University},%
+    pdfkeywords ={Formal Verification, Parameter Estimation, Decision Diagram}
+    bookmarksnumbered=true,%
+    colorlinks=true,%
+    citecolor=black,%
+    filecolor=black,%
+    linkcolor=black,% you should probably change this to black before printing
+    urlcolor=black,%
+    pdfstartview=FitH%
+}
+\makeatother
+
+% Package setup
+\setlength{\marginparwidth}{2cm} % todonotes width
+\setminted{linenos, autogobble, breaklines, fontsize=\footnotesize, style=friendly, xleftmargin=1em, numbersep=5pt}
+\addbibresource{bib/main.bib}
+
+% Other setup and options
+\declaretheorem{theorem}
+\declaretheorem{lemma}
+\declaretheorem{corollary}
+\declaretheorem{definition}
+\declaretheorem{example}
+\declaretheorem{conjecture}
+\DeclareFloatingEnvironment[name=Algorithm, placement=htb!]{algorithm}
+
+\makeglossaries
