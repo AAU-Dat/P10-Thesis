@@ -1,58 +1,114 @@
-# AAU project
-A template for setting up a new semester project for AAU.
-
-## Repo setup
-Most of the repository setup is already automated, but the following additional things are difficult to automate and should be done manually:
-
-1. Create a team in your organization and add it to the repo.
-2. Create a GitHub project for the project management.
-3. Add the project to the repo and the team.
-4. Add a `.github/CODEOWNERS` file.
+# P10 Thesis
+This is the repository containing the thesis for 10th semester at AAU.
 
 ## Local setup
-Before you can compile your article or report, you do have to set a few things up first. This template assumes that you will use either Visual Studio Code or IntelliJ IDEA as your editor.
+Install WSL using PowerShell
+```powershell
+wsl --install
+```
 
-### Scripts
-A collection of scripts are available that configures your environment as described in the following sections.
+Update WSL and Install the following packages: 
+```bash
+sudo apt update && sudo apt upgrade -y && sudo apt install build-essential git cmake libboost-all-dev libcln-dev libgmp-dev libginac-dev automake libglpk-dev libhwloc-dev libz3-dev libxerces-c-dev libeigen3-dev doxygen
+```
 
-### IntelliJ
-To prepare your Windows machine to write and compile LaTeX in IntelliJ, follow this guide. For details on setting up WSL or linux to write and compile LaTeX with VS Code see [VS Code](#vs-code).
+Install WSLU (utilities to make links work properly): 
+```bash
+sudo add-apt-repository ppa:wslutilities/wslu
+sudo apt update
+sudo apt install wslu
+```
 
-- [ ] Install IntelliJ (Using JetBrains Toolbox is the recommended way) and the plugins:
-  - Install [TeXiFy IDEA](https://plugins.jetbrains.com/plugin/9473-texify-idea) 
-  - Install [PDF Viewer](https://plugins.jetbrains.com/plugin/14494-pdf-viewer) 
-    - **Optional** Install [Sumatra PDF](https://www.sumatrapdfreader.org/free-pdf-reader) as an external viewer instead.
-- [ ] Install [TeX Live on Windows](https://tug.org/texlive/windows.html)
-- [ ] Install Python
-  - Install the Pygments Python package
-  - You will most likely have to add the installation location to your PATH environment variable.
-- [ ] Clone the repository with IntelliJ and you are ready to work
+Install GH CLI: 
+```bash
+(type -p wget >/dev/null || (sudo apt update && sudo apt-get install wget -y)) \
+	&& sudo mkdir -p -m 755 /etc/apt/keyrings \
+        && out=$(mktemp) && wget -nv -O$out https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+        && cat $out | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
+	&& sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
+	&& echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+	&& sudo apt update \
+	&& sudo apt install gh -y
+```
 
-Additional recommendations:
+Login with GH CLI (**Requires WSLU** to work): 
+```bash
+gh auth login
+```
 
-### VS Code
-This guide assumes you will use WSL. The steps are similar for Linux, but not entirely equivalent.
+Make sure you select SSH and create a new ssh-token.
+```bash
+gh auth setup-git
+```
 
-- [ ] Install VS Code in Windows and the extensions:
-  - Install Remote Development
-  - Install LaTeX Workshop
-- [ ] Install WSL with the latest Ubuntu distribution
-  - Install WSLU
-  - Install Python
-  - Install the Pygments Python package
-    - You will most likely have to add the installation location to your PATH environment variable.
-- [ ] Clone the repository with git in WSL and you are ready to work
+Install Tex: 
+```bash
+mkdir tmp && cd tmp && curl -L -o install-tl-unx.tar.gz https://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
+```
 
-Additional recommendations:
-- Install Windows Terminal
-- Install the GitHub CLI
+```bash
+zcat < install-tl-unx.tar.gz | tar xf -
+```
 
-### Docker
+```bash
+cd install-tl-*
+```
 
-### VS Code - Dev Container
+```bash
+./install-tl --texdir=~/texlive/2024 --no-interaction
+```
+
+Note: texdir is relevant to the IntelliJ TeXiFy plugin.
+
+prepend ~/texlive/YYYY/bin/PLATFORM to your PATH 
+e.g., add:
+```.bashrc
+export PATH="~/texlive/2024/bin/x86_64-linux:$PATH"
+```
+
+to .bashrc.
+
+In case you have missing packages, as reported by the texlive intallation, you may have to run the following command: 
+```bash
+sudo env PATH="$PATH" tlmgr update --all --reinstall-forcibly-removed
+```
+
+You can then clean up by removing the tmp folder you downloaded the texlive distribution to:
+```bash
+rm -rf tmp/
+```
+
+Install Storm: 
+```bash
+sudo git clone -b stable https://github.com/moves-rwth/storm.git /opt/storm
+```
+
+```bash
+sudo mkdir /opt/storm/build && cd /opt/storm/build
+```
+
+```bash
+sudo cmake ..
+```
+
+```bash
+sudo make -j4
+```
+
+Replace the `4` with any amount of cores you want. If you only have 16gb of ram, you might not be able to run with more than 2.
+
+Clone CuPAAL and P10-Thesis repositories.
+
+## Windows stuff
+Install VSCode
+- Install Remote Development plugin
+- install Latex Workshop
+Install Docker Desktop
+
+Install IntelliJ
+- Texify IDEA plugin
+- pdfviewer
+
 
 ### Git
 On a fresh computer it is a good idea to follow the official [First Time Git Setup](https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup).
-
-### Qodana
-Create a new project in the Qodana cloud, and create a repository secret containing the token.
