@@ -9,7 +9,7 @@ wsl --install
 
 Update WSL and Install the following packages: 
 ```bash
-sudo apt update && sudo apt upgrade -y && sudo apt install build-essential git cmake libboost-all-dev libcln-dev libgmp-dev libginac-dev automake libglpk-dev libhwloc-dev libz3-dev libxerces-c-dev libeigen3-dev doxygen
+sudo apt update && sudo apt upgrade -y && sudo apt install build-essential git cmake libboost-all-dev libcln-dev libgmp-dev libginac-dev automake libglpk-dev libhwloc-dev libz3-dev libxerces-c-dev libeigen3-dev doxygen libyaml-tiny-perl libfile-homedir-perl
 ```
 
 Install WSLU (utilities to make links work properly): 
