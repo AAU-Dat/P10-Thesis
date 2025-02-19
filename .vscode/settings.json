@@ -1,5 +1,13 @@
 {
+  "editor.formatOnSave": true,
   "latex-workshop.latex.outDir": "%WORKSPACE_FOLDER%/report/out",
+  "latex-workshop.formatting.latex": "latexindent",
+  "latex-workshop.formatting.latexindent.args": [
+    "-c",
+    "%OUTDIR%/",
+    "%TMPFILE%",
+    "-y=defaultIndent: '%INDENT%'"
+  ],
   "latex-workshop.latex.recipes": [
     {
       "name": "pdflatex -> biber -> makeglossaries -> pdflatex * 2",
