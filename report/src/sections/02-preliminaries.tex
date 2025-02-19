@@ -1,0 +1,73 @@
+\section{Preliminaries}\label{sec:preliminaries}
+This section provides an overview of the theoretical background necessary to understand the rest of the report. 
+We begin by defining the key concepts of a \gls{hmm} and a \gls{mdp}, which are the two main models used in this report.
+
+
+\subsection{Hidden Markov Model}\label{subsec:hmm}
+\glspl{hmm} were introduced by Baum and Petrie in 1966~\cite{NOTFOUND} and have since been widely used in various fields, such as speech recognition~\cite{NOTFOUND}, bioinformatics~\cite{NOTFOUND}, and finance~\cite{NOTFOUND}.
+\begin{definition}[Hidden Markov Model]
+    A Hidden Markov Model (HMM) is a tuple $\mathcal{M} = (S, \mathcal{L}, \mathscr{l}, \tau,  \pi)$, where:
+    \begin{itemize}
+        \item $S$ is a finite set of states.
+        \item $\mathcal{L}$ is a finite set of labels.
+        \item $\mathscr{l}: S \rightarrow D(\mathcal{L})$ is the emission function.
+        \item $\tau: S \rightarrow D(S)$ is the transition function.
+        \item $\pi \in D(S)$ is the initial distribution.
+    \end{itemize}
+\end{definition}
+
+$D(X)$ denotes the set of probability distributions over a  finite set $X$.
+The emission function $\mathscr{l}$ describes the probability of emitting a label given a state.
+The transition function $\tau$ describes the probability of transitioning from one state to another.
+The initial distribution $\pi$ describes the probability of starting in a given state.
+An \gls{hmm} is a statistical model that describes a system that evolves over time.
+The system is assumed to hold the Markov property, meaning that the future state of the system only depends on the current state and not on the past states.
+The system is also assumed to be unobservable, meaning that the states are hidden and cannot be directly observed.
+Instead, the system emits observations, which are used to infer the hidden states.
+
+An example of an \gls{hmm} is a weather model where the hidden state represents the actual weather (sunny, rainy, or cloudy), but we only observe indirect signals, such as whether someone is carrying an umbrella.
+
+\subsection{Continuous Time Hidden Markov Model}\label{subsec:ctmc}
+In the above definition, we have defined a discrete-time \gls{hmm}, meaning that the system evolves in discrete time steps.
+In this report, we are interested in continuous-time systems, where the system evolves in continuous time.
+To model continuous-time systems, we use a \gls{cthmm}, which is an extension of the \gls{hmm} to continuous time.
+\begin{definition}[Continuous Time Hidden Markov Model]
+    A Continuous Time Hidden Markov Model (CTHMM) is a tuple $\mathcal{M} = (S, \mathcal{L}, \mathscr{l}, \tau,  \pi, \lambda)$, where S, $\mathcal{L}$, $\mathscr{l}$, $\tau$, and $\pi$ are as defined in the \gls{hmm} definition.
+    \begin{itemize}
+        \item $\lambda: S \times S \rightarrow \mathbb{R}_{\geq 0}$ is the rate function.
+    \end{itemize}
+\end{definition}
+
+The rate function $\lambda$ determines the transition rate between states, meaning that the time spent in a state before transitioning follows an exponential distribution.
+
+\subsection{Markov Decision Process}\label{subsec:mdp}
+\glspl{mdp} were introduced by Bellman in 1957~\cite{NOTFOUND} and have since been widely used in various fields, such as robotics~\cite{NOTFOUND}, finance~\cite{NOTFOUND}, and healthcare~\cite{NOTFOUND}.
+\begin{definition}[Markov Decision Process]
+    A Markov Decision Process (MDP) is a tuple $\mathcal{M} = (S, A, \mathcal{L}, \mathscr{l}, \tau, R, \gamma)$, where:
+    \begin{itemize}
+        \item $S$ is a finite set of states.
+        \item $A$ is a finite set of actions.
+        \item $\mathcal{L}$ is a finite set of labels.
+        %\item $\mathscr{l}: S \rightarrow D(\mathcal{L})$ is the emission function.
+        \item $\tau: S \times A \rightarrow D(S)$ is the transition function.
+        \item $R: S \times A \rightarrow \mathbb{R}$ is the reward function.
+        \item $\pi \in D(S)$ is the initial distribution.
+    \end{itemize}
+\end{definition}
+
+A \gls{mdp} works by an agent interacting with an environment.
+Unlike an \gls{hmm}, the agent  takes actions in the environment and receives rewards.
+An agent is the decision-maker that interacts with the environment by taking actions.
+The environment is modeled as a \gls{mdp}, which consists of a set of states $S$, a set of actions $A$, a set of labels $\mathcal{L}$.
+Each state is directly observable, meaning the agent always knows which state it is in.
+When the agent takes an action in a state, it transitions to a new state according to the transition function $\tau$.
+
+The reward function $R$ describes the reward received when taking an action in a state.
+The goal of an \gls{mdp} is to find a policy $\theta: S \rightarrow D(A)$ that maximizes the expected cumulative reward.
+The policy $\theta$ describes the probability of taking an action given a state.
+
+\begin{definition}[Policy]
+    A policy $\theta$ is a function that maps states to actions, i.e., $\theta: S \rightarrow D(A)$.
+\end{definition}
+
+An example of an \gls{mdp} is a robot navigating a grid, where it can choose actions (move up, down, left, or right) and receives rewards based on reaching certain goal locations
