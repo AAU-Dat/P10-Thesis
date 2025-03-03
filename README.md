@@ -62,8 +62,8 @@ Note: texdir is relevant to the IntelliJ TeXiFy plugin.
 
 prepend ~/texlive/YYYY/bin/PLATFORM to your PATH 
 e.g., add:
-```.bashrc
-export PATH="~/texlive/2024/bin/x86_64-linux:$PATH"
+```bash
+export PATH="$HOME/texlive/2024/bin/x86_64-linux:$PATH"
 ```
 
 to .bashrc.
