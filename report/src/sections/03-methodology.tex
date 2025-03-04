@@ -1,0 +1,35 @@
+\section{Methodology}\label{sec:methodology}
+This is a section.
+
+\subsection{Decision Diagrams}\label{subsec:decision-diagrams}
+\acrfullpl{bdd} are data structures for efficiently representing and manipulating Boolean functions.
+They are a compressed representation of truth tables, capturing the logical structure of a function in a graph-based format by eliminating redundancy, reducing memory usage, and improving computational efficiency~\cite{bryant1986graph}.
+
+A \gls{bdd} is a directed acyclic graph derived from a decision tree, where each non-terminal node represents a Boolean variable, edges correspond to binary assignments (0 or 1), and terminal nodes store function values (0 or 1).
+To reduce the size of the decision tree, \glspl{bdd} exploit redundancy by merging equivalent substructures, resulting in a canonical form (when reduced and ordered) that allows for efficient operations such as function evaluation, equivalence checking, and Boolean operations~\cite{bryant1986graph}.
+
+\glspl{bdd} have been widely used in formal verification, model checking, and logic synthesis due to their ability to compactly represent large Boolean functions while maintaining efficient computational properties.
+However, \glspl{bdd} suffer from exponential blowup in certain cases, particularly when dealing with functions that lack inherent structure or when representing numerical computations that go beyond Boolean logic.
+
+\subsubsection{From BDDs to ADDs}\label{subsubsec:adds}
+\acrfullpl{add} generalize the concept of \glspl{bdd} by allowing terminal nodes to take values beyond Boolean constants (0 and 1).
+Instead of restricting values to true/false, \glspl{add} can store arbitrary numerical values, making them useful for representing and manipulating functions over discrete domains~\cite{bahar1997algebric}.
+This generalization enables the efficient representation of functions such as cost functions~\cite{kwiatkowska2004probabilistic}, probabilities~\cite{baier1997symbolic}, and other numerical relationships that arise in probabilistic reasoning.
+
+The fundamental structure of an \gls{add} remains similar to a \gls{bdd}, where a decision tree is compacted by merging redundant substructures.
+However, instead of performing Boolean operations, \glspl{add} allow for arithmetic operations such as addition and multiplication, making them well-suited for applications like dynamic programming, \glspl{mdp}, and linear algebraic computations~\cite{bahar1997algebric}.
+
+\subsection{Recursive vs. Matrix vs. ADD-based Approaches}\label{subsec:approaches}
+When designing algorithms for solving complex problems, different approaches can be taken to optimize computational efficiency.
+Three common strategies are recursive, matrix-based, and \gls{add}-based approaches, each with distinct advantages and limitations.
+\begin{itemize}
+    \item \textbf{Recursive Approach:} Conceptually simple, recursion follows a divide-and-conquer strategy but can suffer from exponential time complexity due to redundant computations of overlapping subproblems~\cite[Chapter 4]{cormen2022introduction}.
+    \item \textbf{Matrix Representation:} Reformulating algorithms using matrix operations leverages algebraic properties for parallel computation and efficient processing.
+          However, matrix-based methods can be memory-intensive, particularly for sparse or structured data~\cite[Chapter 4, 15 \& 28]{cormen2022introduction}.
+    \item \textbf{ADD-based Approach:} \glspl{add} provide a compact representation that eliminates redundancy in recursive computations.
+          By reusing previously computed substructures, they improve efficiency and reduce memory overhead~\cite{bahar1997algebric}.
+          Compared to matrices, \glspl{add} can offer a more space-efficient alternative for structured data while extending \gls{bdd} techniques to handle both Boolean and numerical computations.
+\end{itemize}
+
+In this work we explore the benefits of \gls{add}-based approaches for solving complex problems, focusing on parameter estimation in \glspl{dtmc} and \glspl{ctmc}.
+We compare the performance of \gls{add}-based algorithms against recursive-based implementations, highlighting the advantages of using \glspl{add} for efficient computation and memory management.
