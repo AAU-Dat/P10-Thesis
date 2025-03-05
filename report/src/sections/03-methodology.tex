@@ -23,13 +23,23 @@ However, instead of performing Boolean operations, \glspl{add} allow for arithme
 When designing algorithms for solving complex problems, different approaches can be taken to optimize computational efficiency.
 Three common strategies are recursive, matrix-based, and \gls{add}-based approaches, each with distinct advantages and limitations.
 \begin{itemize}
-    \item \textbf{Recursive Approach:} Conceptually simple, recursion follows a divide-and-conquer strategy but can suffer from exponential time complexity due to redundant computations of overlapping subproblems~\cite[Chapter 4]{cormen2022introduction}.
-    \item \textbf{Matrix Representation:} Reformulating algorithms using matrix operations leverages algebraic properties for parallel computation and efficient processing.
-          However, matrix-based methods can be memory-intensive, particularly for sparse or structured data~\cite[Chapter 4, 15 \& 28]{cormen2022introduction}.
-    \item \textbf{ADD-based Approach:} \glspl{add} provide a compact representation that eliminates redundancy in recursive computations.
-          By reusing previously computed substructures, they improve efficiency and reduce memory overhead~\cite{bahar1997algebric}.
-          Compared to matrices, \glspl{add} can offer a more space-efficient alternative for structured data while extending \gls{bdd} techniques to handle both Boolean and numerical computations.
+      \item \textbf{Recursive Approach:} Conceptually simple, recursion follows a divide-and-conquer strategy but can suffer from exponential time complexity due to redundant computations of overlapping subproblems~\cite[Chapter 4]{cormen2022introduction}.
+      \item \textbf{Matrix Representation:} Reformulating algorithms using matrix operations leverages algebraic properties for parallel computation and efficient processing.
+            However, matrix-based methods can be memory-intensive, particularly for sparse or structured data~\cite[Chapter 4, 15 \& 28]{cormen2022introduction}.
+      \item \textbf{ADD-based Approach:} \glspl{add} provide a compact representation that eliminates redundancy in recursive computations.
+            By reusing previously computed substructures, they improve efficiency and reduce memory overhead~\cite{bahar1997algebric}.
+            Compared to matrices, \glspl{add} can offer a more space-efficient alternative for structured data while extending \gls{bdd} techniques to handle both Boolean and numerical computations.
 \end{itemize}
 
 In this work we explore the benefits of \gls{add}-based approaches for solving complex problems, focusing on parameter estimation in \glspl{dtmc} and \glspl{ctmc}.
 We compare the performance of \gls{add}-based algorithms against recursive-based implementations, highlighting the advantages of using \glspl{add} for efficient computation and memory management.
+
+\subsection{CuDD}\label{subsec:cudd}
+\acrfull{cudd} is a library for implementing and manipulating \glspl{bdd} and \glspl{add} developed at the University of Colorado.
+The \gls{cudd} library~\cite{somenzi1997cudd} is a powerful tool for implementing and manipulating decision diagrams, including \glspl{bdd} and \glspl{add}.
+
+Implemented in C, the \gls{cudd} library ensures high-performance execution and can be seamlessly integrated into C++ programs, which we utilize in this paper.
+By leveraging the \gls{cudd} library, we demonstrate the benefits of \gls{add}-based approaches for solving parameter estimation problems in \glspl{dtmc} and \glspl{ctmc}.
+
+In this project, we use the \gls{cudd} library to store \glspl{add} and perform operations on them.
+Its optimized algorithms and efficient memory management enable symbolic handling of large and complex matrices, significantly improving performance compared to traditional methods.
