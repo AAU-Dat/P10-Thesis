@@ -2,20 +2,21 @@
 %! Date = 29-12-2023
 
 % Preamble
-\documentclass[english,a4paper,compsoc,journal]{IEEEtran}
+\documentclass[runningheads]{llncs}
 \overfullrule=10pt
 \frenchspacing
 
 % Packages
 \input{setup/preamble}
 \input{setup/acronyms}
-\input{setup/title}
+% \input{setup/title}
 
 % Document
 \begin{document}
+\input{setup/title.tex}
 \maketitle
 \input{sections/00-abstract}
-\input{sections/01-introduction}
+% \input{sections/01-introduction}
 \input{sections/02-preliminaries}
 \input{sections/03-methodology}
 \input{sections/04-experiments.tex}
@@ -24,7 +25,7 @@
 
 \printbibliography
 
-\appendices % You can use \appendix if you only have a single appendix
+\appendix % You can use \appendix if you only have a single appendix
 \input{sections/aa-cheatsheet}
 
 \end{document}
