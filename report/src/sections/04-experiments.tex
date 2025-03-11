@@ -16,14 +16,17 @@ These experiments aim to answer the following research questions:
 \subsection{Experimental Setup}
 All experiments are conducted using a set of \glspl{dtmc} and \glspl{ctmc} obtained from publicly available benchmarks\footnote{The models are available at \url{https://qcomp.org/benchmarks/}. The source files describe the parameters and what is observable.}.
 
-
-Each experiment is run ten times, and results are reported as the average runtime and number of iterations.
-We stop the experiments when we reach a convergence threshold of 0.05, which was the default value in the Jajapy implementation.
-The training data is randomly generated based on these models, consisting of a specified number of observation sequences of fixed length.
+Each experiment is run ten times, and results are reported as the average runtime for the full run, average runtime for each iteration,
+the average number of iterations, log-likelihood for each iteration, and average relative parameter error for each iteration.
+We stop the experiments when we reach a convergence threshold of 0.05, which was the default value in the Jajapy implementation or after
+4 hours of runtime.
+The training data is randomly generated based on these models, consisting of 30 observation sequences of length 10 for each model.
 
 \subsubsection{Experiment 1: Performance Comparison of Forward-Backward Implementations}
 The first experiment is based on the ideas from the experiment conducted in~\cite{reynouard2024learning}.
 The models used in this experiment are shown in \autoref{tab:dtmc_models} and \autoref{tab:ctmc_models}.
+All models has a fixed number of parameters of, and the number of states varies.
+
 The experiment evaluates the efficiency and accuracy of the symbolic approach (CuPAAL) versus the recursive approach (Jajapy). We measure:
 \begin{itemize}
     \item \textbf{Runtime Efficiency} - The average time per run.
@@ -46,24 +49,24 @@ Following the approach in \cite{bacci2023mm}, initial parameters are randomly sa
 
 We expect the CuPAAL implementation to have the same accuracy as the Jajapy implementation and have the same number of iterations. However, we expect the CuPAAL implementation to be faster due to the symbolic approach, which can avoid redundant calculations.
 
-The results are presented for \glspl{dtmc} in \autoref{tab:leader_results}, \autoref{tab:herman_results}, \autoref{tab:oscillators_results}, \autoref{tab:brp_results}, and \autoref{tab:crowds_results}.
+The results are presented for \glspl{dtmc} in \autoref{tab:leader_results}, \autoref{tab:brp_results}, and \autoref{tab:crowds_results}.
 
-For \glspl{ctmc}, the results are shown in \autoref{tab:toggle_results}, \autoref{tab:mapk_results}, \autoref{tab:cluster_results}, \autoref{tab:embedded_results}, and \autoref{tab:kanban_results}.
+For \glspl{ctmc}, the results are shown in \autoref{tab:mapk_results}, \autoref{tab:cluster_results}, and \autoref{tab:embedded_results}.
 All tables show the average time per run for each implementation, average number of iterations and log-likelihood and relative parameter error.
 
 \begin{table}[!htb]
     \centering
     \caption{DTMC models}
     \label{tab:dtmc_models}
-    \begin{tabular}{lll}
+    \begin{tabular}{ll}
         \toprule
-        Name         & Number of States & Number of Parameters \\
+        Name         & Number of States \\
         \midrule
-        Leader\_sync & 274              & 2                    \\
-        Herman       & 512              & 1                    \\
-        Oscillators  & 453              & 6                    \\
-        Brp          & 886              & 2                    \\
-        Crowds       & 1145             & 2                    \\
+        Leader\_sync & 274              \\
+        %Herman       & 512              \\
+        %Oscillators  & 453              \\
+        Brp          & 886              \\
+        Crowds       & 1145             \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -74,13 +77,11 @@ All tables show the average time per run for each implementation, average number
     \label{tab:ctmc_models}
     \begin{tabular}{lll}
         \toprule
-        Name          & Number of States & Number of Parameters \\
+        Name     & Number of States \\
         \midrule
-        Toggle-switch & 99               & 1                    \\
-        Mapk          & 118              & 2                    \\
-        Cluster       & 820              & 3                    \\
-        Embedded      & 3480             & 2                    \\
-        Kanban        & 58000            & 1                    \\
+        Mapk     & 118              \\
+        Cluster  & 820              \\
+        Embedded & 3480             \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -93,34 +94,6 @@ All tables show the average time per run for each implementation, average number
     \begin{tabular}{lllll}
         \toprule
         Implementation & Iter & Time(s) & Avg $\delta$ & Log-likelihood \\
-        \midrule
-        Jajapy         & 0    & 0       & 0            & 0              \\
-        CuPAAL         & 0    & 0       & 0            & 0              \\
-        \bottomrule
-    \end{tabular}
-\end{table}
-
-\begin{table}[!htb]
-    \centering
-    \caption{Herman results}
-    \label{tab:herman_results}
-    \begin{tabular}{lllll}
-        \toprule
-        implementation & Iter & Time(s) & avg $\delta$ & log-likelihood \\
-        \midrule
-        Jajapy         & 0    & 0       & 0            & 0              \\
-        CuPAAL         & 0    & 0       & 0            & 0              \\
-        \bottomrule
-    \end{tabular}
-\end{table}
-
-\begin{table}[!htb]
-    \centering
-    \caption{Oscillators results}
-    \label{tab:oscillators_results}
-    \begin{tabular}{lllll}
-        \toprule
-        implementation & Iter & Time(s) & avg $\delta$ & log-likelihood \\
         \midrule
         Jajapy         & 0    & 0       & 0            & 0              \\
         CuPAAL         & 0    & 0       & 0            & 0              \\
@@ -146,20 +119,6 @@ All tables show the average time per run for each implementation, average number
     \centering
     \caption{Crowds results}
     \label{tab:crowds_results}
-    \begin{tabular}{lllll}
-        \toprule
-        implementation & Iter & Time(s) & avg $\delta$ & log-likelihood \\
-        \midrule
-        Jajapy         & 0    & 0       & 0            & 0              \\
-        CuPAAL         & 0    & 0       & 0            & 0              \\
-        \bottomrule
-    \end{tabular}
-\end{table}
-
-\begin{table}[!htb]
-    \centering
-    \caption{Toggle-switch results}
-    \label{tab:toggle_results}
     \begin{tabular}{lllll}
         \toprule
         implementation & Iter & Time(s) & avg $\delta$ & log-likelihood \\
@@ -202,20 +161,6 @@ All tables show the average time per run for each implementation, average number
     \centering
     \caption{Embedded results}
     \label{tab:embedded_results}
-    \begin{tabular}{lllll}
-        \toprule
-        implementation & Iter & Time(s) & avg $\delta$ & log-likelihood \\
-        \midrule
-        Jajapy         & 0    & 0       & 0            & 0              \\
-        CuPAAL         & 0    & 0       & 0            & 0              \\
-        \bottomrule
-    \end{tabular}
-\end{table}
-
-\begin{table}[!htb]
-    \centering
-    \caption{Kanban results}
-    \label{tab:kanban_results}
     \begin{tabular}{lllll}
         \toprule
         implementation & Iter & Time(s) & avg $\delta$ & log-likelihood \\
