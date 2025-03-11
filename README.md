@@ -9,7 +9,7 @@ wsl --install
 
 Update WSL and Install the following packages: 
 ```bash
-sudo apt update && sudo apt upgrade -y && sudo apt install build-essential git cmake libboost-all-dev libcln-dev libgmp-dev libginac-dev automake libglpk-dev libhwloc-dev libz3-dev libxerces-c-dev libeigen3-dev doxygen libyaml-tiny-perl libfile-homedir-perl python-is-python3 libconfig-yaml-perl libyaml-tiny-perl libfile-homedir-perl graphviz tex-fmt
+sudo apt update && sudo apt upgrade -y && sudo apt install build-essential git cmake libboost-all-dev libcln-dev libgmp-dev libginac-dev automake libglpk-dev libhwloc-dev libz3-dev libxerces-c-dev libeigen3-dev doxygen libyaml-tiny-perl libfile-homedir-perl python-is-python3 libconfig-yaml-perl libyaml-tiny-perl libfile-homedir-perl graphviz
 ```
 
 Install WSLU (utilities to make links work properly): 
