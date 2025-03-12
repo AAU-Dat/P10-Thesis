@@ -1,0 +1,46 @@
+\section{Improvements}\label{sec:improvements}
+This section outlines the improvements gained by transitioning from the recursive implementation in Jajapy to the symbolic approach in Cupaal.
+
+As discussed in (Ref to previous section talking about Jajapy), Jajapy uses a recursive implementation of the Baum-Welch algorithm to learn \glspl{hmm}.
+In contrast, Cupaal implements the Baum-Welch algorithm using \glspl{add}.
+By leveraging \glspl{add}, Cupaal demonstrates significant improvements over the recursive approach used in Jajapy.
+The discussion of these improvements is based on the experimental results presented in Section~\ref{sec:experiments}.
+
+\subsection{Run Time}\label{subsec:improvements_run_time}
+One of the most notable advantages of Cupaal over Jajapy is the reduction in run time, particularly for models with a large number of states.
+
+The use of \glspl{add} minimizes redundant computations by merging identical values within the structure.
+This optimization significantly reduces the computational needs, compared to a recursive implementation.
+As a result, the run time gap between Cupaal and Jajapy increases as the number of states grows, making Cupaal a more scalable solution for large \glspl{hmm}.
+
+The number of iterations of Cupaal for each model is also slightly reduced compared to Jajapy.
+
+This advantage is particularly beneficial in scenarios where handling large probability matrices would otherwise lead to excessive computational costs.
+
+
+\subsection{Accuracy}\label{subsec:improvements_accuracy}
+While run time is a key advantage of Cupaal, it is equally important to assess whether these performance gains come at the cost of accuracy.
+Since both approaches implement the Baum-Welch algorithm, they are expected to converge to similar model parameters when learning \glspl{hmm}.
+
+As shown in Section~\ref{sec:experiments}, Cupaal achieves accuracy comparable to Jajapy across various models.
+These results can be seen in the values of avg delta and the log-likelihood, where the closer the value is to 0 the better.
+Displaying that a symbolic implementation does not introduce significant numerical errors, ensuring that the learned transition and emission probabilities remain consistent with those obtained using the recursive approach.
+
+Furthermore, by eliminating redundant calculations, Cupaal may reduce floating-point errors that typically accumulate in recursive implementations.
+Importantly, Cupaal maintains accuracy even as the number of states increases, showcasing that its efficiency improvements do not compromise learning quality.
+This makes it particularly well-suited for handling large-scale \glspl{hmm}.
+
+
+\subsection{Implementation}\label{subsec:improvements_implementation}
+The implementation of Cupaal has been done in c++, compared to Jajapy which is implemented in Python.
+This could also be a factor aiding the performance improvement of Cupaal, as C++ is generally faster at computation compared to Python.
+This choice of implementation not only improves speed but also ensures that Cupaal can efficiently handle large models that would be infeasible in Python.
+
+\subsection{Final improvement overview}\label{improvements_overview}
+The improvements introduced by Cupaal stem from multiple factors: the adoption of \glspl{add}, optimized run time and a high-performance C++ implementation.
+These enhancements make Cupaal a powerful alternative to recursive approaches like Jajapy, particularly when working with large, redundant, and complex \glspl{hmm}.
+
+
+
+
+
