@@ -1,0 +1,27 @@
+\section{Previouse work}\label{sec:jajapy_and_cupaal}
+In this section, we provide a brief overview of previous work that has influenced our research and has been iterated upon.
+Specifically, we discuss what these tools are, how they function, who utilizes them, and the motivations behind integrating them into our research.
+The focus will be on two primary tools: Jajapy and Cupaal.
+
+
+\subsection{Jajapy}\label{subsec:jajapy}
+Jajapy is a Python library developed to implement the Baum-Welch algorithm for learning various types of Markov models.
+The library employs a recursive implementation of the Baum-Welch algorithm to infer the parameters of these models.
+
+Jajapy was chosen for our research due to its established use of recursive methods in training Hidden Markov Models (HMMs) and other probabilistic models.
+Our objective was to explore the impact of using \glspl{add} in the Baum-Welch algorithm, as opposed to conventional matrix-based or recursive methods.
+Jajapy served as an appropriate baseline for comparison, allowing us to evaluate the potential computational efficiency and accuracy improvements that \glspl{add} might offer.
+
+
+\subsection{Cupaal}\label{subsec:cupaal}
+Cupaal is a tool developed in C++ that extends the work done in Jajapy by implementing the Baum-Welch algorithm with an \gls{add}-based approach instead of a recursive method.
+The goal of Cupaal is to leverage \glspl{add} to improve the efficiency of learning Markov models, particularly in large-scale applications where traditional recursive methods may become computationally expensive.
+
+Cupaal has undergone multiple iterations. Initially, it implemented a partial \gls{add}-based approach, where only certain components of the Baum-Welch algorithm were optimized using \glspl{add}.
+This partial implementation served as an initial proof-of-concept to determine whether incorporating \glspl{add} could yield performance benefits compared to the recursive approach employed by Jajapy.
+
+Following promising results from the partial implementation, further development led to a fully \gls{add}-based version of Cupaal.
+This iteration replaced all recursive computations with \glspl{add}, enabling more efficient execution, particularly for large models.
+The transition to a fully \gls{add}-based approach demonstrated the potential for significant computational savings and scalability improvements, reinforcing the viability of this method for broader applications beyond our initial research scope.
+
+By building upon Jajapy and developing Cupaal, we have been able to evaluate the impact of using \glspl{add} in probabilistic model learning.
