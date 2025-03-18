@@ -10,11 +10,13 @@ We conduct two experiments:
 These experiments aim to answer the following research questions:
 \begin{itemize}
     \item \textbf{Question 1}: How does the symbolic implementation of the Baum-Welch algorithm in CuPAAL compare to the recursive implementation in Jajapy in terms of runtime and accuracy?
-    \item \textbf{Question 2}: How does the performance of the CuPAAL implementation scale with the number of states in the model?
+    \item \textbf{Question 2}: How does the performance of the CuPAAL implementation scale with the size of the model?
 \end{itemize}
 
 \subsection{Experimental Setup}
-All experiments are conducted using a set of \glspl{dtmc} and \glspl{ctmc} obtained from publicly available benchmarks\footnote{The models are available at \url{https://qcomp.org/benchmarks/}. The source files describe the parameters and what is observable.}.
+All experiments are conducted using a set of \glspl{dtmc} and \glspl{ctmc} obtained from publicly available benchmarks\footnote{The models are available at \url{https://qcomp.org/benchmarks/}. The source files describe the parameters and what is observable.}
+
+~\cite{qcompbenchmarks}.
 
 Each experiment is run ten times, and results are reported as the average runtime for the full run, average runtime for each iteration,
 the average number of iterations, log-likelihood for each iteration, and average relative parameter error for each iteration.
@@ -25,7 +27,7 @@ The training data is randomly generated based on these models, consisting of 30 
 \subsubsection{Experiment 1: Performance Comparison of Forward-Backward Implementations}
 The first experiment is based on the ideas from the experiment conducted in~\cite{reynouard2024learning}.
 The models used in this experiment are shown in \autoref{tab:dtmc_models} and \autoref{tab:ctmc_models}.
-All models has a fixed number of parameters of, and the number of states varies.
+All models hav a fixed number of parameters, which corresponds to \(n^2\) where \(n\) is the number of states.
 
 The experiment evaluates the efficiency and accuracy of the symbolic approach (CuPAAL) versus the recursive approach (Jajapy). We measure:
 \begin{itemize}
