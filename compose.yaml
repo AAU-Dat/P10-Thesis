@@ -1,0 +1,7 @@
+services:
+  jajapy-testing:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ~/.ssh:/root/.ssh
