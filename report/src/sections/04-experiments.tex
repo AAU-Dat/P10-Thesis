@@ -1,6 +1,6 @@
 \section{Experiments}\label{sec:experiments}
 In this section, we describe the experiments conducted to evaluate the performance of the symbolic implementation of the Baum-Welch algorithm in the CuPAAL library by comparing it to the recursive implementation in Jajapy. The evaluation is based on two key aspects: execution time and accuracy.
-
+\cite{qcompbenchmarks}
 We conduct two experiments:
 \begin{itemize}
     \item \textbf{Performance Comparison} - Measuring runtime and accuracy across different models.
@@ -15,7 +15,7 @@ Through these experiments, we aim to answer the following research questions:
 
 \subsection{Experimental Setup}
 All experiments are conducted using a set of \glspl{dtmc} and \glspl{ctmc} obtained from publicly available benchmarks~\cite{hartmanns2019quantitative}
-\footnote{The models are available at \url{https://qcomp.org/benchmarks/}. The models are Leader\_sync, Brp, Crowds, Mapk, Cluster, and Embedded.}.
+\footnote{The models are available at \url{https://qcomp.org/benchmarks/}. The models are Leader\_sync, Brp, Crowds, Mapk, Cluster, and Embedded.}\cite{hartmanns2019quantitative}.
 
 Each experiment is run ten times.
 We report the average runtime (full run and per iteration), the average number of iterations, log-likelihood per iteration, and the type of error based on the model type.
