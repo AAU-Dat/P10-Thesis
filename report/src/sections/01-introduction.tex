@@ -4,7 +4,7 @@
 \section{Introduction}\label{sec:introduction}
 The Baum-Welch algorithm is a widely used method for training markov models in applications such as speech recognition, bioinformatics, and financial modeling~\cite{chavan2013overview,ciocchetta2009bio,mamon2007hidden}.
 
-Traditionally, the Baum-Welch algorithm relies on matrix- or recursive-based approaches to estimate model parameters from observed sequences.
+Traditionally, the Baum-Welch algorithm relies on matrix-based or recursive approaches to estimate model parameters from observed sequences.
 
 However, these methods can become computationally expensive, particularly for large state spaces and long observation sequences.
 The inherent redundancy in matrix-based representations leads to inefficiencies in both time and memory usage, limiting scalability in practical applications.
@@ -14,9 +14,8 @@ To address these challenges, we propose a novel approach that replaces conventio
 
 By leveraging \glspl{add}, we can exploit the sparsity and structural regularities of HMMs, significantly reducing memory consumption and accelerating computation.
 
-This paper explores the integration of glspl{add} into the Baum-Welch algorithm, demonstrating how this approach improves efficiency while maintaining numerical accuracy.
+This paper explores the integration of \glspl{add} into the Baum-Welch algorithm, demonstrating how this approach enhances efficiency while preserving numerical accuracy.
 
-The integration of \glspl{add}, will be compared to the python library Jajapy, which implements a recursive approach of matrix representation.
-These comparisons will include scalability, run-time, number of interations, log-likelihood etc.
+The proposed method is implemented in the tool CuPAAL, which will be compared to the Python library Jajapy, an existing implementation that employs a recursive matrix-based approach. These comparisons will evaluate key factors such as scalability, runtime, number of iterations, and log-likelihood.
 
 Our findings suggest that replacing matrices and recursive formulations with \glspl{add} offers a scalable alternative, making Markov model-based learning feasible for larger and more complex datasets.
