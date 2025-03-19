@@ -9,7 +9,7 @@ A \gls{bdd} is a directed acyclic graph derived from a decision tree, where each
 To reduce the size of the decision tree, \glspl{bdd} exploit redundancy by merging equivalent substructures, resulting in a canonical form (when reduced and ordered) that allows for efficient operations such as function evaluation, equivalence checking, and Boolean operations~\cite{bryant1986graph}.
 
 \glspl{bdd} have been widely used in formal verification, model checking, and logic synthesis due to their ability to compactly represent large Boolean functions while maintaining efficient computational properties.
-However, \glspl{bdd} suffer from exponential blowup in certain cases, particularly when dealing with functions that lack inherent structure or when representing numerical computations that go beyond Boolean logic.
+However, in rare cases \glspl{bdd} can suffer from exponential blowup. This can occur particularly when dealing with functions that lack inherent structure or when representing numerical computations that go beyond Boolean logic.
 
 \subsubsection{From BDDs to ADDs}\label{subsubsec:adds}
 \acrfullpl{add} generalize the concept of \glspl{bdd} by allowing terminal nodes to take values beyond Boolean constants (0 and 1).
@@ -20,12 +20,12 @@ The fundamental structure of an \gls{add} remains similar to a \gls{bdd}, where 
 However, instead of performing Boolean operations, \glspl{add} allow for arithmetic operations such as addition and multiplication, making them well-suited for applications like dynamic programming, \glspl{mdp}, and linear algebraic computations~\cite{bahar1997algebric}.
 
 \subsection{Recursive vs. Matrix vs. ADD-based Approaches}\label{subsec:approaches}
-When designing algorithms for solving complex problems, different approaches can be taken to optimize computational efficiency.
+When working with the Baum-Welch algorithm, different approaches can be taken to optimize computational efficiency.
 Three common strategies are recursive, matrix-based, and \gls{add}-based approaches, each with distinct advantages and limitations.
 \begin{itemize}
-      \item \textbf{Recursive Approach:} Conceptually simple, recursion follows a divide-and-conquer strategy but can suffer from exponential time complexity due to redundant computations of overlapping subproblems~\cite[Chapter 4]{cormen2022introduction}.
+      \item \textbf{Recursive Approach:} Conceptually simple, recursion follows a divide-and-conquer strategy, and makes use of a dynamic programming approach. Previouse calculations are used to build upon future calculations. These results are stored in a list or a map, so that they can be accessed when needed ~\cite[Chapter 4]{cormen2022introduction}.
       \item \textbf{Matrix Representation:} Reformulating algorithms using matrix operations leverages algebraic properties for parallel computation and efficient processing.
-            However, matrix-based methods can be memory-intensive, particularly for sparse or structured data~\cite[Chapter 4, 15 \& 28]{cormen2022introduction}.
+            By building upon the recursive approach, matrices provide an efficient method of accessing the stored results leading the faster computations overall~\cite[Chapter 4, 15 \& 28]{cormen2022introduction}.
       \item \textbf{ADD-based Approach:} \glspl{add} provide a compact representation that eliminates redundancy in recursive computations.
             By reusing previously computed substructures, they improve efficiency and reduce memory overhead~\cite{bahar1997algebric}.
             Compared to matrices, \glspl{add} can offer a more space-efficient alternative for structured data while extending \gls{bdd} techniques to handle both Boolean and numerical computations.
