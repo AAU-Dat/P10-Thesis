@@ -75,5 +75,5 @@ RUN git remote set-url origin git@github.com:AAU-Dat/P10-Thesis.git
 #RUN git config branch.test.merge refs/heads/test
 
 #RUN chmod +x command_script.sh
-ENTRYPOINT python3 experiments/models.py && git checkout -b initial-models && git add experiments/initial-models/ experiments/observations/ && git commit -m"made observations and initial probabilities" && git push --set-upstream origin initial-models
-#ENTRYPOINT python3 experiments/models.py && tail -f /dev/null
+#ENTRYPOINT python3 experiments/models.py && git checkout -b initial-models-observations && git add experiments/initial-models/ experiments/observations/ && git commit -m"made observations and initial probabilities" && git push --set-upstream origin initial-models-observations
+ENTRYPOINT python3 experiments/models.py && tail -f /dev/null
