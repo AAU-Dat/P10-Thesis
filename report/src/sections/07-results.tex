@@ -1,0 +1,22 @@
+\section{Results}\label{sec:results}
+In this section, we present the results of our experiments comparing the performance of Jajapy and CuPAAL, using the Baum-Welch algorithm.
+The metrics used for comparison are the time taken to train the model, the number of iterations needed, the average error, and the log-likelihood of the model.
+
+The experiments were conducted on the same machine, the specifications of which are provided in Table\todo{ref to pc specs}.
+
+\subsection{Time taken to train the model}\label{subsec:results_time}
+The time taken to train the model is an important metric to consider when comparing the performance of Jajapy and CuPAAL.
+The time taken to train the model is the time taken to complete the Baum-Welch algorithm, and the time is measured in seconds.
+
+The results are displayed visually in figure\todo{ref to figure}.
+The figure displays two bars for each model used in the experiment, one for Jajapy and one for CuPAAL.
+The height of the bars represents the time taken to train the model, and the error bars represent the standard deviation of the time taken to train the model.
+
+The results show a clear difference in the time taken to train the model between Jajapy and CuPAAL.
+CuPAAL is significantly faster than Jajapy, acress all models used in the experiment.
+The difference between the two tools, in terms of time taken to train the model, is especially pronounced for the larger models used in the experiment.
+
+
+\subsection{Accuracy of the model}\label{subsec:results_accuracy}
+The accuracy of the model is also an important metric to consider when comparing the performance of Jajapy and CuPAAL.
+The accuracy of the model is measured using the log-likelihood of the model, which is a measure of how well the model fits the data.
