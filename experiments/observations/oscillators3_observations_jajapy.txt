@@ -1,0 +1,3 @@
+0
+['init', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty']
+30
