@@ -1,9 +1,18 @@
 import jajapy as ja
-from random import uniform, randint
-import stormpy
-from ast import literal_eval
 import numpy as np
-from numpy.random import seed
+import stormpy
+
+def observations_to_file(training_set, model):
+    filename = "experiments/observations/" +model.name + "_observations_cupaal.txt"
+    with open(filename, "w") as file:
+        for time, sequence in zip(training_set.times, training_set.sequences):
+            for i in range(time):
+                file.write(' '.join(sequence) + '\n')
+
+def print_to_console(filename):
+    with open(filename, "r") as file:
+        for line in file:
+            print(line, end='')
 
 def write_to_file(model, filename):
     with open(filename, "w") as file:
@@ -40,89 +49,31 @@ def write_to_file(model, filename):
                     file.write("0 ")
             file.write("\n")
 
-def print_to_console(filename):
-    with open(filename, "r") as file:
-        for line in file:
-            print(line, end='')
+def make_model(filepath, name):
+    model = ja.loadPrism(filepath)
+    model.name = name
 
-def normalize(arr, t_min, t_max):
-    norm_arr = []
-    diff = t_max - t_min
-    diff_arr = max(arr) - min(arr)
-    for i in arr:
-        temp = (((i - min(arr))*diff)/diff_arr) + t_min
-        norm_arr.append(temp)
-    return norm_arr
+    training_set = model.generateSet(30, 10)
+    observations_to_file(training_set, model)
+    training_set.save("experiments/observations/" + name + "_observations_jajapy.txt")
 
-def observations_to_file(model):
-    training_set = model.generateSet(10, 30)
-    filename = "experiments/observations/" + model.name + "_observations.txt"
-    with open(filename, "w") as file:
-        for time, sequence in zip(training_set.times, training_set.sequences):
-            for i in range(time):
-                file.write(' '.join(sequence) + '\n')
-
-def MC_random(nb_states: int, sseed:int=None):
-	if sseed != None:
-		seed(sseed)
-	matrix = []
-	for _ in range(nb_states):
-		matrix.append((randomProbabilities(nb_states)))
-	matrix = np.array(matrix)
-	seed() # reset seed
-	return matrix
-
-def randomProbabilities(length, decimals=5):
-    # Generate random numbers
-    random_numbers = np.random.rand(length)
-    # Normalize the random numbers so they sum to 1
-    normalized_probabilities = random_numbers / random_numbers.sum()
-
-    #formatted_probabilities = [float(f"{p:.{decimals}f}") for p in normalized_probabilities]
-    formatted_probabilities = [round(p, decimals) for p in normalized_probabilities]
-    return formatted_probabilities
-
-def generate_random_model(model):
-    filename = "experiments/initial-models/" + model.name + "_run"
     for i in range(10):
-        model.matrix = MC_random(model.nb_states)
-        write_to_file(model, filename + str(i) + ".txt")
-        print("Done! with "+ filename + str(i) + ".txt")
+        initial_model = ja.MC_random(nb_states=model.nb_states-1, labelling=model.labelling[1:], random_initial_state=False, sseed=i)
+        initial_model.save("experiments/initial-models/" + name + "_jajapy_run" + str(i) + ".txt")
+        write_to_file(initial_model, "experiments/initial-models/" + name + "_cupaal_run" + str(i) + ".txt")
 
-# Usage example
-print("Creating model...")
-leader_sync = ja.loadPrism("experiments/original-models/dtmc/leader_sync.4-3.v1.prism")
-brp = ja.loadPrism("experiments/original-models/dtmc/brp.v1.prism")
-crowds = ja.loadPrism("experiments/original-models/dtmc/crowds.v1.prism")
-oscilltor_1 = ja.loadPrism("experiments/original-models/dtmc/oscillators.3-6-0.1-1.v1.prism")
-oscilltor_2 = ja.loadPrism("experiments/original-models/dtmc/oscillators.6-6-0.1-1.v1.prism")
-oscilltor_3 = ja.loadPrism("experiments/original-models/dtmc/oscillators.6-8-0.1-1.v1.prism")
-oscilltor_4 = ja.loadPrism("experiments/original-models/dtmc/oscillators.6-10-0.1-1.v1.prism")
-leader_sync.name = "leader_sync"
-brp.name = "brp"
-crowds.name = "crowds"
-oscilltor_1.name = "oscilltor_1"
-oscilltor_2.name = "oscilltor_2"
-oscilltor_3.name = "oscilltor_3"
-oscilltor_4.name = "oscilltor_4"
 
-print("Writing to file...")
-observations_to_file(leader_sync)
-observations_to_file(brp)
-observations_to_file(crowds)
-observations_to_file(oscilltor_1)
-observations_to_file(oscilltor_2)
-observations_to_file(oscilltor_3)
-observations_to_file(oscilltor_4)
+make_model("experiments/original-models/dtmc/leader_sync.4-3.v1.prism", "leader_sync")
+make_model("experiments/original-models/dtmc/brp.v1.prism", "brp")
+make_model("experiments/original-models/dtmc/crowds.v1.prism", "crowds")
+make_model("experiments/original-models/dtmc/oscillators.3-6-0.1-1.v1.prism", "oscillators1")
+make_model("experiments/original-models/dtmc/oscillators.6-6-0.1-1.v1.prism", "oscillators2")
+make_model("experiments/original-models/dtmc/oscillators.6-8-0.1-1.v1.prism", "oscillators3")
 
-print("Done!")
+    
 
-generate_random_model(leader_sync)
-generate_random_model(brp)
-generate_random_model(crowds)
-generate_random_model(oscilltor_1)
-generate_random_model(oscilltor_2)
-generate_random_model(oscilltor_3)
-generate_random_model(oscilltor_4)
-
-1.0/0.5
+#original_model, results = ja.BW().fit(training_set, initial_model=model, nb_states=model.nb_states, pp=0, verbose=4, return_data=True)
+#new_model, new_results = ja.BW().fit(training_set, initial_model=initial_model,nb_states=model.nb_states, pp=0,verbose=4, return_data=True)
+#print(results['training_set_loglikelihood'])
+#print(new_results['training_set_loglikelihood'])
+#print(results['training_set_loglikelihood'] - new_results['training_set_loglikelihood'])
