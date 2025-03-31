@@ -1,10 +1,10 @@
 \section{Preliminaries}\label{sec:preliminaries}
-This section provides an overview of the theoretical background necessary to understand the rest of the report. 
+This section provides an overview of the theoretical background necessary to understand the rest of the report.
 We begin by defining the key concepts of a \gls{hmm} and a \gls{mdp}, which are the two main models used in this report.
 
 
 \subsection{Hidden Markov Model}\label{subsec:hmm}
-\glspl{hmm} were introduced by Baum and Petrie in 1966~\cite{NOTFOUND} and have since been widely used in various fields, such as speech recognition~\cite{NOTFOUND}, bioinformatics~\cite{NOTFOUND}, and finance~\cite{NOTFOUND}.
+\glspl{hmm} were introduced by Baum and Petrie in 1966~\cite{baum1966statistical} and have since been widely used in various fields, such as speech recognition~\cite{chavan2013overview}, bioinformatics~\cite{ciocchetta2009bio}, and finance~\cite{mamon2007hidden}.
 \begin{definition}[Hidden Markov Model]
     A Hidden Markov Model (HMM) is a tuple $\mathcal{M} = (S, \mathcal{L}, \mathscr{l}, \tau,  \pi)$, where:
     \begin{itemize}
@@ -41,14 +41,14 @@ To model continuous-time systems, we use a \gls{cthmm}, which is an extension of
 The rate function $\lambda$ determines the transition rate between states, meaning that the time spent in a state before transitioning follows an exponential distribution.
 
 \subsection{Markov Decision Process}\label{subsec:mdp}
-\glspl{mdp} were introduced by Bellman in 1957~\cite{NOTFOUND} and have since been widely used in various fields, such as robotics~\cite{NOTFOUND}, finance~\cite{NOTFOUND}, and healthcare~\cite{NOTFOUND}.
+\glspl{mdp} were introduced by Bellman in 1957~\cite{bellman1957} and have since been widely used in various fields, such as robotics~\cite{mdprobotics2020}, finance~\cite{mdpfinance2023}, and healthcare~\cite{mdphealthcare2021}.
 \begin{definition}[Markov Decision Process]
     A Markov Decision Process (MDP) is a tuple $\mathcal{M} = (S, A, \mathcal{L}, \mathscr{l}, \tau, R, \gamma)$, where:
     \begin{itemize}
         \item $S$ is a finite set of states.
         \item $A$ is a finite set of actions.
         \item $\mathcal{L}$ is a finite set of labels.
-        %\item $\mathscr{l}: S \rightarrow D(\mathcal{L})$ is the emission function.
+              %\item $\mathscr{l}: S \rightarrow D(\mathcal{L})$ is the emission function.
         \item $\tau: S \times A \rightarrow D(S)$ is the transition function.
         \item $R: S \times A \rightarrow \mathbb{R}$ is the reward function.
         \item $\pi \in D(S)$ is the initial distribution.
