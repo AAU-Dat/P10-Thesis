@@ -52,11 +52,6 @@ For a given observation sequence $O$ and model $M$, it is defined as:
 \end{equation}
 where $P(O_t|M)$ is the probability of observing $O_t$ given the model.
 
-%For both experiments on \glspl{dtmc} and \glspl{ctmc}, we expect the CuPAAL implementation to be faster than the Jajapy implementation due to the symbolic approach, which can avoid redundant calculations.
-%We also expect the accuracy to be consistent whether the type of model is a \gls{dtmc} or a \gls{ctmc} between the two implementations since the Baum-Welch algorithm is deterministic.
-
-%The results will be presented in tables for each model, showing the average time per run for each implementation, average number of iterations and log-likelihood and error for each model.
-
 \subsubsection{Experiment 1A: Accuracy Comparison for DTMCs}
 For \glspl{dtmc}, the models used are shown in \autoref{tab:dtmc_models}.
 For \glspl{dtmc}, we use the absolute error as the measure of accuracy, because in \glspl{dtmc} we are estimating probabilities, and we are interested in the absolute difference between the real value and the estimated value.
@@ -68,8 +63,6 @@ The absolute error is calculated as follows:
     \end{aligned}
 \end{equation}
 where $r$ is the real value and $e$ is the expected value.
-
-% The results are presented for \glspl{dtmc} in \autoref{tab:leader_results}, \autoref{tab:brp_results}, and \autoref{tab:crowds_results}.
 
 \subsubsection{Experiment 1B: Accuracy Comparison for CTMCs}
 For \glspl{ctmc}, the models used are shown in \autoref{tab:ctmc_models}.
@@ -85,8 +78,6 @@ The relative error is calculated as follows:
     \end{aligned}
 \end{equation}
 where $r$ is the real value and $e$ is the expected value.
-
-% The results are shown in \autoref{tab:mapk_results}, \autoref{tab:cluster_results}, and \autoref{tab:embedded_results}.
 
 \begin{table}[!htb]
     \centering
@@ -120,90 +111,6 @@ where $r$ is the real value and $e$ is the expected value.
 \end{table}
 
 
-% \begin{table}[!htb]
-%     \centering
-%     \caption{Leader\_sync results}
-%     \label{tab:leader_results}
-%     \begin{tabular}{lllll}
-%         \toprule
-%         Implementation & Iter & Time(s) & Avg $\delta$ & Log-likelihood \\
-%         \midrule
-%         Jajapy         & 0    & 0       & 0            & 0              \\
-%         CuPAAL         & 0    & 0       & 0            & 0              \\
-%         \bottomrule
-%     \end{tabular}
-% \end{table}
-
-% \begin{table}[!htb]
-%     \centering
-%     \caption{Brp results}
-%     \label{tab:brp_results}
-%     \begin{tabular}{lllll}
-%         \toprule
-%         implementation & Iter & Time(s) & avg $\delta$ & log-likelihood \\
-%         \midrule
-%         Jajapy         & 0    & 0       & 0            & 0              \\
-%         CuPAAL         & 0    & 0       & 0            & 0              \\
-%         \bottomrule
-%     \end{tabular}
-% \end{table}
-
-% \begin{table}[!htb]
-%     \centering
-%     \caption{Crowds results}
-%     \label{tab:crowds_results}
-%     \begin{tabular}{lllll}
-%         \toprule
-%         implementation & Iter & Time(s) & avg $\delta$ & log-likelihood \\
-%         \midrule
-%         Jajapy         & 0    & 0       & 0            & 0              \\
-%         CuPAAL         & 0    & 0       & 0            & 0              \\
-%         \bottomrule
-%     \end{tabular}
-% \end{table}
-
-% \begin{table}[!htb]
-%     \centering
-%     \caption{Mapk results}
-%     \label{tab:mapk_results}
-%     \begin{tabular}{lllll}
-%         \toprule
-%         implementation & Iter & Time(s) & avg $\delta$ & log-likelihood \\
-%         \midrule
-%         Jajapy         & 0    & 0       & 0            & 0              \\
-%         CuPAAL         & 0    & 0       & 0            & 0              \\
-%         \bottomrule
-%     \end{tabular}
-% \end{table}
-
-% \begin{table}[!htb]
-%     \centering
-%     \caption{Cluster results}
-%     \label{tab:cluster_results}
-%     \begin{tabular}{lllll}
-%         \toprule
-%         implementation & Iter & Time(s) & avg $\delta$ & log-likelihood \\
-%         \midrule
-%         Jajapy         & 0    & 0       & 0            & 0              \\
-%         CuPAAL         & 0    & 0       & 0            & 0              \\
-%         \bottomrule
-%     \end{tabular}
-% \end{table}
-
-% \begin{table}[!htb]
-%     \centering
-%     \caption{Embedded results}
-%     \label{tab:embedded_results}
-%     \begin{tabular}{lllll}
-%         \toprule
-%         implementation & Iter & Time(s) & avg $\delta$ & log-likelihood \\
-%         \midrule
-%         Jajapy         & 0    & 0       & 0            & 0              \\
-%         CuPAAL         & 0    & 0       & 0            & 0              \\
-%         \bottomrule
-%     \end{tabular}
-% \end{table}
-
 \subsection{Scalability Experiment}
 The primary objective of this experiment is to evaluate the scalability of the proposed symbolic implementation of the Baum-Welch algorithm in comparison to the recursive implementation in Jajapy.
 Specifically, we aim to measure the time required to learn \glspl{dtmc} and \glspl{ctmc} over the number of states.
@@ -219,31 +126,9 @@ In this experiment, we evaluate the scalability of CuPAAL for \glspl{dtmc} by me
 We use the \textit{leader\_sync} model, scaling from 26 to 1050 states.
 
 This experiment provides insights into how the symbolic approach scales as model complexity increases.
-% The results are shown in \autoref{fig:leader_results}.
-% We expect CuPAAL to demonstrate lower runtime and improved scalability, while maintaining accuracy comparable to Jajapy.
-
-% \begin{figure}
-%     \centering
-%     \begin{tikzpicture}
-%         \node {missing picture};
-%     \end{tikzpicture}
-%     \caption{Scalability results for the leader\_sync model}
-%     \label{fig:leader_results}
-% \end{figure}
 
 \subsubsection{Experiment 2B: Scalability for CTMCs}
 In this experiment, we evaluate the scalability of CuPAAL for \glspl{ctmc} by measuring runtime efficiency as the number of states increases.
 We use the \textit{polling} model, scaling from 36 to 1334 states.
 
 This experiment provides insights into how the symbolic approach scales as model complexity increases.
-% The results are shown in \autoref{fig:polling_results}.
-% We expect CuPAAL to demonstrate lower runtime and improved scalability, while maintaining accuracy comparable to Jajapy.
-
-% \begin{figure}
-%     \centering
-%     \begin{tikzpicture}
-%         \node {missing picture};
-%     \end{tikzpicture}
-%     \caption{Scalability results for the polling model}
-%     \label{fig:polling_results}
-% \end{figure}
