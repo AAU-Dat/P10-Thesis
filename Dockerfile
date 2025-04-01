@@ -29,8 +29,7 @@ RUN pip install setuptools==68.2.2
 RUN git clone --branch 14.25 --single-branch --depth 1 https://github.com/moves-rwth/carl-storm.git /base/carl-storm && \
     git clone --branch 2.2.0 --single-branch --depth 1 https://github.com/moves-rwth/pycarl.git /base/pycarl && \
     git clone --branch 1.8.1 --single-branch --depth 1 https://github.com/moves-rwth/storm.git /base/storm && \
-    git clone --branch 1.8.0 --single-branch --depth 1 https://github.com/moves-rwth/stormpy.git /base/stormpy && \
-    git clone https://github.com/Rapfff/jajapy.git /base/jajapy
+    git clone --branch 1.8.0 --single-branch --depth 1 https://github.com/moves-rwth/stormpy.git /base/stormpy 
 
 
 # Build CArL-storm
@@ -63,10 +62,12 @@ RUN pip install numpy==1.26.0 && \
     apt-get install gdb -y && \
     rm -rf /var/lib/apt/lists/*
 
-# GO BACK
-RUN pip install jajapy
 COPY . .
+
+# GO BACK
+#RUN pip install jajapy
 RUN git config --list
+WORKDIR /base/jajapy
 # Configure Git user identity
 RUN git config --global user.email "saahol20@student.aau.dk"
 RUN git config --global user.name "test"
@@ -75,5 +76,5 @@ RUN git remote set-url origin git@github.com:AAU-Dat/P10-Thesis.git
 #RUN git config branch.test.merge refs/heads/test
 
 #RUN chmod +x command_script.sh
-ENTRYPOINT python3 experiments/models.py && git checkout -b initial-models && git add experiments/initial-models/ experiments/observations/ && git commit -m"made observations and initial probabilities" && git push --set-upstream origin initial-models
-#ENTRYPOINT python3 experiments/models.py && tail -f /dev/null
+ENTRYPOINT python3 jajapy_experiment.py && git checkout -b jajapy-experiment && git add experiments/results/ && git commit -m"experiment for jajapy" && git push --set-upstream origin jajapy-experiment
+#ENTRYPOINT python3 jajapy_experiment.py && tail -f /dev/null
