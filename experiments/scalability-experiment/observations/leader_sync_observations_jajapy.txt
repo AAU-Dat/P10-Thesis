@@ -1,0 +1,7 @@
+0
+['init', 'empty', 'empty', 'empty', 'empty', 'init', 'empty', 'empty', 'empty', 'empty', 'elected']
+8
+['init', 'empty', 'empty', 'empty', 'empty', 'elected', 'elected', 'elected', 'elected', 'elected', 'elected']
+20
+['init', 'empty', 'empty', 'empty', 'empty', 'init', 'empty', 'empty', 'empty', 'empty', 'init']
+2
