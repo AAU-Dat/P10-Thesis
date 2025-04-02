@@ -29,8 +29,8 @@ RUN pip install setuptools==68.2.2
 RUN git clone --branch 14.25 --single-branch --depth 1 https://github.com/moves-rwth/carl-storm.git /base/carl-storm && \
     git clone --branch 2.2.0 --single-branch --depth 1 https://github.com/moves-rwth/pycarl.git /base/pycarl && \
     git clone --branch 1.8.1 --single-branch --depth 1 https://github.com/moves-rwth/storm.git /base/storm && \
-    git clone --branch 1.8.0 --single-branch --depth 1 https://github.com/moves-rwth/stormpy.git /base/stormpy && \
-    git clone https://github.com/Rapfff/jajapy.git /base/jajapy
+    git clone --branch 1.8.0 --single-branch --depth 1 https://github.com/moves-rwth/stormpy.git /base/stormpy 
+
 
 
 # Build CArL-storm
@@ -76,4 +76,4 @@ RUN git remote set-url origin git@github.com:AAU-Dat/P10-Thesis.git
 
 #RUN chmod +x command_script.sh
 #ENTRYPOINT python3 experiments/models.py && git checkout -b initial-models-observations && git add experiments/initial-models/ experiments/observations/ && git commit -m"made observations and initial probabilities" && git push --set-upstream origin initial-models-observations
-ENTRYPOINT python3 experiments/models.py && tail -f /dev/null
+ENTRYPOINT python3 models.py && tail -f /dev/null
