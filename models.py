@@ -50,9 +50,9 @@ def write_to_file(model, name, i):
                     file.write("0 ")
             file.write("\n")
 
-def make_model(filepath):
+def make_model(filepath, name):
     model = ja.loadPrism(filepath)
-    model.name = "leader_sync" + str(model.nb_states)
+    model.name = name + str(model.nb_states)
 
     #training_set = model.generateSet(30, 10)
     #observations_to_file(training_set, model)
@@ -63,26 +63,32 @@ def make_model(filepath):
         initial_model.save("experiments/scalability-experiment/initial-models/" + model.name + "_jajapy_run" + str(i) + ".txt")
         write_to_file(initial_model, model.name, i)
 
+model = ja.loadPrism("experiments/original-models/dtmc/leader_sync.4-3.v1.prism")
+model.name = "leader_sync"
+training_set = model.generateSet(30, 10)
+observations_to_file(training_set, model)
+training_set.save("experiments/scalability-experiment/observations/" + model.name + "_observations_jajapy.txt")
+
 model = ja.loadPrism("experiments/original-models/tandem.v1.prism")
 model.name = "tandem"
 training_set = model.generateSet(30, 10, timed=False)
 observations_to_file(training_set, model)
 training_set.save("experiments/scalability-experiment/observations/" + model.name + "_observations_jajapy.txt")
 
-make_model("experiments/original-models/tandem.v1.prism")
-make_model("experiments/original-models/tandem.v1.2.prism")
-make_model("experiments/original-models/tandem.v1.3.prism")
-make_model("experiments/original-models/tandem.v1.4.prism")
+make_model("experiments/original-models/tandem.v1.prism", "tandem")
+make_model("experiments/original-models/tandem.v1.2.prism", "tandem")
+make_model("experiments/original-models/tandem.v1.3.prism", "tandem")
+make_model("experiments/original-models/tandem.v1.4.prism", "tandem")
 
-#make_model("experiments/original-models/dtmc/leader_sync.3-2.v1.prism")
-#make_model("experiments/original-models/dtmc/leader_sync.3-3.v1.prism")
-#make_model("experiments/original-models/dtmc/leader_sync.3-4.v1.prism")
-#make_model("experiments/original-models/dtmc/leader_sync.4-2.v1.prism")
-#make_model("experiments/original-models/dtmc/leader_sync.4-3.v1.prism")
-#make_model("experiments/original-models/dtmc/leader_sync.4-4.v1.prism")
-#make_model("experiments/original-models/dtmc/leader_sync.5-2.v1.prism")
-#make_model("experiments/original-models/dtmc/leader_sync.5-3.v1.prism")
+make_model("experiments/original-models/dtmc/leader_sync.3-2.v1.prism", "leader_sync")
+make_model("experiments/original-models/dtmc/leader_sync.3-4.v1.prism", "leader_sync")
+make_model("experiments/original-models/dtmc/leader_sync.3-3.v1.prism", "leader_sync")
+make_model("experiments/original-models/dtmc/leader_sync.4-3.v1.prism", "leader_sync")
+make_model("experiments/original-models/dtmc/leader_sync.4-2.v1.prism", "leader_sync")
+make_model("experiments/original-models/dtmc/leader_sync.5-2.v1.prism", "leader_sync")
+make_model("experiments/original-models/dtmc/leader_sync.4-4.v1.prism", "leader_sync")
 #make_model("experiments/original-models/dtmc/brp.v1.prism", "brp")
+#make_model("experiments/original-models/dtmc/leader_sync.5-3.v1.prism")
 #make_model("experiments/original-models/dtmc/crowds.v1.prism", "crowds")
 #make_model("experiments/original-models/dtmc/oscillators.3-6-0.1-1.v1.prism", "oscillators1")
 #make_model("experiments/original-models/dtmc/oscillators.6-6-0.1-1.v1.prism", "oscillators2")
