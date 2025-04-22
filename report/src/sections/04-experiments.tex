@@ -1,83 +1,43 @@
 \section{Experiments}\label{sec:experiments}
-In this section, we describe the experiments conducted to evaluate the performance of the symbolic implementation of the Baum-Welch algorithm in the CuPAAL library by comparing it to the recursive implementation in Jajapy.
-The evaluation is based on two key aspects: execution time and accuracy.
+In this section, we present an empirical evaluation comparing the performance of two implementations of the Baum-Welch algorithm: the original version from \Jajapy and the new symbolic implementation introduced in \JajapyTwo.
+For this comparison, we use a selection of discrete-time Markov chains taken from the QComp benchmark set~\cite{hartmanns2019quantitative}.
 
-We conduct two experiments:
+Our evaluation focuses on two primary criteria: execution time and estimation accuracy.
+
+We designed two experiments to address these aspects:
+
 \begin{itemize}
-    \item \textbf{Performance Comparison} - Measuring runtime and accuracy across different models.
-    \item \textbf{Scalability Analysis} - Evaluating performance as the number of states increases.
+    \item \textbf{Performance Comparison} — Assessing runtime and accuracy across a variety of models.
+    \item \textbf{Scalability Analysis} — Examining how performance is affected as the model size, specifically the number of states, increases.
 \end{itemize}
 
-Through these experiments, we aim to answer the following research questions:
+The goal of these experiments is to answer the following research questions:
+
 \begin{itemize}
-    \item \textbf{Question 1}: How does the symbolic implementation of the Baum-Welch algorithm in CuPAAL compare to the recursive implementation in Jajapy in terms of runtime and accuracy?
-    \item \textbf{Question 2}: How does the performance of the CuPAAL implementation scale with the size of the model?
+    \item \textbf{Question 1}: How does the symbolic implementation of the Baum-Welch algorithm in CuPAAL perform in terms of runtime and accuracy compared to the recursive implementation in \Jajapy?
+    \item \textbf{Question 2}: How does the runtime performance of CuPAAL scale as the size of the model increases?
 \end{itemize}
 
 \subsection{Experimental Setup}
-All experiments are conducted using a set of \glspl{dtmc} and \glspl{ctmc} obtained from publicly available benchmarks~\cite{hartmanns2019quantitative}
-\footnote{The models are available at \url{https://qcomp.org/benchmarks/}. The models are Leader\_sync, Brp, Crowds, Mapk, Cluster, and Embedded.}~\cite{hartmanns2019quantitative}.
+All experiments were conducted on a machine equipped with a Ryzen 5 3600 processor, 64 GB of RAM, running Ubuntu Linux.
 
-Each experiment is run ten times.
-We report the average runtime (full run and per iteration), the average number of iterations, log-likelihood per iteration, and the type of error based on the model type.
+For each model from the benchmark set, we selected a subset of observable atomic propositions\footnote{{\color{red} link to models with description of the chosen observable atomic propositions}} and generated a training dataset consisting of $30$ observation sequences, each of length $10$.
 
-Experiments stop when reaching a convergence threshold of 0.05 (the Jajapy default) or a 4-hour runtime limit. The final iteration's results are recorded.
+In each case, the output model was configured to match the state size of the original benchmark, and all transition probabilities were treated as parameters to be estimated.
 
-The training data is randomly generated based on these models, consisting of 30 observation sequences of length 10 for each model.
-
-The implementations used are:
-\begin{enumerate}
-    \item The original Jajapy implementation.
-    \item The symbolic CuPAAL implementation.
-\end{enumerate}
+Each training session was allowed to run until either the default convergence threshold of $0.01$ was reached or a maximum runtime of $4$ hours elapsed.
+Every experiment was repeated 10 times. During each run, we recorded the runtime, the absolute error $\epsilon_i$ for each estimated parameter $x_i$\footnote{The absolute error is defined as $|e - r|$, where $e$ is the estimated value and $r$ is the real value.}, and the log-likelihood value achieved in the final iteration.
 
 \subsection{Experiment 1: Performance Comparison of Implementations}
 The first experiment is based on the ideas from the experiment conducted in~\cite{reynouard2024learning}.
-
-We split this experiment into two separate analyses: one focusing on \glspl{dtmc} and another on \glspl{ctmc}. Since \glspl{dtmc} estimate probabilities while \glspl{ctmc} estimate rates, we use different error measures for accuracy evaluation.
-
-The experiments evaluate the efficiency and accuracy of the symbolic approach (CuPAAL) versus the recursive approach (Jajapy). We measure:
+The models used are shown in \autoref{tab:dtmc_models}.
+The experiment evaluate the efficiency and accuracy of the symbolic approach versus the recursive approach.
+We measure:
 \begin{itemize}
     \item \textbf{Runtime Efficiency} - The average time per run.
     \item \textbf{Convergence Speed} - The average number of iterations required.
     \item \textbf{Accuracy} - Measured using log-likelihood and an average error.
 \end{itemize}
-
-\textbf{Log-likelihood:} Measures how well a learned model explains observed data.
-For a given observation sequence $O$ and model $M$, it is defined as:
-\begin{equation}
-    \begin{aligned}
-        \log P(O \mid M) = \sum_{t=1}^{T} \log P(O_t \mid M)
-    \end{aligned}
-\end{equation}
-where $P(O_t|M)$ is the probability of observing $O_t$ given the model.
-
-\subsubsection{Experiment 1A: Accuracy Comparison for DTMCs}
-For \glspl{dtmc}, the models used are shown in \autoref{tab:dtmc_models}.
-For \glspl{dtmc}, we use the absolute error as the measure of accuracy, because in \glspl{dtmc} we are estimating probabilities, and we are interested in the absolute difference between the real value and the estimated value.
-
-The absolute error is calculated as follows:
-\begin{equation}
-    \begin{aligned}
-        \text{Absolute Error} = |r - e|
-    \end{aligned}
-\end{equation}
-where $r$ is the real value and $e$ is the expected value.
-
-\subsubsection{Experiment 1B: Accuracy Comparison for CTMCs}
-For \glspl{ctmc}, the models used are shown in \autoref{tab:ctmc_models}.
-
-For \glspl{ctmc}, we use relative error as the measure of accuracy, since rates in CTMCs can vary significantly in magnitude, an absolute difference may not properly reflect the accuracy.
-For example, a difference of 0.1 in a transition rate of 0.2 is a large error, whereas the same difference in a rate of 10 is negligible.
-Using relative error ensures that errors are proportional to the expected value.
-
-The relative error is calculated as follows:
-\begin{equation}
-    \begin{aligned}
-        \text{Relative Error} = \cfrac{|r - e|}{e}
-    \end{aligned}
-\end{equation}
-where $r$ is the real value and $e$ is the expected value.
 
 \begin{table}[!htb]
     \centering
@@ -88,47 +48,119 @@ where $r$ is the real value and $e$ is the expected value.
         Name         & Number of States \\
         \midrule
         Leader\_sync & 274              \\
-        %Oscillators  & 453              \\
         Brp          & 886              \\
         Crowds       & 1145             \\
         \bottomrule
     \end{tabular}
 \end{table}
 
-\begin{table}[!htb]
-    \centering
-    \caption{CTMC models}
-    \label{tab:ctmc_models}
-    \begin{tabular}{lll}
-        \toprule
-        Name     & Number of States \\
-        \midrule
-        Mapk     & 118              \\
-        Cluster  & 820              \\
-        Embedded & 3480             \\
-        \bottomrule
-    \end{tabular}
-\end{table}
+\autoref{tab:comparison} reports the aggregated results of the experiments. The column $|S|$ provides the number of states of the model; the columns ``time'' and ``iter'' respectively report the average running time and number of iterations; and the column ``$\epsilon$'' and ``$\log \mathcal{L}$'' respectively report the average error of the estimated transition probabilities and the average log-likelihood valued measured w.r.t. the training set.
 
+
+%We split this experiment into two separate analyses: one focusing on \glspl{dtmc} and another on \glspl{ctmc}. Since \glspl{dtmc} estimate probabilities while \glspl{ctmc} estimate rates, we use different error measures for accuracy evaluation.
+
+
+\newcommand{\colsep}[0]{\hspace{0.5 em}}
+\begin{table}[!h]
+    \begin{center}
+        \begin{tabular}{l@{\colsep}|c@{\colsep}|c@{\colsep}c@{\colsep}c@{\colsep}c@{\colsep}|c@{\colsep}c@{\colsep}c@{\colsep}l}
+            %\toprule
+            \multirow{2}{*}{Model} & \multirow{2}{*}{$|S|$} & \multicolumn{4}{|c}{\Jajapy} & \multicolumn{4}{|c}{\JajapyTwo}                                                                                    \\ \cline{3-10}
+                                   &                        & iter                         & time                            & $\log \mathcal{L}$ & $\epsilon$ & iter & time  & $\log \mathcal{L}$ & $\epsilon$ \\ \cline{1-2}
+            Leader sync            & 274                    & 15.6                         & 35.84                           & -0.00165602        & 0.35       & 15.7 & 24.02 & -5.357103          &            \\
+            %BRP                    & 886                    & 2                            & 46.65                           & $2.331 \cdot 10^{-15}$  &            &      &       &                    &            \\
+            %Crowds                 & 1145                   & 2                            & 87.52                           & $-9.659 \cdot 10^{-15}$ &            &      &       &                    &            \\
+            %Oscillators1           & 57                     & 2                            & 0.32                            & $4.33 \cdot 10^{-15}$   &            &      &       &                    &            \\
+            %Oscillators2           & 463                    & 2                            & 11.8                            & $1.33 \cdot 10^{-15}$   &            &      &       &                    &            \\
+            %Oscillators3           & 1717                   & 2                            & 170.7                           & $6.66 \cdot 10^{-16}$   &            &      &       &                    &
+            %\bottomrule
+        \end{tabular}
+    \end{center}
+    \caption{Experimental comparison between the original and symbolic implementation of the BW algorithm in \Jajapy.}
+    \label{tab:comparison}
+\end{table}
 
 \subsection{Scalability Experiment}
 The primary objective of this experiment is to evaluate the scalability of the proposed symbolic implementation of the Baum-Welch algorithm in comparison to the recursive implementation in Jajapy.
-Specifically, we aim to measure the time required to learn \glspl{dtmc} and \glspl{ctmc} over the number of states.
+Specifically, we aim to measure the time required to learn \glspl{dtmc} over the number of states.
 We measure:
 \begin{itemize}
     \item \textbf{Runtime efficiency} - The average time per run.
 \end{itemize}
 
-For this experiment, we selected two models-\textit{leader\_sync} (\gls{dtmc}) and \textit{polling} (\gls{ctmc})—as they represent those used in the performance comparison experiment and scale well to large state spaces.
-
-\subsubsection{Experiment 2A: Scalability for DTMCs}
-In this experiment, we evaluate the scalability of CuPAAL for \glspl{dtmc} by measuring runtime efficiency as the number of states increases.
+%For this experiment, we selected the model \textit{leader\_sync}, as it represents those used in the performance comparison experiment and scale well to large state spaces.
 We use the \textit{leader\_sync} model, scaling from 26 to 1050 states.
-
 This experiment provides insights into how the symbolic approach scales as model complexity increases.
 
-\subsubsection{Experiment 2B: Scalability for CTMCs}
-In this experiment, we evaluate the scalability of CuPAAL for \glspl{ctmc} by measuring runtime efficiency as the number of states increases.
-We use the \textit{polling} model, scaling from 36 to 1334 states.
+% \subsection{Experimental Setup}
+% All experiments are conducted using a set of \glspl{dtmc} and \glspl{ctmc} obtained from publicly available benchmarks~\cite{hartmanns2019quantitative}
+% \footnote{The models are available at \url{https://qcomp.org/benchmarks/}. The models are Leader\_sync, Brp, Crowds, Mapk, Cluster, and Embedded.}~\cite{hartmanns2019quantitative}.
 
-This experiment provides insights into how the symbolic approach scales as model complexity increases.
+% Each experiment is run ten times.
+% We report the average runtime (full run and per iteration), the average number of iterations, log-likelihood per iteration, and the type of error based on the model type.
+
+% Experiments stop when reaching a convergence threshold of 0.05 (the Jajapy default) or a 4-hour runtime limit. The final iteration's results are recorded.
+
+% The training data is randomly generated based on these models, consisting of 30 observation sequences of length 10 for each model.
+
+% The implementations used are:
+% \begin{enumerate}
+%     \item The original Jajapy implementation.
+%     \item The symbolic CuPAAL implementation.
+% \end{enumerate}
+
+% \textbf{Log-likelihood:} Measures how well a learned model explains observed data.
+% For a given observation sequence $O$ and model $M$, it is defined as:
+% \begin{equation}
+% \begin{aligned}
+% \log P(O \mid M) = \sum_{t=1}^{T} \log P(O_t \mid M)
+% \end{aligned}
+% \end{equation}
+% where $P(O_t|M)$ is the probability of observing $O_t$ given the model.
+
+%\subsubsection{Experiment 1A: Accuracy Comparison for DTMCs}
+%For \glspl{dtmc}, we use the absolute error as the measure of accuracy, because in \glspl{dtmc} we are estimating probabilities, and we are interested in the absolute difference between the real value and the estimated value.
+
+% The absolute error is calculated as follows:
+% \begin{equation}
+%     \begin{aligned}
+%         \text{Absolute Error} = |r - e|
+%     \end{aligned}
+% \end{equation}
+% where $r$ is the real value and $e$ is the expected value.
+
+% \subsubsection{Experiment 1B: Accuracy Comparison for CTMCs}
+% For \glspl{ctmc}, the models used are shown in \autoref{tab:ctmc_models}.
+
+% For \glspl{ctmc}, we use relative error as the measure of accuracy, since rates in CTMCs can vary significantly in magnitude, an absolute difference may not properly reflect the accuracy.
+% For example, a difference of 0.1 in a transition rate of 0.2 is a large error, whereas the same difference in a rate of 10 is negligible.
+% Using relative error ensures that errors are proportional to the expected value.
+
+% The relative error is calculated as follows:
+% \begin{equation}
+%     \begin{aligned}
+%         \text{Relative Error} = \cfrac{|r - e|}{e}
+%     \end{aligned}
+% \end{equation}
+% where $r$ is the real value and $e$ is the expected value.
+
+% \begin{table}[!htb]
+%     \centering
+%     \caption{CTMC models}
+%     \label{tab:ctmc_models}
+%     \begin{tabular}{lll}
+%         \toprule
+%         Name     & Number of States \\
+%         \midrule
+%         Mapk     & 118              \\
+%         Cluster  & 820              \\
+%         Embedded & 3480             \\
+%         \bottomrule
+%     \end{tabular}
+% \end{table}
+
+% \subsubsection{Experiment 2B: Scalability for CTMCs}
+% In this experiment, we evaluate the scalability of CuPAAL for \glspl{ctmc} by measuring runtime efficiency as the number of states increases.
+% We use the \textit{polling} model, scaling from 36 to 1334 states.
+
+% This experiment provides insights into how the symbolic approach scales as model complexity increases.
