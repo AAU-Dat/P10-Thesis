@@ -4,13 +4,47 @@ Specifically, we discuss what these tools are, how they function, who utilizes t
 The focus will be on two primary tools: Jajapy and CuPAAL.
 
 
-\subsection{Jajapy}\label{subsec:jajapy}
-Jajapy is a Python library developed to implement the Baum-Welch algorithm for learning various types of Markov models.
-The library employs a recursive implementation of the Baum-Welch algorithm to infer the parameters of these models.
+\subsection{Jajapy}\label{sec:jajapy}
+\Jajapy\ provides learning algorithms designed to construct accurate models of a system under learning (SUL) from observed traces.
+Once learned, these models can be directly exported for formal analysis in tools such as \Storm~and \Prism.
 
-Jajapy was chosen for our research due to its established use of recursive methods in training Hidden Markov Models (HMMs) and other probabilistic models.
-Our objective was to explore the impact of using \glspl{add} in the Baum-Welch algorithm, as opposed to conventional matrix-based or recursive methods.
-Jajapy served as an appropriate baseline for comparison, allowing us to evaluate the potential computational efficiency and accuracy improvements that \glspl{add} might offer.
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/workflow.pdf}
+    \caption{Modeling and verification workflow using \Jajapy. Phases involving \Jajapy\ are highlighted in green, while the blue phase represents verification using \Storm~or \Prism.}
+    \label{fig:workflow}
+\end{figure}
+
+In this context, we refer to the \textit{training set} as the collection of observation traces used to infer a model of the SUL, and the \textit{test set} as a separate set of traces used to evaluate the quality of the learned model.
+
+\Jajapy\ supports learning various types of models, depending on the structure of the training data.
+For clarity, this paper focuses specifically on the new features introduced in \JajapyTwo, which primarily target Markov chains.
+However, these improvements are equally applicable to other classes of Markov models supported by the tool.
+
+At the core of \Jajapy's learning capabilities are several variants of the Baum-Welch (BW) algorithm~\cite{Baum70,Rabiner89}, adapted for discrete-time Markov chains (MCs), Markov decision processes (MDPs)\cite{BacciILR21}, and continuous-time Markov chains (CTMCs)\cite{BacciILR23}.
+Each algorithm requires two inputs: a training set and the desired number of states for the output model.
+The process begins with the creation of a randomly initialized model (e.g., a Markov chain) and iteratively updates its transition probabilities, increasing the likelihood of transitions that better explain the observed traces.
+
+The efficiency and accuracy of the learning process depend heavily on the choice of the initial hypothesis.
+To improve convergence and model quality, \Jajapy\ allows users to supply a custom initial hypotheses in several formats, including \Stormpy~sparse models, \Prism~files, or native \Jajapy\ model definitions.
+
+An example of using \Jajapy\ to learn a 10-state Markov chain from a training set, starting from a random initial hypothesis, is shown in \autoref{fig:run-bw}.
+
+\begin{listing}
+    \begin{minted}{python} 
+    from jajapy import BW 
+    type(training_set) # list 
+    output_model = BW().fit(training_set, nb_states=10) type(output_model) # stormpy.SparseDtmc 
+    \end{minted}
+    \caption{Example of using \Jajapy's BW implementation to learn a 10-state Markov chain from a training set.}
+    \label{fig:run-bw}
+\end{listing}
+
+%Beyond the Baum-Welch algorithm, \Jajapy\ also includes implementations of Alergia~\cite{CarrascoO94,CarrascoO99} and IOAlergia~\cite{Mao11,MaoCJNLN16}, which are alternative algorithms for learning MCs and MDPs, respectively.
+%These approaches require both a training set and a user-defined \textit{confidence} parameter.
+
+Once a model has been learned, \Jajapy\ supports direct verification of properties using \Storm, provided the properties are supported.
+Alternatively, the model can be exported to \Prism's format for verification using the \Prism\ model checker.
 
 
 \subsection{CuPAAL}\label{subsec:cupaal}
@@ -25,3 +59,5 @@ This iteration replaced all recursive computations with \glspl{add}, enabling mo
 The transition to a fully \gls{add}-based approach demonstrated the potential for significant computational savings and scalability improvements, reinforcing the viability of this method for broader applications beyond our initial research scope.
 
 By building upon Jajapy and developing CuPAAL, we have been able to evaluate the impact of using \glspl{add} in probabilistic model learning.
+
+
