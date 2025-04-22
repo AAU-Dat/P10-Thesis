@@ -5,6 +5,14 @@ The different approaches that can be taken for the Baum-Welch algorithm will als
 
 Finally, the \gls{cudd} library will be introduced, which is a library for implementing and manipulating \glspl{bdd} and \glspl{add}.
 
+The accuracy of the models learned with the BW algorithm strongly depends on selecting an appropriate size for the output model. However, increasing this size substantially raises the computational cost of each update iteration, both in terms of time and space complexity.
+
+This is because each iteration requires running the forward-backward algorithm on every trace in the training set. In the original implementation, this step was performed using Jajapy models, incurring a cost of $O(n^2 \cdot K)$ in time and $O(n \cdot K)$ in space per iteration, where $n$ is the number of states in the output model and $K$ is the total number of label occurrences in the training set. Moreover, computing the updated transition probabilities from the forward and backward coefficients added an extra $O(n^2 \cdot K)$ overhead in both time and space.
+
+Unsurprisingly, this had a significant impact on the performance of the BW algorithm as the number of states increased.
+
+To address this limitation, CuPAAL\ introduces a symbolic engine that efficiently handles both the forward-backward computation and the parameter updates.
+
 \subsection{Decision Diagrams}\label{subsec:decision-diagrams}
 \acrfullpl{bdd} are data structures for efficiently representing and manipulating Boolean functions.
 They are a compressed representation of truth tables, capturing the logical structure of a function in a graph-based format by eliminating redundancy, reducing memory usage, and improving computational efficiency~\cite{bryant1986graph}.
@@ -47,3 +55,48 @@ By leveraging the \gls{cudd} library, we demonstrate the benefits of \gls{add}-b
 
 In this project, we use the \gls{cudd} library to store \glspl{add} and perform operations on them.
 Its optimized algorithms and efficient memory management enable symbolic handling of large and complex matrices, significantly improving performance compared to traditional methods.
+
+\subsection{From Prism to CuPAAL}\label{subsec:from_prism_to_cupaal}
+The models are encoded from Prism models to CuPAAL models. This is done by parsing the Prism model to Jajapy, using Stormpy.
+
+The Jajapy model contains a matrix for it's transitions, a matrix for it's labels, and a vector for the initial state. The model is passed to CuPAAL where these matrices and vectors are encoded into \glspl{add}.
+
+The Transition matrix is a $S\times S$ matrix, where $S=States$, and is encoded to an \gls{add}, by assigning each row and column with a binary value. This value is determined based on the size of the matrix,
+$|binaryValue| = \ceil{log_2(S)}$.
+Meaning for a $2\times 2$ matrix, a single binary value for each row and column, will suffice.
+For this case, the first row will be assigned the binary value $0$, and the second row will be assigned $1$, and vice versa for the columns.
+
+The label matrix is a $S\times L$ matrix, Where $L=Labels$ and since there is no guarantee that $S = L$, the encoding is handled differently.
+The matrix is instead treated as a list of vectors.
+Each vector is encoded as square matrices, where each row or column (depending on the vector type) is duplicated, which is then encoded to a list of \glspl{add}.
+
+The Initial state vector is encoded similarly to the label matrix, but only as a single \gls{add}.
+
+We have not modified or extended the CUDD library.
+All functionality used in our implementation is available through the standard CUDD library.
+However, we adapted how we represent vectors to optimize our symbolic computations.
+
+This is due to the structure of Decision Diagrams in CuPAAL, where keeping track of all the new binary values used for encoding from a matrix to an \gls{add} can add a layer of complexity for calculation.
+Especially when computing operations that translate matrices to new dimensions, such as the Kronecker product.
+This matrix-based approach enables efficient symbolic operations, as the Kronecker product can be calculated by taking the Hadamard product between a column matrix \gls{add} and a row matrix \gls{add}, simplifying what would otherwise be a more complex operation.
+
+An example of this can be seen with the two vectors $\hat{A}$ and $\hat{B}$
+
+Let $\hat{A} = \begin{bmatrix}
+            1 \\
+            2
+      \end{bmatrix}$
+and $\hat{B}=\begin{bmatrix}
+            3 & 4
+      \end{bmatrix}$.
+
+$\hat{A}$ and $\hat{B}$ are expanded to be matrices, similar to how the matrix was treated as a list of vectors and then expanded to square matrices, as seen with the Label matrix.
+
+Let $\mathbf{A} = \begin{bmatrix}
+            1 & 1 \\
+            2 & 2
+      \end{bmatrix}$ and
+$\mathbf{B} = \begin{bmatrix}
+            3 & 4 \\
+            3 & 4
+      \end{bmatrix}$.
