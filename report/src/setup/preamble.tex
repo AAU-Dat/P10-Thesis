@@ -9,8 +9,9 @@
 \usepackage{mathtools}
 \usepackage{booktabs}
 \usepackage{tikz}
-% \usepackage{amsthm}
-% \usepackage{thm-restate}
+\usepackage{amsthm}
+\usepackage{thm-restate}
+\usepackage{multirow}
 
 % Packages with options set
 \usepackage[hidelinks]{hyperref}
@@ -24,9 +25,10 @@
     url=false
 ]{biblatex}
 \usepackage[acronym]{glossaries}
+\newcommand{\ceil}[1]{\left\lceil #1 \right\rceil}
 
 % Hyperlink and PDF properties
-% \usepackage{orcidlink}
+\usepackage{orcidlink}
 \makeatletter
 \hypersetup{%
     plainpages=false,%
@@ -51,12 +53,12 @@
 \addbibresource{bib/main.bib}
 
 % Other setup and options
-% \declaretheorem{theorem}
-% \declaretheorem{lemma}
-% \declaretheorem{corollary}
-% \declaretheorem{definition}
-% \declaretheorem{example}
-% \declaretheorem{conjecture}
+\declaretheorem{theorem}
+\declaretheorem{lemma}
+\declaretheorem{corollary}
+\declaretheorem{definition}
+\declaretheorem{example}
+\declaretheorem{conjecture}
 \DeclareFloatingEnvironment[name=Algorithm, placement=htb!]{algorithm}
 \newcommand{\Jajapy}{\textsc{Jajapy}}
 \newcommand{\JajapyTwo}{\textsc{Jajapy 2}}
