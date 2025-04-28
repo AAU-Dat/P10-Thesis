@@ -5,8 +5,11 @@
 The Baum-Welch algorithm is a widely used method for training markov models in applications such as speech recognition, bioinformatics, and financial modeling~\cite{chavan2013overview,ciocchetta2009bio,mamon2007hidden}.
 
 Traditionally, the Baum-Welch algorithm relies on matrix-based or recursive approaches to estimate model parameters from observed sequences.
+An example of this is the Jajapy library~\cite{ReynouardIB23}, which implements the Baum-Welch algorithm using a recursive matrix-based approach.
+This library is designed to learn probabilistic models from partially observable executions, also known as traces.
+The key strength of Jajapy lies in its flexibility to accommodate various learning scenarios, along with seamless integration into standard verification workflows using tools like Storm and Prism.
+However, the performance of its Baum-Welch algorithm implementation has been a significant limitation, particularly in terms of time and memory consumption, which restricts its scalability to larger models.
 
-However, these methods can become computationally expensive, particularly for large state spaces and long observation sequences.
 The inherent redundancy in matrix-based representations leads to inefficiencies in both time and memory usage, limiting scalability in practical applications.
 
 To address these challenges, we propose a novel approach that replaces conventional matrices and recursive formulations with \glspl{add}.
@@ -16,6 +19,28 @@ By leveraging \glspl{add}, we can exploit the sparsity and structural regulariti
 
 This paper explores the integration of \glspl{add} into the Baum-Welch algorithm, demonstrating how this approach enhances efficiency while preserving numerical accuracy.
 
-The proposed method is implemented in the tool CuPAAL, which will be compared to the Python library Jajapy, an existing implementation that employs a recursive matrix-based approach. These comparisons will evaluate key factors such as scalability, runtime, number of iterations, and log-likelihood.
+To enable this, we reformulate each algorithm step as operations on \glspl{add}, leveraging the CUDD library to carry out these operations symbolically using \glspl{add}.
+
+The proposed method is implemented in the tool CuPAAL, which will be compared to Jajapy. These comparisons will evaluate key factors such as scalability, runtime, number of iterations, and log-likelihood.
+These evaluations will be conducted on discrete-time Markov chains from the QComp benchmark set~\cite{HartmannsKPQR19}, which serves as a standard reference for evaluating the performance of probabilistic model learning algorithms.
 
 Our findings suggest that replacing matrices and recursive formulations with \glspl{add} offers a scalable alternative, making Markov model-based learning feasible for larger and more complex datasets.
+
+
+% The Jajapy library [17] was developed to address this gap by providing a suite of
+% off-the-shelf algorithms to learn probabilistic models from partially observable
+% executions (also referred to as traces). Its key strength lies in its flexibility to
+% accommodate a variety of learning scenarios, along with seamless integration
+% into standard verification workflows using tools like Storm and Prism.
+% As highlighted in [17], a significant limitation of Jajapy was the performance
+% of its Baum-Welch algorithm implementation, particularly in terms of time and
+% memory consumption, which restricted its scalability to larger models.
+
+% To enable this,
+% we reformulated each algorithm step as matrix operations, leveraging the CUDD
+% library to carry out these operations symbolically using ADDs.
+
+% We present an experimental evaluation comparing the original and symbolic
+% implementations on discrete-time Markov chains from the QComp benchmark
+% set [11]. The results demonstrate substantial performance improvements, with
+% speedups ranging from ??% to ??%.
