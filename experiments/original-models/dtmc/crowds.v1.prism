@@ -176,3 +176,29 @@ module crowds
 	
 endmodule
 
+label "launched"    = launch;
+label "new_run"     = new;
+label "started"     = start;
+label "running"     = run;
+label "done"        = done;
+
+label "message_delivered" = deliver;
+
+label "member_good" = good;
+label "member_bad"  = bad;
+
+label "recording_last_seen" = recordLast;
+label "bad_observing"       = badObserve;
+
+// To detect when a bad member actually makes an observation
+label "bad_recorded_originator" = badObserve & (lastSeen >= 0) & (lastSeen < MaxGood);
+
+// To detect if an observation was made in the current protocol run
+label "observation_made" = 
+    (observe0 > 0) | (observe1 > 0) | (observe2 > 0) | (observe3 > 0) | (observe4 > 0) |
+    (observe5 > 0) | (observe6 > 0) | (observe7 > 0) | (observe8 > 0) | (observe9 > 0) |
+    (observe10 > 0) | (observe11 > 0) | (observe12 > 0) | (observe13 > 0) | (observe14 > 0) |
+    (observe15 > 0) | (observe16 > 0) | (observe17 > 0) | (observe18 > 0) | (observe19 > 0);
+
+// Identify if the sender (member 0) was observed
+label "originator_observed" = (observe0 > 0);

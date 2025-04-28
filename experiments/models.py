@@ -62,15 +62,21 @@ def make_model(filepath, name):
         initial_model.save("experiments/initial-models/" + name + "_jajapy_run" + str(i) + ".txt")
         write_to_file(initial_model, "experiments/initial-models/" + name + "_cupaal_run" + str(i) + ".txt")
 
+#make_model("experiments/original-models/dtmc/leader_sync.4-3.v1.prism", "leader_sync")
+#make_model("experiments/original-models/dtmc/brp.v1.prism", "brp")
+#make_model("experiments/original-models/dtmc/crowds.v1.prism", "crowds")
+#make_model("experiments/original-models/dtmc/oscillators.3-6-0.1-1.v1.prism", "oscillators1")
+#make_model("experiments/original-models/dtmc/oscillators.6-6-0.1-1.v1.prism", "oscillators2")
+#make_model("experiments/original-models/dtmc/oscillators.6-8-0.1-1.v1.prism", "oscillators3")
 
-make_model("experiments/original-models/dtmc/leader_sync.4-3.v1.prism", "leader_sync")
-make_model("experiments/original-models/dtmc/brp.v1.prism", "brp")
-make_model("experiments/original-models/dtmc/crowds.v1.prism", "crowds")
-make_model("experiments/original-models/dtmc/oscillators.3-6-0.1-1.v1.prism", "oscillators1")
-make_model("experiments/original-models/dtmc/oscillators.6-6-0.1-1.v1.prism", "oscillators2")
-make_model("experiments/original-models/dtmc/oscillators.6-8-0.1-1.v1.prism", "oscillators3")
+model = ja.loadPrism("experiments/original-models/dtmc/crowds.v1.prism")
+stormpy_model = stormpy.parse_prism_program("experiments/original-models/dtmc/crowds.v1.prism")
+stormpy_model = stormpy.build_model(stormpy_model)
+print(stormpy_model)
 
-    
+training_set = model.generateSet(30, 10)
+training_set.save("experiments/_observations_jajapy.txt")
+print_to_console("experiments/_observations_jajapy.txt")
 
 #original_model, results = ja.BW().fit(training_set, initial_model=model, nb_states=model.nb_states, pp=0, verbose=4, return_data=True)
 #new_model, new_results = ja.BW().fit(training_set, initial_model=initial_model,nb_states=model.nb_states, pp=0,verbose=4, return_data=True)

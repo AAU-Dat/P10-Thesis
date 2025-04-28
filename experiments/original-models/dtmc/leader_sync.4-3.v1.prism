@@ -80,5 +80,26 @@ rewards "num_rounds"
 endrewards
 
 // labels
+
+// Election status
+label "all_finished" = s1=3 & s2=3 & s3=3 & s4=3;
+label "someone_finished" = s1=3 | s2=3 | s3=3 | s4=3;
+label "none_finished" = s1!=3 & s2!=3 & s3!=3 & s4!=3;
+
+// Global unique status
+label "all_unique" = u1 & u2 & u3 & u4;
+label "some_unique" = u1 | u2 | u3 | u4;
+label "none_unique" = !u1 & !u2 & !u3 & !u4;
+
+// Retry status (all processes deciding but failed to elect)
+label "all_deciding" = s1=2 & s2=2 & s3=2 & s4=2;
+
+// Process at retry point
+label "retry_possible" = (s1=2 | s2=2 | s3=2 | s4=2) & !(u1 | u2 | u3 | u4);
+
+// Counter status
+label "full_read" = c=N-1;
+label "still_reading" = c<N-1;
+
 label "elected" = s1=3&s2=3&s3=3&s4=3;
 
