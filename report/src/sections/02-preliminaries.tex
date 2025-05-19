@@ -1,6 +1,6 @@
 \section{Preliminaries}\label{sec:preliminaries}
-This section provides an overview of the theoretical background necessary to understand the rest of the report.
-We begin by defining the key concepts of a \gls{hmm} and a \gls{mdp}, which are the two main models used in this report.
+This section provides an overview of the theoretical background necessary to understand the rest of the article.
+We begin by defining the key concepts of a \gls{hmm} and a \gls{mc}, which are the two main models used in this report.
 
 
 \subsection{Hidden Markov Model}\label{subsec:hmm}
@@ -27,47 +27,74 @@ Instead, the system emits observations, which are used to infer the hidden state
 
 An example of an \gls{hmm} is a weather model where the hidden state represents the actual weather (sunny, rainy, or cloudy), but we only observe indirect signals, such as whether someone is carrying an umbrella.
 
-\subsection{Continuous Time Hidden Markov Model}\label{subsec:ctmc}
-In the above definition, we have defined a discrete-time \gls{hmm}, meaning that the system evolves in discrete time steps.
-In this report, we are interested in continuous-time systems, where the system evolves in continuous time.
-To model continuous-time systems, we use a \gls{cthmm}, which is an extension of the \gls{hmm} to continuous time.
-\begin{definition}[Continuous Time Hidden Markov Model]
-    A Continuous Time Hidden Markov Model (CTHMM) is a tuple $\mathcal{M} = (S, \mathcal{L}, \mathscr{l}, \tau,  \pi, \lambda)$, where S, $\mathcal{L}$, $\mathscr{l}$, $\tau$, and $\pi$ are as defined in the \gls{hmm} definition.
+\subsection{Markov Chain}\label{subsec:mc}
+A \gls{mc}, named after Andrei Markov, is a stochastic model widely used in fields such as natural language processing and biology~\cite{zekri2024large, kim2002can}.
+\begin{definition}[Markov Chain]
+    A Markov Chain (MC) is a tuple $\mathcal{M} = (S, \mathcal{L}, \mathscr{l}, \tau,  \pi)$ identical to the HMM structure above except that the emission function is
+    \emph{deterministic}: for every $s\in S$ there is a single label
+    $l=\mathscr{l}(s)$ emitted with probability 1.
+\end{definition}
+In other words, the emission function $\mathscr{l}$ is a one-to-one mapping from states to labels.
+
+A common example of an MC is a board game where a player moves between squares based on dice rolls.
+Each square corresponds to a state, the dice rolls determine the transition probabilities, and the current square (state) is directly observable.
+
+\subsection{Conversion between MCs and HMMs}\label{subsec:mc_hmm_conversion}
+In this section, we will discuss the conversion between \glspl{mc} and \glspl{hmm}.
+This conversion is important because it allows us to use the same algorithms and techniques for both models, even though they have different properties.
+From the definition of a \gls{mc}, we can see that it is a special case of an \gls{hmm} where the emission function is deterministic.
+
+\subsubsection{Markov Chains to Hidden Markov Models}\label{subsec:mc2hmm}
+This conversion is straightforward because the components of the \gls{mc} and \gls{hmm} are the same.
+\begin{definition}[Markov Chain to Hidden Markov Model]
+    Given a \gls{hmm} $\mathcal{M} = (S, \mathcal{L}, \mathscr{l}, \tau,  \pi)$, we can convert it into a \gls{mc} $\mathcal{M}' = (S', \mathcal{L}', \mathscr{l}', \tau',  \pi')$ by defining the components as follows:
     \begin{itemize}
-        \item $\lambda: S \times S \rightarrow \mathbb{R}_{\geq 0}$ is the rate function.
+        \item $S' = S$.
+        \item $\mathcal{L}' = \mathcal{L}$.
+        \item $\mathscr{l}' =  \begin{cases}
+                      1 & l=\mathscr{l}(s) \\
+                      0 & \text{otherwise}
+                  \end{cases}$
+        \item $\tau' = \tau$.
+        \item $\pi' = \pi$.
     \end{itemize}
 \end{definition}
+The \gls{mc} $\mathcal{M}'$ is equivalent to the \gls{hmm} $\mathcal{M}$, meaning that they have the same transition and emission probabilities.
+The only difference is that the \gls{mc} has a trivial emission function, meaning that each state emits a single label with probability 1.
 
-The rate function $\lambda$ determines the transition rate between states, meaning that the time spent in a state before transitioning follows an exponential distribution.
-
-\subsection{Markov Decision Process}\label{subsec:mdp}
-\glspl{mdp} were introduced by Bellman in 1957~\cite{bellman1957} and have since been widely used in various fields, such as robotics~\cite{mdprobotics2020}, finance~\cite{mdpfinance2023}, and healthcare~\cite{mdphealthcare2021}.
-\begin{definition}[Markov Decision Process]
-    A Markov Decision Process (MDP) is a tuple $\mathcal{M} = (S, A, \mathcal{L}, \mathscr{l}, \tau, R, \gamma)$, where:
+\subsubsection{Hidden Markov Models to Markov Chains}\label{subsec:hmm2mc}
+Converting a \gls{hmm} to an equivalent \gls{mc} is more complex.
+In a \gls{hmm}, the observations are probabilistically related to the states, which introduces ambiguity, as multiple states can emit the same observation.
+To create a fully observable \gls{mc} that captures the behavior of a \gls{hmm}, we must encode both the hidden state and the emitted label into the state space.
+\begin{definition}[Hidden Markov Model to Markov Chain]
+    Conversely, let
+    \(
+    \mathcal{M}
+    = (S, \mathcal{L}, \mathscr{l}, \tau, \pi)
+    \)
+    be a \gls{hmm}.
+    We define the observable \gls{mc}
+    \(
+    \mathcal{M}'
+    = (S', \mathcal{L}', \mathscr{l}', \tau', \pi')
+    \)
+    by:
     \begin{itemize}
-        \item $S$ is a finite set of states.
-        \item $A$ is a finite set of actions.
-        \item $\mathcal{L}$ is a finite set of labels.
-              %\item $\mathscr{l}: S \rightarrow D(\mathcal{L})$ is the emission function.
-        \item $\tau: S \times A \rightarrow D(S)$ is the transition function.
-        \item $R: S \times A \rightarrow \mathbb{R}$ is the reward function.
-        \item $\pi \in D(S)$ is the initial distribution.
+        \item $S' = \{(s,l)\in S\times\mathcal{L}\}$%, the new state space encodes both hidden states and their possible emitted labels,
+        \item $\mathcal{L}' = \mathcal{L}$%, the label space remains unchanged,
+        \item $\mathscr{l}'(s,l) = l$%, each new state deterministically emits its label,
+        \item $\tau'\big((s,l),(s',l')\big) = \tau(s,s')\;\mathscr{l}(s')(l')$%, the transition function is modified to account for the emission probabilities,
+        \item $\pi'(s,l) = \pi(s)\;\mathscr{l}(s)(l)$%, the initial distribution is modified to account for the emission probabilities.
     \end{itemize}
+    \textbf{Remark.}
+    Here each ' symbol refers to an object of the \emph{derived MC}.  In
+    particular, $\tau'$ is \emph{not} the original HMM transition; it acts on the
+    expanded state space $S'$ and already incorporates the emission probability for
+    the label $l'$.
+
+    The mapping increases the state space size from $|S|$ to at most
+    $|S|\cdot|\mathcal{L}|$, but yields a fully observable system amenable to
+    standard MC analysis.
 \end{definition}
 
-A \gls{mdp} works by an agent interacting with an environment.
-Unlike an \gls{hmm}, the agent  takes actions in the environment and receives rewards.
-An agent is the decision-maker that interacts with the environment by taking actions.
-The environment is modeled as a \gls{mdp}, which consists of a set of states $S$, a set of actions $A$, a set of labels $\mathcal{L}$.
-Each state is directly observable, meaning the agent always knows which state it is in.
-When the agent takes an action in a state, it transitions to a new state according to the transition function $\tau$.
-
-The reward function $R$ describes the reward received when taking an action in a state.
-The goal of an \gls{mdp} is to find a policy $\theta: S \rightarrow D(A)$ that maximizes the expected cumulative reward.
-The policy $\theta$ describes the probability of taking an action given a state.
-
-\begin{definition}[Policy]
-    A policy $\theta$ is a function that maps states to actions, i.e., $\theta: S \rightarrow D(A)$.
-\end{definition}
-
-An example of an \gls{mdp} is a robot navigating a grid, where it can choose actions (move up, down, left, or right) and receives rewards based on reaching certain goal locations
+The conversion between \glspl{mc} and \glspl{hmm} is important because it allows us to use the same algorithms and techniques for both models, even though they have different properties.
