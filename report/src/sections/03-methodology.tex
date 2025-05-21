@@ -102,3 +102,17 @@ $\mathbf{B} = \begin{bmatrix}
             3 & 4 \\
             3 & 4
       \end{bmatrix}$.
+
+
+\subsection{Tandem Model Experiments}\label{subsec:tandem_model_experiments}
+This section will provide an overview of the experiments conducted on the Tandem model.
+The experiment is conducted to evaluate the performance of the \gls{add}-based approach in comparison to the recursive approach, and to analyze the impact of different parameters on the performance of the \gls{bw} algorithm.
+The experiment is run in a similar manner to how the experiments were run in \todo{Cite P7}.
+The experiment is done to compare how to different approaches perform in terms of scalability, as the number of states and observations in the model increases.
+
+The number of states is increased from 28 to 1225.
+
+
+Our hypothesis is that the \gls{add} based approach will outperform the recursive approach in terms of time spent to learn the model, and that as the model states and observations increase, the \gls{add} based approach will scale better than the recursive approach.
+
+
