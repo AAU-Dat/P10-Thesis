@@ -98,3 +98,145 @@ To create a fully observable \gls{mc} that captures the behavior of a \gls{hmm},
 \end{definition}
 
 The conversion between \glspl{mc} and \glspl{hmm} is important because it allows us to use the same algorithms and techniques for both models, even though they have different properties.
+
+\subsection{Baum-Welch Algorithm}\label{subsec:baum-welch}
+The Baum-Welch algorithm is a special case of the Expectation-Maximization (EM) framework used to estimate the parameters of a Hidden Markov Model (HMM) given a set of observed sequences. Since the underlying states are not directly observable, the algorithm iteratively refines the model parameters $\pi$, $\mathscr{l}$, and $\tau$ to maximize the likelihood of the observations.
+Each iteration of the algorithm consists of two steps:
+\begin{itemize}
+    \item E-step: Compute the expected values of the hidden variables (state transitions and state occupancies) given the current parameters.
+    \item M-step: Update the model parameters to maximize the expected complete-data log-likelihood.
+\end{itemize}
+
+Convergence is typically achieved when the change in the likelihood (or parameters) between iterations falls below a threshold~\cite{Rabiner89}.
+
+We adopt a matrix-based implementation for computational efficiency, following~\cite{aaholmbaum}, and extend it to handle multiple observation sequences. Notation used throughout this section is summarized below:
+\begin{itemize}
+    \item $|S|$ is the number of hidden states.
+    \item $|\mathcal{L}|$ is the number of labels.
+    \item $\mathcal{O} = {O_1, \ldots, O_{|\mathcal{O}|}}$  is the set of observations sequences.
+    \item Each observation sequence $O_i = (o_{i1}, o_{i2}, \ldots, o_{i|o|-1 })$, where $o_{it} \in \mathcal{L}$.
+    \item $s_t$ is the hidden state at time $t$.
+    \item $|O|$ is the number of observation sequences.
+    \item $|\mathbf{o}|$ is the length of a single observation sequence.
+    \item $o_t$ is the observation at time $t$.
+    \item $s_t$ is the state at time $t$.
+\end{itemize}
+
+We can represent a HMM as matrices for computational efficiency.
+They are defined as follows:
+\begin{itemize}
+    \item $\pmb{\pi}$ is the initial state distribution vector, where $\pi_i = \pi(s_i)$ is the probability of starting in state $s_i$, this is a column vector of size $|S|$.
+    \item $\pmb{P}$ is the transition matrix, where $P_{ij} = \tau(s_i)(s_j)$ is the probability of transitioning from state $s_i$ to state $s_j$, this is a square matrix of size $|S| \times |S|$.
+    \item $\pmb{\omega}$ is the emission matrix, where $\omega_{ij} = \mathscr{l}(s_i)(l_j)$ is the probability of emitting label $l_j$ given state $s_i$, this is a matrix of size $|S| \times |\mathcal{L}|$.
+\end{itemize}
+
+We describe observations as a sequence of labels $O = (o_1, o_2, \ldots, o_{|o|-1})$, where $o_t \in \mathcal{L}$.
+We can describe multiple sequences as a set of observations $\mathcal{O} = \{O_1, O_2, \ldots, O_{|O|-1}\}$, where $O_i = (o_{i1}, o_{i2}, \ldots, o_{i|o|-1})$.
+
+We follow a matrix-based implementation for computational efficiency, as described in~\cite{aaholmbaum}, and extend it to handle multiple observation sequences.
+
+Using multiple sequences, we dont need to change the calculation of the E-step, as it is the same as before, we just need to do it for every observation sequence.
+In the M-step, we need to update the parameters based on all the observation sequences.
+We dont need to change the calculation of $\gamma$ and $\xi$, we just need to cacalate for every observation sequence.
+
+We get from \cite{aaholmbaum} that the update equations for the parameters are as follows:
+\begin{equation}
+    \pmb{P}_{s s'} = \frac{\sum_{t = 1}^{|\mathbf{o}|-1} \xi_{ss'}(t)}{\sum_{t = 1}^{|\mathbf{o}|-1} \gamma_s(t)}
+    \label{eq:transition-probabilities}
+\end{equation}
+
+\begin{equation}
+    \pmb{\omega}_{s, l} = \frac{\sum_{t = 1}^{|\mathbf{o}|-1} \gamma_s(t) \lBrack o_t = l \rBrack}{\sum_{t = 1}^{|\mathbf{o}|-1} \gamma_s(t)}
+    \label{eq:omega}
+\end{equation}
+
+\begin{equation}
+    \pi_s = \gamma_s(1)
+    \label{eq:initial-probabilities}
+\end{equation}
+
+We can then update the parameters for a single sequence with matrix operations as follows:
+
+\begin{equation}
+    \pmb{P}
+    = (\mathbbm{1} \oslash \pmb{\gamma}) \bullet \pmb{\xi}
+    \label{eq:transition-probabilities-multiple-sequences}
+\end{equation}
+
+\begin{equation}
+    \pmb{\omega}
+    _s(o) = (\mathbbm{1} \oslash \pmb{\gamma}) \bullet (\sum_{t=1}^{|\mathbf{o}|-1} \pmb{\gamma}_t \otimes \mathbbm{1}_{yt}^{|\mathbf{o}|-1})
+    \label{eq:omega-multiple-sequences}
+\end{equation}
+
+\begin{equation}
+    \pmb{\pi}
+    = \pmb{\gamma}_1
+    \label{eq:initial-probabilities-multiple-sequences}
+\end{equation}
+
+Here $\oslash$ denotes Hadamard division (elementwise division) and $\bullet$ denotes the Katri-Rao product (column-wise Kronecker product).
+In the formulas above, $\mathbbm{1}$ denotes a column vector of ones, $\mathbbm{1}_{yt}$ denotes a column vector with $|\mathcal{L}|$ rows, with all elements set to zero except for the element at the index where $o_t = l$ which is set to one.
+
+$\gamma$ and $\xi$ are the sum of the respective vectors over all time steps $t$:
+\begin{align}
+    \pmb{\gamma} = \sum_{t=1}^{|\mathbf{o}|-1} \pmb{\gamma}_t
+    \text{ and }
+    \pmb{\xi} = \sum_{t=1}^{|\mathbf{o}|-1} \pmb{\xi}_t
+\end{align}
+
+Now we can extend this to multiple sequences.
+We can see that the update equations for the parameters are the same as before, but we need to sum over all sequences and all time steps.
+
+\begin{equation}
+    \pi_s = \frac{\sum_{i=i}^{|\mathcal{O}|} \gamma_{is}(1) }{|\mathcal{O}|}
+\end{equation}
+
+\begin{equation}
+    \pmb{\omega}_{s, l} = \frac{\sum_{i=1}^{|\mathcal{O}|} \sum_{t=1}^{|\mathbf{o}|-1} \gamma_{is}(t) \lBrack o_t = l \rBrack}{\sum_{i=1}^{|\mathcal{O}|} \sum_{t=1}^{|\mathbf{o}|-1} \gamma_{is}(t)}
+\end{equation}
+
+\begin{equation}
+    \pmb{P}_{s s'} = \frac{\sum_{i=1}^{|\mathcal{O}|} \sum_{t = 1}^{|\mathbf{o}|-1} \xi_{iss'}(t)}{\sum_{i=1}^{|\mathcal{O}|} \sum_{t = 1}^{|\mathbf{o}|-1} \gamma_{is}(t)}
+\end{equation}
+
+In the transition matrix, we need to sum over all sequences and all time steps.
+In the initial distribution, we need to sum over all sequences and take the first time step.
+In the emission matrix, we need to sum over all sequences and all time steps.
+
+This means, when describing the update equations as matrix operations, we need to sum over all sequences and all time steps, when calculating the $\gamma$ and $\xi$ matrices.
+
+we need to find the sum of the $\gamma$ and $\xi$ over all sequences and all time steps.
+
+This will give us:
+
+\begin{align}
+    \pmb{\gamma} = \sum_{i=1}^{|\mathcal{O}|}\sum_{t=1}^{|\mathbf{o}|-1} \pmb{\gamma}_t
+    \text{ and }
+    \pmb{\xi} = \sum_{i=1}^{|\mathcal{O}|}\sum_{t=1}^{|\mathbf{o}|-1} \pmb{\xi}_t
+\end{align}
+
+We can then update the parameters with matrix operations as follows:
+\begin{equation}
+    \pmb{P}
+    = (\mathbbm{1} \oslash \pmb{\gamma}) \bullet \pmb{\xi}
+    \label{eq:transition-probabilities-update}
+\end{equation}
+
+This is the same as the previous equation, but we need to sum over all sequences and all time steps.
+
+\begin{equation}
+    \pmb{\omega}
+    _s(o) = (\mathbbm{1} \oslash \pmb{\gamma}) \bullet (\sum_{i=1}^N \sum_{t=1}^{|\mathbf{o}|-1} \pmb{\gamma}_{it} \otimes \mathbbm{1}_{yt}^{|\mathbf{o}|-1})
+    \label{eq:omega-update}
+\end{equation}
+This is almost the same as the previous equation, but we need to sum over all sequences and all time steps, in the left side of the Kronecker product, the right side is the same as before.
+
+\begin{equation}
+    \pmb{\pi}
+    = \pmb{\gamma}_1
+    \label{eq:initial-probabilities-update}
+\end{equation}
+This is the same as the previous equation, but we need to sum over all sequences and all time steps.
+
+
