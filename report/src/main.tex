@@ -12,23 +12,26 @@
 \input{setup/title}
 
 % Document
+\usepgfplotslibrary{external}
+\tikzexternalize
 \begin{document}
 
 \maketitle
 \input{sections/00-abstract}
 \input{sections/01-introduction}
-\input{sections/06-jajapy_and_cupaal.tex}
+\input{sections/06-jajapy_and_cupaal}
 \input{sections/02-preliminaries}
 \input{sections/03-methodology}
-\input{sections/04-experiments.tex}
-\input{sections/07-results.tex}
-\input{sections/05-improvements.tex}
+\input{sections/04-experiments}
+\input{sections/07-results}
+\input{sections/05-improvements}
 
 \printglossary[type=\acronymtype]
 
 \printbibliography
 
-\appendix % You can use \appendix if you only have a single appendix
+\appendices % You can use \appendix if you only have a single appendix
+\input{sections/aa-machine.tex}
 \input{sections/aa-cheatsheet}
 
 \end{document}
