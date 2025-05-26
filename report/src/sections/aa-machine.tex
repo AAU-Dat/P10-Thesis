@@ -1,0 +1,46 @@
+\section{Machine Specifications}\label{sec:machine_specs}
+The specifications of the machine used for the experiments are listed in \autoref{tab:machine_specs}.
+The image used for the experiments is based on the movesrwth/stormpy image (version 1.9.0), which is a Docker image that contains the necessary dependencies for running \Jajapy\footnote{\url{https://hub.docker.com/r/movesrwth/stormpy}}.
+We add the dependencies for \Cupaal\ to the image, which are listed in \autoref{tab:python_env}.
+For full details see the github repository for \Cupaal.
+
+\begin{table}[htb!]
+    \centering
+    \caption{Machine specifications}
+    \label{tab:machine_specs}
+    \begin{tabular}{ll}
+        \toprule
+        Specification & Value            \\
+        \midrule
+        CPU           & AMD Ryzen 5 3600 \\
+        RAM           & 64 GB DDR4       \\
+        OS            & Windows 11 Pro   \\
+        Docker        & 4.40.0           \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Python Environment}\label{subsec:python_env}
+This section describes the Python environment used for the experiments. The Python version and the versions of the libraries used are listed in \autoref{tab:python_env}.
+
+\begin{table}[htb!]
+    \centering
+    \caption{Python environment}
+    \label{tab:python_env}
+    \begin{tabular}{ll}
+        \toprule
+        Requirement     & version \\
+        \midrule
+        Python          & 3.12.3  \\
+        Jajapy          & 0.10.8  \\
+        CuPAAL          & 0.1.0   \\
+        numpy           & 1.26.0  \\
+        pandas          & 2.2.3   \\
+        scipy           & 1.11.2  \\
+        sympy           & 1.12.0  \\
+        matplotlib      & 3.8.1   \\
+        alive-progress  & 3.1.4   \\
+        pybind11 global & 2.13.6  \\
+        \bottomrule
+    \end{tabular}
+\end{table}
