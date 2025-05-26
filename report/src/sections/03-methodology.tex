@@ -35,7 +35,7 @@ However, instead of performing Boolean operations, \glspl{add} allow for arithme
 When working with the Baum-Welch algorithm, different approaches can be taken to optimize computational efficiency.
 Three common strategies are recursive, matrix-based, and \gls{add}-based approaches, each with distinct advantages and limitations.
 \begin{itemize}
-      \item \textbf{Recursive Approach:} Conceptually simple, recursion follows a divide-and-conquer strategy, and makes use of a dynamic programming approach. Previouse calculations are used to build upon future calculations. These results are stored in a list or a map, so that they can be accessed when needed ~\cite[Chapter 4]{cormen2022introduction}.
+      \item \textbf{Recursive Approach:} Conceptually simple, recursion follows a divide-and-conquer strategy, and makes use of a dynamic programming approach. Previous calculations are used to build upon future calculations. These results are stored in a list or a map, so that they can be accessed when needed ~\cite[Chapter 4]{cormen2022introduction}.
       \item \textbf{Matrix Representation:} Reformulating algorithms using matrix operations leverages algebraic properties for parallel computation and efficient processing.
             By building upon the recursive approach, matrices provide an efficient method of accessing the stored results leading the faster computations overall~\cite[Chapter 4, 15 \& 28]{cormen2022introduction}.
       \item \textbf{ADD-based Approach:} \glspl{add} provide a compact representation that eliminates redundancy in recursive computations.
@@ -61,16 +61,16 @@ Its optimized algorithms and efficient memory management enable symbolic handlin
 \subsection{From Prism to CuPAAL}\label{subsec:from_prism_to_cupaal}
 The models are encoded from Prism models to CuPAAL models. This is done by parsing the Prism model to Jajapy, using Stormpy.
 
-The Jajapy model contains a matrix for it's transitions, a matrix for it's labels, and a vector for the initial state. The model is passed to CuPAAL where these matrices and vectors are encoded into \glspl{add}.
+The Jajapy model contains a matrix for it's transitions, a matrix for it's labels, and a vector for the initial state.
+The model is passed to CuPAAL where these matrices and vectors are encoded into \glspl{add}, as a function $f \colon {0,1}^n \times {0,1}^n \to R$.
 
-The Transition matrix is a $S\times S$ matrix, where $S=States$, and is encoded to an \gls{add}, by assigning each row and column with a binary value. This value is determined based on the size of the matrix,
-$|binaryValue| = \ceil{log_2(S)}$.
-Meaning for a $2\times 2$ matrix, a single binary value for each row and column, will suffice.
-For this case, the first row will be assigned the binary value $0$, and the second row will be assigned $1$, and vice versa for the columns.
+The Transition matrix is a $S\times S$ matrix, where $S=States$, and is encoded to an \gls{add}, by each row and column with a binary value. This value is determined based on the size of the matrix,
+$n = \ceil{log_2(S)}$.
 
-The label matrix is a $S\times L$ matrix, Where $L=Labels$ and since there is no guarantee that $S = L$, the encoding is handled differently.
+The label matrix is a $S\times L$ matrix, where $L=Labels$ and since there is no guarantee that $S = L$, the encoding is handled differently.
 The matrix is instead treated as a list of vectors.
 Each vector is encoded as square matrices, where each row or column (depending on the vector type) is duplicated, which is then encoded to a list of \glspl{add}.
+As knowing the matrices are square and their dimensions help to simplify some of the symbolic operations.
 
 The Initial state vector is encoded similarly to the label matrix, but only as a single \gls{add}.
 
@@ -82,6 +82,9 @@ This is due to the structure of Decision Diagrams in CuPAAL, where keeping track
 Especially when computing operations that translate matrices to new dimensions, such as the Kronecker product.
 This matrix-based approach enables efficient symbolic operations, as the Kronecker product can be calculated by taking the Hadamard product between a column matrix \gls{add} and a row matrix \gls{add}, simplifying what would otherwise be a more complex operation.
 
+
+\subsection{Kronecker Product Implementation}\label{subsec:kronecker-product-implementation}
+This section will provide an overview of how the Kronecker product is implemented in CuPAAL, using the row and column duplication method mentioned in \autoref{subsec:from_prism_to_cupaal}.
 An example of this can be seen with the two vectors $\hat{A}$ and $\hat{B}$
 
 Let $\hat{A} = \begin{bmatrix}
@@ -102,3 +105,6 @@ $\mathbf{B} = \begin{bmatrix}
             3 & 4 \\
             3 & 4
       \end{bmatrix}$.
+
+
+\todo{Elaborate on the Kronecker product implementation, including how the Hadamard product is used to compute the Kronecker product between the two matrices.}
