@@ -106,13 +106,19 @@ $\mathbf{B} = \begin{bmatrix}
 
 \subsection{Tandem Model Experiments}\label{subsec:tandem_model_experiments}
 This section will provide an overview of the experiments conducted on the Tandem model.
-The experiment is conducted to evaluate the performance of the \gls{add}-based approach in comparison to the recursive approach, and to analyze the impact of different parameters on the performance of the \gls{bw} algorithm.
-The experiment is run in a similar manner to how the experiments were run in \todo{Cite P7}.
+The experiment is conducted to evaluate the performance of the \gls{add} based approach in comparison to the recursive approach, and to analyze the impact of different parameters on the performance of the \gls{bw} algorithm.
 The experiment is done to compare how to different approaches perform in terms of scalability, as the number of states and observations in the model increases.
 
-The number of states is increased from 28 to 1225.
+The only paramter that is varied is the constant $\mathbf{c}$, which represents the queue capacity in the Tandem model. This constant is varied from 5 to 20, with intervals of 5, resulting in 4 different values for C.
+The increase of the constant $\mathbf{c}$, will give models that contains a number of states from 66 to \~1000, giving us a decent variation of models to test the performance of the \gls{bw} algorithm.
 
+Since the model is a \gls{ctmc}, which is not supported by CuPAAL, jajapy is used to generate the model.
+This will result in a training set containing labels and their dwell times.
+The dwell times will be ommited from the training set, as they are not needed for a \gls{dtmc}, which is a supported model for Cupaal.
 
-Our hypothesis is that the \gls{add} based approach will outperform the recursive approach in terms of time spent to learn the model, and that as the model states and observations increase, the \gls{add} based approach will scale better than the recursive approach.
+With the models prepared, the \gls{bw} algorithm is run on each model using both the recursive and \gls{add} based approaches.
+The performance of the \gls{bw} algorithm is measured in terms of time spent to learn the model, and the number of iterations needed to converge to a solution.
+
+Our hypothesis is that the \gls{add} based approach will outperform the recursive approach in terms of time spent to learn the model, and as the model states and observations increase, the \gls{add} based approach will scale better than the recursive approach.
 
 
