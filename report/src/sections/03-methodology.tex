@@ -5,14 +5,6 @@ The different approaches that can be taken for the Baum-Welch algorithm will als
 
 Finally, the \gls{cudd} library will be introduced, which is a library for implementing and manipulating \glspl{bdd} and \glspl{add}.
 
-The accuracy of the models learned with the BW algorithm strongly depends on selecting an appropriate size for the output model. However, increasing this size substantially raises the computational cost of each update iteration, both in terms of time and space complexity.
-
-This is because each iteration requires running the forward-backward algorithm on every trace in the training set. In the original implementation, this step was performed using Jajapy models, incurring a cost of $O(n^2 \cdot K)$ in time and $O(n \cdot K)$ in space per iteration, where $n$ is the number of states in the output model and $K$ is the total number of label occurrences in the training set. Moreover, computing the updated transition probabilities from the forward and backward coefficients added an extra $O(n^2 \cdot K)$ overhead in both time and space.
-
-Unsurprisingly, this had a significant impact on the performance of the BW algorithm as the number of states increased.
-
-To address this limitation, CuPAAL\ introduces a symbolic engine that efficiently handles both the forward-backward computation and the parameter updates.
-
 \subsection{Decision Diagrams}\label{subsec:decision-diagrams}
 \acrfullpl{bdd} are data structures for efficiently representing and manipulating Boolean functions.
 They are a compressed representation of truth tables, capturing the logical structure of a function in a graph-based format by eliminating redundancy, reducing memory usage, and improving computational efficiency~\cite{bryant1986graph}.
@@ -83,8 +75,27 @@ Especially when computing operations that translate matrices to new dimensions, 
 This matrix-based approach enables efficient symbolic operations, as the Kronecker product can be calculated by taking the Hadamard product between a column matrix \gls{add} and a row matrix \gls{add}, simplifying what would otherwise be a more complex operation.
 
 
+\subsection{Implementation to Jajapy}\label{subsec:implementation-to-jajapy}
+This section will give an overview of how CuPAAL is implemented into Jajapy, using bindings between C++ and Python.
+
+To implement CuPAAL into Jajapy, we create bindings between C++ and Python using the \texttt{pybind11} library~\cite{pybind11github}.
+This allows us to call C++ functions from Python, enabling us to use CuPAAL in Jajapy.
+
+We create a C++ bindings file, that defines the function we want to expose to Python, we call this function $bw\_wrapping\_function$.
+This function takes model parameters from a Jajapy model as input, and transforms them to be used in CuPAAL.
+We then calculate the Baum-Welch algorithm using CuPAAL, and return the results to Jajapy, as a tuple with the relevant values.
+These being the initial distribution, the transitions and the emissions.
+
+The C++ bindings file is then compiled to a shared library, which can be imported in Jajapy.
+Jajapy can call the $bw\_wrapping\_function$ function, which will then call the CuPAAL implementation of the Baum-Welch algorithm.
+In Jajapy, we add a nem boolean parameter for called symbolic to the fit function, which by default is false, and is set to true when the CuPAAL implementation is used.
+
+When the parameter is true, the Jajapy model will call the $bw_wrapping_function$ function, which will then call the CuPAAL implementation of the Baum-Welch algorithm.
+
+
 \subsection{Kronecker Product Implementation}\label{subsec:kronecker-product-implementation}
 This section will provide an overview of how the Kronecker product is implemented in CuPAAL, using the row and column duplication method mentioned in \autoref{subsec:from_prism_to_cupaal}.
+
 An example of this can be seen with the two vectors $\hat{A}$ and $\hat{B}$
 
 Let $\hat{A} = \begin{bmatrix}
@@ -95,6 +106,19 @@ and $\hat{B}=\begin{bmatrix}
             3 & 4
       \end{bmatrix}$.
 
+The Kronecker product of these two vectors is computed as follows:
+\begin{equation}
+      \hat{A} \otimes \hat{B} = \begin{bmatrix}
+            1 \cdot 3 & 1 \cdot 4 \\
+            2 \cdot 3 & 2 \cdot 4
+      \end{bmatrix} = \begin{bmatrix}
+            3 & 4 \\
+            6 & 8
+      \end{bmatrix}.
+      \label{eq:kronecker-product-example}
+\end{equation}
+
+Another way to calculate the Kronecker product is to expand the vectors into matrices.
 $\hat{A}$ and $\hat{B}$ are expanded to be matrices, similar to how the matrix was treated as a list of vectors and then expanded to square matrices, as seen with the Label matrix.
 
 Let $\mathbf{A} = \begin{bmatrix}
@@ -106,5 +130,18 @@ $\mathbf{B} = \begin{bmatrix}
             3 & 4
       \end{bmatrix}$.
 
+The Kronecker product of $\hat{A}$ and $\hat{B}$ can also be calculated, by using the Hadamard product of $\mathbf{A}$ and $\mathbf{B}$.
+This is done as follows:
 
-\todo{Elaborate on the Kronecker product implementation, including how the Hadamard product is used to compute the Kronecker product between the two matrices.}
+\begin{equation}
+      \mathbf{A} \circ \mathbf{B} = \begin{bmatrix}
+            1 \cdot 3 & 1 \cdot 4 \\
+            2 \cdot 3 & 2 \cdot 4
+      \end{bmatrix} = \begin{bmatrix}
+            3 & 4 \\
+            6 & 8
+      \end{bmatrix}.
+\end{equation}
+
+Hereby showing that the Hadamard product can be used to compute the Kronecker product between two matrices, by using the row and column duplication method.
+
