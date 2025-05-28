@@ -1,0 +1,9 @@
+\section{Discussion}\label{sec:discussion}
+
+The accuracy of the models learned with the BW algorithm strongly depends on selecting an appropriate size for the output model. However, increasing this size substantially raises the computational cost of each update iteration, both in terms of time and space complexity.
+
+This is because each iteration requires running the forward-backward algorithm on every trace in the training set. In the original implementation, this step was performed using Jajapy models, incurring a cost of $O(n^2 \cdot K)$ in time and $O(n \cdot K)$ in space per iteration, where $n$ is the number of states in the output model and $K$ is the total number of label occurrences in the training set. Moreover, computing the updated transition probabilities from the forward and backward coefficients added an extra $O(n^2 \cdot K)$ overhead in both time and space.
+
+Unsurprisingly, this had a significant impact on the performance of the BW algorithm as the number of states increased.
+
+To address this limitation, CuPAAL\ introduces a symbolic engine that efficiently handles both the forward-backward computation and the parameter updates.
