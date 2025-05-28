@@ -15,17 +15,20 @@
 \usepackage{thm-restate}
 \usepackage{multirow}
 \usepackage{bbm}
+\usepackage{listings}
+\lstset{breaklines}
+\usepackage[numbered]{matlab-prettifier}
 
 % Packages with options set
 \usepackage[hidelinks]{hyperref}
 \usepackage[textsize=small,obeyDraft]{todonotes}
 \usepackage[newfloat]{minted}
 \usepackage[backend=biber,
-    bibencoding=utf8,
-    maxbibnames=20,
-    style=ieee,
-    citestyle=numeric-comp,
-    url=false
+      bibencoding=utf8,
+      maxbibnames=20,
+      style=ieee,
+      citestyle=numeric-comp,
+      url=false
 ]{biblatex}
 \usepackage[acronym]{glossaries}
 \newcommand{\ceil}[1]{\left\lceil #1 \right\rceil}
@@ -34,19 +37,19 @@
 \usepackage{orcidlink}
 \makeatletter
 \hypersetup{%
-    plainpages=false,%
-    pdftitle=\@title,%
-    pdfauthor={Sebastian Aaholm, Lars Emanuel Hansen, Daniel Runge Petersen},%
-    pdflang={en-GB},%
-    pdfsubject={Semester project at Aalborg University},%
-    pdfkeywords ={Formal Verification, Parameter Estimation, Decision Diagram}
-    bookmarksnumbered=true,%
-    colorlinks=true,%
-    citecolor=black,%
-    filecolor=black,%
-    linkcolor=black,% you should probably change this to black before printing
-    urlcolor=black,%
-    pdfstartview=FitH%
+      plainpages=false,%
+      pdftitle=\@title,%
+      pdfauthor={Sebastian Aaholm, Lars Emanuel Hansen, Daniel Runge Petersen},%
+      pdflang={en-GB},%
+      pdfsubject={Semester project at Aalborg University},%
+      pdfkeywords ={Formal Verification, Parameter Estimation, Decision Diagram}
+      bookmarksnumbered=true,%
+      colorlinks=true,%
+      citecolor=black,%
+      filecolor=black,%
+      linkcolor=black,% you should probably change this to black before printing
+      urlcolor=black,%
+      pdfstartview=FitH%
 }
 \makeatother
 

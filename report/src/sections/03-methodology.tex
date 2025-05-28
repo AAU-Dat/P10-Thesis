@@ -62,39 +62,21 @@ $n = \ceil{log_2(S)}$.
 The label matrix is a $S\times L$ matrix, where $L=Labels$ and since there is no guarantee that $S = L$, the encoding is handled differently.
 The matrix is instead treated as a list of vectors.
 Each vector is encoded as square matrices, where each row or column (depending on the vector type) is duplicated, which is then encoded to a list of \glspl{add}.
-As knowing the matrices are square and their dimensions help to simplify some of the symbolic operations.
+As knowing that the matrices are square and their dimensions help to simplify some of the symbolic operations.
+An example of this will be displayed in \autoref{subsec:kronecker-product-implementation}.
 
 The Initial state vector is encoded similarly to the label matrix, but only as a single \gls{add}.
 
 We have not modified or extended the CUDD library.
 All functionality used in our implementation is available through the standard CUDD library.
-However, we adapted how we represent vectors to optimize our symbolic computations.
-
-This is due to the structure of Decision Diagrams in CuPAAL, where keeping track of all the new binary values used for encoding from a matrix to an \gls{add} can add a layer of complexity for calculation.
-Especially when computing operations that translate matrices to new dimensions, such as the Kronecker product.
-This matrix-based approach enables efficient symbolic operations, as the Kronecker product can be calculated by taking the Hadamard product between a column matrix \gls{add} and a row matrix \gls{add}, simplifying what would otherwise be a more complex operation.
-
-
-\subsection{Implementation to Jajapy}\label{subsec:implementation-to-jajapy}
-This section will give an overview of how CuPAAL is implemented into Jajapy, using bindings between C++ and Python.
-
-To implement CuPAAL into Jajapy, we create bindings between C++ and Python using the \texttt{pybind11} library~\cite{pybind11github}.
-This allows us to call C++ functions from Python, enabling us to use CuPAAL in Jajapy.
-
-We create a C++ bindings file, that defines the function we want to expose to Python, we call this function $bw\_wrapping\_function$.
-This function takes model parameters from a Jajapy model as input, and transforms them to be used in CuPAAL.
-We then calculate the Baum-Welch algorithm using CuPAAL, and return the results to Jajapy, as a tuple with the relevant values.
-These being the initial distribution, the transitions and the emissions.
-
-The C++ bindings file is then compiled to a shared library, which can be imported in Jajapy.
-Jajapy can call the $bw\_wrapping\_function$ function, which will then call the CuPAAL implementation of the Baum-Welch algorithm.
-In Jajapy, we add a nem boolean parameter for called symbolic to the fit function, which by default is false, and is set to true when the CuPAAL implementation is used.
-
-When the parameter is true, the Jajapy model will call the $bw_wrapping_function$ function, which will then call the CuPAAL implementation of the Baum-Welch algorithm.
 
 
 \subsection{Kronecker Product Implementation}\label{subsec:kronecker-product-implementation}
 This section will provide an overview of how the Kronecker product is implemented in CuPAAL, using the row and column duplication method mentioned in \autoref{subsec:from_prism_to_cupaal}.
+
+The structure of Decision Diagrams in CuPAAL, where keeping track of all the new binary values used for encoding from a matrix to an \gls{add} can add a layer of complexity for calculation.
+Especially when computing operations that translate matrices to new dimensions, such as the Kronecker product.
+This matrix-based approach enables efficient symbolic operations, as the Kronecker product can be calculated by taking the Hadamard product between a column matrix \gls{add} and a row matrix \gls{add}, simplifying what would otherwise be a more complex operation.
 
 An example of this can be seen with the two vectors $\hat{A}$ and $\hat{B}$
 
@@ -145,3 +127,45 @@ This is done as follows:
 
 Hereby showing that the Hadamard product can be used to compute the Kronecker product between two matrices, by using the row and column duplication method.
 
+\subsection{Implementation to Jajapy}\label{subsec:implementation-to-jajapy}
+This section will give an overview of how CuPAAL is implemented into Jajapy, using bindings between C++ and Python.
+
+To implement CuPAAL into Jajapy, we create bindings between C++ and Python using the \texttt{pybind11} library~\cite{pybind11github}.
+This allows us to call C++ functions from Python, enabling us to use CuPAAL in Jajapy.
+
+We create a C++ bindings file, that defines the function we want to expose to Python, we call this function $bw\_wrapping\_function$, which can be seen in~\autoref{lst:cupaal-bw-wrapping-function}.
+This function takes model parameters from a Jajapy model as input, and transforms them to be used in CuPAAL.
+We then calculate the Baum-Welch algorithm using CuPAAL, and return the results to Jajapy, as a tuple with the relevant values.
+These being the initial distribution, the transitions and the emissions.
+
+The C++ bindings file is then compiled to a shared library, which can be imported in Jajapy.
+Jajapy can call the $bw\_wrapping\_function$ function, which will then call the CuPAAL implementation of the Baum-Welch algorithm.
+In Jajapy, we add a nem boolean parameter for called symbolic to the fit function, which by default is false, and is set to true when the CuPAAL implementation is used.
+
+When the parameter is true, the Jajapy model will call the $bw_wrapping_function$ function, which will then call the CuPAAL implementation of the Baum-Welch algorithm.
+
+\lstdefinestyle{mymatstyle}{%
+      style=Matlab-editor,
+      basicstyle=\mlttfamily,
+      frame=leftline,
+      numberstyle=\scriptsize,
+      xleftmargin=1.8em,
+}
+
+\begin{lstlisting}[style=mymatstyle, caption={The C++ function that wraps the CuPAAL implementation of the Baum-Welch algorithm.}, label={lst:cupaal-bw-wrapping-function}]
+Markov_model bw_wrapping_function(Jajapy_model jajayp_model){
+      cupaal_markov_model model = convert_to_cupaal_markov_model(jajayp_model);
+      if(model.observations > 1){
+            model.baum_welch_multiple_observations();
+      }
+      else{
+            model.baum_welch();
+      }
+      cupaal_markov_model model_data;
+      model_data.initial_distribution = model.initial_distribution;
+      model_data.transitions = model.transitions;
+      model_data.emissions = model.emissions;
+      
+      return model_data;
+      }
+\end{lstlisting}
