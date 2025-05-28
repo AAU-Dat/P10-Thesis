@@ -127,37 +127,27 @@ Let $\mathcal{M}$ denote the current \gls{hmm} hypothesis and let $\mathbf{o} = 
     \item $\pmb{\omega} \in [0,1]^{n \times |\mathcal{L}|}$ is the emission probability matrix.
 \end{itemize}
 
-The forward and backward algorithms are implemented using dynamic programming, as shown in \autoref{fig:forward-backward}.
+The forward and backward algorithms are implemented using dynamic programming, as shown in \autoref{lst:forward-backward}.
 For a given time step $t$, let $\pmb{\omega}(t)$ be the column vector of emission probabilities for label $o_t$ for each state, and $\bigcirc$ the Hadamard (element-wise) product.
 
-\begin{figure}[h!]
-    \centering
-    %\subfloat[Forward Algorithm]{
-    \begin{minipage}{0.45\textwidth}
-        \begin{codebox}
-            \Procname{\proc{Forward-Algorithm}}
-            \li $\pmb{\alpha}(1) = \pmb{\omega}(1) \bigcirc \pmb{\pi}$
-            \li \For $t = 2$ \To $T$ \Do
-            \li $\pmb{\alpha}(t) = \pmb{\omega}(t) \bigcirc \left( P^\top \pmb{\alpha}(t-1) \right)$
-            \End
-        \end{codebox}%
-    \end{minipage}
-    %}
-    \quad
-    %\subfloat[Backward Algorithm]{
-    \begin{minipage}{0.45\textwidth}
-        \begin{codebox}
-            \Procname{\proc{Backward-Algorithm}}
-            \li $\pmb{\beta}(T) = \mathbf{1}$
-            \li \For $t = T-1$ \To $1$ \Do
-            \li $\pmb{\beta}(t) = P \left( \pmb{\beta}(t+1) \bigcirc \pmb{\omega}(t+1) \right)$
-            \End
-        \end{codebox}
-    \end{minipage}
-    %}
+\begin{listing}[htb!]
+    \begin{codebox}
+        \Procname{\proc{Forward-Algorithm}}
+        \li $\pmb{\alpha}(1) = \pmb{\omega}(1) \bigcirc \pmb{\pi}$
+        \li \For $t = 2$ \To $T$ \Do
+        \li $\pmb{\alpha}(t) = \pmb{\omega}(t) \bigcirc \left( P^\top \pmb{\alpha}(t-1) \right)$
+        \End
+    \end{codebox}
+    \begin{codebox}
+        \Procname{\proc{Backward-Algorithm}}
+        \li $\pmb{\beta}(T) = \mathbf{1}$
+        \li \For $t = T-1$ \To $1$ \Do
+        \li $\pmb{\beta}(t) = P \left( \pmb{\beta}(t+1) \bigcirc \pmb{\omega}(t+1) \right)$
+        \End
+    \end{codebox}
     \caption{Computation of the forward and backward coefficients}
-    \label{fig:forward-backward}
-\end{figure}
+    \label{lst:forward-backward}
+\end{listing}
 
 The above procedures compute the column vectors $\pmb{\alpha}(t) \text{ and } \pmb{\beta}(t) \in [0,1]^{n}$ for $t = 1\dots T$ which are later used to compute the coefficients $\pmb{\gamma}(t) \in [0,1]^{n}$ and $\pmb{\xi}(t) \in [0,1]^{n \times n}$ as follows:
 
