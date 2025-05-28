@@ -62,7 +62,7 @@ $n = \ceil{log_2(S)}$.
 The label matrix is a $S\times L$ matrix, where $L=Labels$ and since there is no guarantee that $S = L$, the encoding is handled differently.
 The matrix is instead treated as a list of vectors.
 Each vector is encoded as square matrices, where each row or column (depending on the vector type) is duplicated, which is then encoded to a list of \glspl{add}.
-As knowing that the matrices are square and their dimensions help to simplify some of the symbolic operations.
+Knowing the exact dimensions of matrices and that they are square helps to simplify some of the symbolic operations.
 An example of this will be displayed in \autoref{subsec:kronecker-product-implementation}.
 
 The Initial state vector is encoded similarly to the label matrix, but only as a single \gls{add}.
