@@ -3,7 +3,7 @@ This section provides an overview of the theoretical background necessary to und
 We begin by defining the key concepts of a \gls{hmm} and a \gls{mc}, which are the two main models used in this report, then go on to introduce the Baum-Welch algorithm, which is a widely used algorithm for training \glspl{hmm}, and showing how it can be adapted to handle multiple observation sequences using matrix operations.
 
 \subsection{Hidden Markov Model}\label{subsec:hmm}
-\glspl{hmm} were introduced by Baum and Petrie in 1966~\cite{baum1966statistical} and have since been widely used in various fields, such as speech recognition~\cite{chavan2013overview}, bioinformatics~\cite{ciocchetta2009bio}, and finance~\cite{mamon2007hidden}.
+\acrfullpl{hmm} were introduced by Baum and Petrie in 1966~\cite{baum1966statistical} and have since been widely used in various fields, such as speech recognition~\cite{chavan2013overview}, bioinformatics~\cite{ciocchetta2009bio}, and finance~\cite{mamon2007hidden}.
 \begin{definition}[Hidden Markov Model]
     A Hidden Markov Model (HMM) is a tuple $\mathcal{M} = (S, \mathcal{L}, \mathscr{l}, \tau,  \pi)$, where:
     \begin{itemize}
@@ -19,24 +19,24 @@ $D(X)$ denotes the set of probability distributions over a  finite set $X$.
 The emission function $\mathscr{l}$ describes the probability of emitting a label given a state.
 The transition function $\tau$ describes the probability of transitioning from one state to another.
 The initial distribution $\pi$ describes the probability of starting in a given state.
-An \gls{hmm} is a statistical model that describes a system that evolves over time.
+A \gls{hmm} is a statistical model that describes a system that evolves over time.
 The system is assumed to hold the Markov property, meaning that the future state of the system only depends on the current state and not on the past states.
 The system is also assumed to be unobservable, meaning that the states are hidden and cannot be directly observed.
 Instead, the system emits observations, which are used to infer the hidden states.
 
-An example of an \gls{hmm} is a weather model where the hidden state represents the actual weather (sunny, rainy, or cloudy), but we only observe indirect signals, such as whether someone is carrying an umbrella.
+An example of a \gls{hmm} is a weather model where the hidden state represents the actual weather (sunny, rainy, or cloudy), but we only observe indirect signals, such as whether someone is carrying an umbrella or wearing sunglasses.
 
 \subsection{Markov Chain}\label{subsec:mc}
-A \gls{mc}, named after Andrei Markov, is a stochastic model widely used in different fields of study~\cite{Rabiner89}.
+A \acrfull{mc}, named after Andrei Markov, is a stochastic model widely used in different fields of study~\cite{Rabiner89}.
 \begin{definition}[Markov Chain]
     A Markov Chain (MC) is a tuple $\mathcal{M} = (S, \mathcal{L}, \mathscr{l}, \tau,  \pi)$ identical to the \gls{hmm} structure above except that the emission function is
     \emph{deterministic}: for every $s\in S$ there is a single label
     $l=\mathscr{l}(s)$ emitted with probability 1.
 \end{definition}
-In other words, the emission function $\mathscr{l}$ is a one-to-one mapping from states to labels.
+In other words, the emission function $\mathscr{l}$ is a function that maps each state to a single label, meaning that each state emits exactly one label with probability 1.
 
 A common example of a \gls{mc} is a board game where a player moves between squares based on dice rolls.
-Each square corresponds to a state, the dice rolls determine the transition probabilities, and the current square (state) is directly observable.
+Each square corresponds to a state, the dice rolls determine the transition probabilities.
 
 \subsection{Conversion between MCs and HMMs}\label{subsec:mc_hmm_conversion}
 In this section, we will discuss the conversion between \glspl{mc} and \glspl{hmm}.
@@ -50,7 +50,7 @@ This conversion is straightforward because the components of the \gls{mc} and \g
     \begin{itemize}
         \item $S' = S$.
         \item $\mathcal{L}' = \mathcal{L}$.
-        \item $\mathscr{l}' =  \begin{cases}
+        \item $\mathscr{l}_{(s)}' =  \begin{cases}
                       1 & l=\mathscr{l}(s) \\
                       0 & \text{otherwise}
                   \end{cases}$
@@ -61,42 +61,42 @@ This conversion is straightforward because the components of the \gls{mc} and \g
 The \gls{mc} $\mathcal{M}'$ is equivalent to the \gls{hmm} $\mathcal{M}$, meaning that they have the same transition and emission probabilities.
 The only difference is that the \gls{mc} has a trivial emission function, meaning that each state emits a single label with probability 1.
 
-\subsubsection{Hidden Markov Models to Markov Chains}\label{subsec:hmm2mc}
-Converting a \gls{hmm} to an equivalent \gls{mc} is more complex.
-In a \gls{hmm}, the observations are probabilistically related to the states, which introduces ambiguity, as multiple states can emit the same observation.
-To create a fully observable \gls{mc} that captures the behavior of a \gls{hmm}, we must encode both the hidden state and the emitted label into the state space.
-\begin{definition}[Hidden Markov Model to Markov Chain]
-    Conversely, let
-    \(
-    \mathcal{M}
-    = (S, \mathcal{L}, \mathscr{l}, \tau, \pi)
-    \)
-    be a \gls{hmm}.
-    We define the observable \gls{mc}
-    \(
-    \mathcal{M}'
-    = (S', \mathcal{L}', \mathscr{l}', \tau', \pi')
-    \)
-    by:
-    \begin{itemize}
-        \item $S' = \{(s,l)\in S\times\mathcal{L}\}$%, the new state space encodes both hidden states and their possible emitted labels,
-        \item $\mathcal{L}' = \mathcal{L}$%, the label space remains unchanged,
-        \item $\mathscr{l}'(s,l) = l$%, each new state deterministically emits its label,
-        \item $\tau'\big((s,l),(s',l')\big) = \tau(s,s')\;\mathscr{l}(s')(l')$%, the transition function is modified to account for the emission probabilities,
-        \item $\pi'(s,l) = \pi(s)\;\mathscr{l}(s)(l)$%, the initial distribution is modified to account for the emission probabilities.
-    \end{itemize}
-    \textbf{Remark.}
-    Here each ' symbol refers to an object of the \emph{derived MC}.  In
-    particular, $\tau'$ is \emph{not} the original \gls{hmm} transition; it acts on the
-    expanded state space $S'$ and already incorporates the emission probability for
-    the label $l'$.
+% \subsubsection{Hidden Markov Models to Markov Chains}\label{subsec:hmm2mc}
+% Converting a \gls{hmm} to an equivalent \gls{mc} is more complex.
+% In a \gls{hmm}, the observations are probabilistically related to the states, which introduces ambiguity, as multiple states can emit the same observation.
+% To create a fully observable \gls{mc} that captures the behavior of a \gls{hmm}, we must encode both the hidden state and the emitted label into the state space.
+% \begin{definition}[Hidden Markov Model to Markov Chain]
+%     Conversely, let
+%     \(
+%     \mathcal{M}
+%     = (S, \mathcal{L}, \mathscr{l}, \tau, \pi)
+%     \)
+%     be a \gls{hmm}.
+%     We define the observable \gls{mc}
+%     \(
+%     \mathcal{M}'
+%     = (S', \mathcal{L}', \mathscr{l}', \tau', \pi')
+%     \)
+%     by:
+%     \begin{itemize}
+%         \item $S' = \{(s,l)\in S\times\mathcal{L}\}$%, the new state space encodes both hidden states and their possible emitted labels,
+%         \item $\mathcal{L}' = \mathcal{L}$%, the label space remains unchanged,
+%         \item $\mathscr{l}'(s,l) = l$%, each new state deterministically emits its label,
+%         \item $\tau'\big((s,l),(s',l')\big) = \tau(s,s')\;\mathscr{l}(s')(l')$%, the transition function is modified to account for the emission probabilities,
+%         \item $\pi'(s,l) = \pi(s)\;\mathscr{l}(s)(l)$%, the initial distribution is modified to account for the emission probabilities.
+%     \end{itemize}
+%     \textbf{Remark.}
+%     Here each ' symbol refers to an object of the \emph{derived MC}.  In
+%     particular, $\tau'$ is \emph{not} the original \gls{hmm} transition; it acts on the
+%     expanded state space $S'$ and already incorporates the emission probability for
+%     the label $l'$.
 
-    The mapping increases the state space size from $|S|$ to at most
-    $|S|\cdot|\mathcal{L}|$, but yields a fully observable system amenable to
-    standard \gls{mc} analysis.
-\end{definition}
+%     The mapping increases the state space size from $|S|$ to at most
+%     $|S|\cdot|\mathcal{L}|$, but yields a fully observable system amenable to
+%     standard \gls{mc} analysis.
+% \end{definition}
 
-The conversion between \glspl{mc} and \glspl{hmm} is important because it allows us to use the same algorithms and techniques for both models, even though they have different properties.
+% The conversion between \glspl{mc} and \glspl{hmm} is important because it allows us to use the same algorithms and techniques for both models, even though they have different properties.
 
 \subsection{Baum-Welch Algorithm}\label{subsec:baum-welch}
 The Baum-Welch algorithm is a special case of the Expectation-Maximization (EM) framework used to estimate the parameters of a \gls{hmm} given a set of observed sequences.
@@ -109,21 +109,6 @@ Each iteration of the algorithm consists of two steps:
 
 Convergence is typically achieved when the change in the likelihood (or parameters) between iterations falls below a threshold~\cite{Rabiner89}.
 
-
-We adopt a matrix-based implementation for computational efficiency, following~\cite{aaholmbaum}, and extend it to handle multiple observation sequences.
-Notation used throughout this section is summarized below:
-
-\begin{itemize}
-    \item $|S|$ is the number of hidden states.
-    \item $|\mathcal{L}|$ is the number of labels.
-    \item $\mathcal{O} = {O_1, \ldots, O_{|\mathcal{O}|}}$  is the set of observations sequences.
-    \item Each observation sequence $O_i = (o_{1}, o_{2}, \ldots, o_{|o|-1 })$, where $o_{t} \in \mathcal{L}$.
-    \item $|O|$ is the number of observation sequences.
-    \item $|\mathbf{o}|$ is the length of a single observation sequence.
-    \item $o_t$ is the observation at time $t$.
-    \item $s_t$ is the state at time $t$.
-\end{itemize}
-
 We can represent a \gls{hmm} as matrices for computational efficiency.
 
 They are defined as follows:
@@ -133,117 +118,119 @@ They are defined as follows:
     \item $\pmb{\omega}$ is the emission matrix, where $\omega_{ij} = \mathscr{l}(s_i)(l_j)$ is the probability of emitting label $l_j$ given state $s_i$, this is a matrix of size $|S| \times |\mathcal{L}|$.
 \end{itemize}
 
-We follow a matrix-based implementation for computational efficiency, as described in~\cite{aaholmbaum}, and extend it to handle multiple observation sequences.
+To illustrate our symbolic implementation, we describe a single Baum-Welch iteration in terms of matrix operations, assuming familiarity with the algorithm. For an introductory treatment, see~\cite{Baum70,reynouard2024learning}.
 
-Using multiple sequences, we dont need to change the calculation of the E-step, as it is the same as before, we just need to do it for every observation sequenc, see \cite{Rabiner89} for the details.
+Let $\mathcal{M}$ denote the current \gls{hmm} hypothesis and let $\mathbf{o} = o_1 \dots o_T$ be a sequence of observations, where each $o_t \in \mathcal{L}$, the observation sequence has the length $T$. Suppose $\mathcal{M}$ has $n$ states, i.e., $S = {s_1, \dots, s_n}$, with parameters represented as follows:
+\begin{itemize}
+    \item $\pmb{\pi} \in [0,1]^{n}$ is the initial state distribution column vector.
+    \item $\pmb{P} \in [0,1]^{n \times n}$ is the transition probability matrix.
+    \item $\pmb{\omega} \in [0,1]^{n \times |\mathcal{L}|}$ is the emission probability matrix.
+\end{itemize}
 
-In the M-step, we need to update the parameters based on all the observation sequences.
-We dont need to change the calculation of $\gamma$ and $\xi$, we just need to cacalate for every observation sequence.
+The forward and backward algorithms are implemented using dynamic programming, as shown in \autoref{fig:forward-backward}.
+For a given time step $t$, let $\pmb{\omega}(t)$ be the column vector of emission probabilities for label $o_t$ for each state, and $\bigcirc$ the Hadamard (element-wise) product.
 
-We get from \cite{aaholmbaum} that the update equations for the parameters are as follows:
+\begin{figure}[h!]
+    \centering
+    %\subfloat[Forward Algorithm]{
+    \begin{minipage}{0.45\textwidth}
+        \begin{codebox}
+            \Procname{\proc{Forward-Algorithm}}
+            \li $\pmb{\alpha}(1) = \pmb{\omega}(1) \bigcirc \pmb{\pi}$
+            \li \For $t = 2$ \To $T$ \Do
+            \li $\pmb{\alpha}(t) = \pmb{\omega}(t) \bigcirc \left( P^\top \pmb{\alpha}(t-1) \right)$
+            \End
+        \end{codebox}%
+    \end{minipage}
+    %}
+    \quad
+    %\subfloat[Backward Algorithm]{
+    \begin{minipage}{0.45\textwidth}
+        \begin{codebox}
+            \Procname{\proc{Backward-Algorithm}}
+            \li $\pmb{\beta}(T) = \mathbf{1}$
+            \li \For $t = T-1$ \To $1$ \Do
+            \li $\pmb{\beta}(t) = P \left( \pmb{\beta}(t+1) \bigcirc \pmb{\omega}(t+1) \right)$
+            \End
+        \end{codebox}
+    \end{minipage}
+    %}
+    \caption{Computation of the forward and backward coefficients}
+    \label{fig:forward-backward}
+\end{figure}
+
+The above procedures compute the column vectors $\pmb{\alpha}(t) \text{ and } \pmb{\beta}(t) \in [0,1]^{n}$ for $t = 1\dots T$ which are later used to compute the coefficients $\pmb{\gamma}(t) \in [0,1]^{n}$ and $\pmb{\xi}(t) \in [0,1]^{n \times n}$ as follows:
+
+\begin{align*}
+    \pmb{\gamma}(t) & = (\pmb{\alpha}(t) \bigcirc \pmb{\beta}(t)) / P[\mathbf{o} | \mathcal{M}]                                                                  & t = 1\dots T   \\
+    \pmb{\xi}(t)    & = (P[\mathbf{o} | \mathcal{M}] \cdot P) \bigcirc \left( \pmb{\alpha}(t) \otimes (\pmb{\beta}(t+1) \bigcirc \pmb{\omega}(t+1))^\top \right) & t = 1\dots T-1
+\end{align*}
+
+Here, $\otimes$ is the Kronecker product and the probability $P[\mathbf{o} | \mathcal{M}]$ to observe $\mathbf{o}$ in $\mathcal{M}$ is computed as $\mathbf{1}^\top \pmb{\alpha}(T)$, Here $\top$ describes the transposed vector, i.e., $\mathbf{1}^\top$ is a row vector of ones.
+
+Finally, the initial probability vector, the transition probability matrix and emission matrix and are updated as follows:
+
 \begin{equation}
-    \pmb{P}_{s s'} = \frac{\sum_{t = 1}^{|\mathbf{o}|-1} \xi_{ss'}(t)}{\sum_{t = 1}^{|\mathbf{o}|-1} \gamma_s(t)}
-    \label{eq:transition-probabilities}
+    \hat{\pmb{\pi}} = \pmb{\gamma}(1)
+    \label{eq:initial-probabilities-update}
 \end{equation}
-
 \begin{equation}
-    \pmb{\omega}_{s, l} = \frac{\sum_{t = 1}^{|\mathbf{o}|-1} \gamma_s(t) \lBrack o_t = l \rBrack}{\sum_{t = 1}^{|\mathbf{o}|-1} \gamma_s(t)}
-    \label{eq:omega}
+    \hat{\pmb{\omega}} = (\mathbbm{1} \oslash \pmb{\gamma}) \bullet (\sum_{t=1}^{T} \pmb{\gamma}_t \otimes \mathbbm{1}_{[[o_t]]}^{T})
+    \label{eq:emission-probabilities-update}
 \end{equation}
-
 \begin{equation}
-    \pi_s = \gamma_s(1)
-    \label{eq:initial-probabilities}
-\end{equation}
-
-We can then update the parameters for a single sequence with matrix operations as follows:
-
-\begin{equation}
-    \pmb{P}
-    = (\mathbbm{1} \oslash \pmb{\gamma}) \bullet \pmb{\xi}
-    \label{eq:transition-probabilities-multiple-sequences}
-\end{equation}
-
-\begin{equation}
-    \pmb{\omega}
-    _s(o) = (\mathbbm{1} \oslash \pmb{\gamma}) \bullet (\sum_{t=1}^{|\mathbf{o}|-1} \pmb{\gamma}_t \otimes \mathbbm{1}_{yt}^{|\mathbf{o}|-1})
-    \label{eq:omega-multiple-sequences}
-\end{equation}
-
-\begin{equation}
-    \pmb{\pi}
-    = \pmb{\gamma}_1
-    \label{eq:initial-probabilities-multiple-sequences}
-\end{equation}
-
-Here $\oslash$ denotes Hadamard division (elementwise division) and $\bullet$ denotes the Katri-Rao product (column-wise Kronecker product).
-In the formulas above, $\mathbbm{1}$ denotes a column vector of ones, $\mathbbm{1}_{yt}$ denotes a column vector with $|\mathcal{L}|$ rows, with all elements set to zero except for the element at the index where $o_t = l$ which is set to one.
-
-$\gamma$ and $\xi$ are the sum of the respective vectors over all time steps $t$:
-\begin{align}
-    \pmb{\gamma} = \sum_{t=1}^{|\mathbf{o}|-1} \pmb{\gamma}_t
-    \text{ and }
-    \pmb{\xi} = \sum_{t=1}^{|\mathbf{o}|-1} \pmb{\xi}_t
-\end{align}
-
-
-\subsection{Multiple Observation Sequences}\label{subsec:multiple-observation-sequences}
-In this section, we extend the Baum-Welch algorithm to handle multiple observation sequences.
-We can see that the update equations for the parameters are the same as before, but we need to sum over all sequences and all time steps.
-This is done by:
-
-
-\begin{equation}
-    \pi_s = \frac{\sum_{i=i}^{|\mathcal{O}|} \gamma_{is}(1) }{|\mathcal{O}|}
-\end{equation}
-
-\begin{equation}
-    \pmb{\omega}_{s, l} = \frac{\sum_{i=1}^{|\mathcal{O}|} \sum_{t=1}^{|\mathbf{o}|-1} \gamma_{is}(t) \lBrack o_t = l \rBrack}{\sum_{i=1}^{|\mathcal{O}|} \sum_{t=1}^{|\mathbf{o}|-1} \gamma_{is}(t)}
-\end{equation}
-
-\begin{equation}
-    \pmb{P}_{s s'} = \frac{\sum_{i=1}^{|\mathcal{O}|} \sum_{t = 1}^{|\mathbf{o}|-1} \xi_{iss'}(t)}{\sum_{i=1}^{|\mathcal{O}|} \sum_{t = 1}^{|\mathbf{o}|-1} \gamma_{is}(t)}
-\end{equation}
-
-In the transition matrix, we need to sum over all sequences and all time steps.
-In the initial distribution, we need to sum over all sequences and take the first time step.
-In the emission matrix, we need to sum over all sequences and all time steps.
-
-This means, when describing the update equations as matrix operations, we need to sum over all sequences and all time steps, when calculating the $\gamma$ and $\xi$ matrices.
-
-we need to find the sum of the $\gamma$ and $\xi$ over all sequences and all time steps.
-
-This will give us:
-
-\begin{align}
-    \pmb{\gamma} = \sum_{i=1}^{|\mathcal{O}|}\sum_{t=1}^{|\mathbf{o}|-1} \pmb{\gamma}_t
-    \text{ and }
-    \pmb{\xi} = \sum_{i=1}^{|\mathcal{O}|}\sum_{t=1}^{|\mathbf{o}|-1} \pmb{\xi}_t
-\end{align}
-
-We can then update the parameters with matrix operations as follows:
-\begin{equation}
-    \pmb{P}
-    = (\mathbbm{1} \oslash \pmb{\gamma}) \bullet \pmb{\xi}
+    \hat{P} = (\mathbf{1} \oslash \pmb{\gamma} ) \bullet \pmb{\xi}
     \label{eq:transition-probabilities-update}
 \end{equation}
 
-This is the same as the previous equation.
+Where $\bullet$ is the transposed Khatri-Rao product (i.e., row-by-row Kronecker product), and $[[o_t]] = ([[o_t=l]])_{l \in \mathcal{L}}$ is the one-hot encoding of the observation $o_t$, meaning that it is a vector of size $|\mathcal{L}|$ with a 1 in the position corresponding to the observation $o_t$ and 0 elsewhere.
+$\oslash$ is the element-wise division, and $\otimes$ is the Kronecker product.
+The $\pmb{\gamma}$ and $\pmb{\xi}$ are defined as follows:
+\begin{equation}
+    \pmb{\gamma} = \sum_{t=1}^{T} \pmb{\gamma}(t) \text{ and } \pmb{\xi} = \sum_{t=1}^{T-1} \pmb{\xi}(t)
+    \label{eq:gamma-xi-definitions}
+\end{equation}
 
+These update rules form the standard Baum-Welch algorithm for training \glspl{hmm} on a single observation sequence.
+However, the approach can be naturally extended to multiple sequences.
+
+\subsection{Multiple Observation Sequences}\label{subsec:multiple-observation-sequences}
+Suppose we are given a multiset of observation sequences $\mathcal{O} = {O_1, O_2, \ldots, O_{|\mathcal{O}|}}$, where each $O_i = (o_{i1}, o_{i2}, \ldots, o_{iT})$ is of length $T$.
+The E-step remains unchanged: for each sequence, we compute the corresponding $\pmb{\alpha}(t)$, $\pmb{\beta}(t)$, $\pmb{\gamma}(t)$, and $\pmb{\xi}(t)$ values independently.
+
+In the M-step, we aggregate statistics across all sequences to update the parameters.
+Specifically, we define:
+\begin{align}
+    \pmb{\gamma} = \sum_{i=1}^{|\mathcal{O}|}\sum_{t=1}^{T} \pmb{\gamma}_t
+    \text{ and }
+    \pmb{\xi} = \sum_{i=1}^{|\mathcal{O}|}\sum_{t=1}^{T-1} \pmb{\xi}_t
+\end{align}
+
+With these aggregate quantities, the update rules for the initial distribution (see \autoref{eq:initial-probabilities-update}) and transition matrix (see \autoref{eq:transition-probabilities-update}) remain unchanged, because they are already defined in terms of the sum over all sequences.
+However, the emission matrix update needs to account for all sequences.
+
+The emission matrix is updated as follows:
 
 \begin{equation}
     \pmb{\omega}
-    _s(o) = (\mathbbm{1} \oslash \pmb{\gamma}) \bullet (\sum_{i=1}^N \sum_{t=1}^{|\mathbf{o}|-1} \pmb{\gamma}_{it} \otimes \mathbbm{1}_{yt}^{|\mathbf{o}|-1})
+    _s(o) = (\mathbbm{1} \oslash \pmb{\gamma}) \bullet (\sum_{i=1}^N \sum_{t=1}^{T} \pmb{\gamma}_{it} \otimes \mathbbm{1}_{[[o_t]]}^{T})
     \label{eq:omega-update}
 \end{equation}
-This is almost the same as the previous equation, but we need to sum over all sequences and all time steps, in the left side of the Kronecker product, the right side is the same as before.
 
-Finally, we can update the initial distribution as follows:
+This mirrors the single-sequence case (see \autoref{eq:emission-probabilities-update}) but extends the summation in the left side of the Kronecker product to cover all sequences and all time steps.
+This allows us to compute the emission probabilities for each state across all sequences, ensuring that the model captures the overall distribution of observations.
 
-\begin{equation}
-    \pmb{\pi}
-    = \pmb{\gamma}_1
-    \label{eq:initial-probabilities-update}
-\end{equation}
-This is the same as the previous equation.
+\subsection{Baum-Welch Algorithm for Markov Chains}\label{subsec:baum-welch-mc}
+Since \glspl{mc} can be seen as \glspl{hmm} with deterministic emissions, where each state emits a unique observation with probability 1, the Baum-Welch algorithm simplifies accordingly when applied to \glspl{mc}.
 
+In this case:
+
+\begin{itemize}
+    \item The forward and backward algorithms are computed identically to the \gls{hmm} case, but without weighting by emission probabilities, as these are implicitly handled by the observation sequence.
+    \item The \textbf{E-step} computations for $\pmb{\gamma}(t)$ and $\pmb{\xi}(t)$ remain structurally the same, though emission terms are omitted due to determinism.
+    \item The \textbf{M-step} updates for the initial distribution $\pmb{\pi}$ and the transition matrix $\pmb{P}$ are unchanged.
+    \item The emission matrix $\pmb{\omega}$ is not updated, as it is fixed by the model's structure and need not be learned.
+\end{itemize}
+
+This simplification avoids unnecessary computation and reflects the reduced uncertainty in the model: there is no need to marginalize over emissions, as each state deterministically produces a known label.
+Consequently, the Baum-Welch algorithm becomes more efficient when applied to \glspl{mc}.
