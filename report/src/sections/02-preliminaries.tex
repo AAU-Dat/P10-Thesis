@@ -50,7 +50,7 @@ This conversion is straightforward because the components of the \gls{mc} and \g
     \begin{itemize}
         \item $S' = S$.
         \item $\mathcal{L}' = \mathcal{L}$.
-        \item $\mathscr{l}_{(s)}' =  \begin{cases}
+        \item $\mathscr{l}(s)' =  \begin{cases}
                       1 & l=\mathscr{l}(s) \\
                       0 & \text{otherwise}
                   \end{cases}$
@@ -162,11 +162,12 @@ For a given time step $t$, let $\pmb{\omega}(t)$ be the column vector of emissio
 The above procedures compute the column vectors $\pmb{\alpha}(t) \text{ and } \pmb{\beta}(t) \in [0,1]^{n}$ for $t = 1\dots T$ which are later used to compute the coefficients $\pmb{\gamma}(t) \in [0,1]^{n}$ and $\pmb{\xi}(t) \in [0,1]^{n \times n}$ as follows:
 
 \begin{align*}
-    \pmb{\gamma}(t) & = (\pmb{\alpha}(t) \bigcirc \pmb{\beta}(t)) / P[\mathbf{o} | \mathcal{M}]                                                                  & t = 1\dots T   \\
-    \pmb{\xi}(t)    & = (P[\mathbf{o} | \mathcal{M}] \cdot P) \bigcirc \left( \pmb{\alpha}(t) \otimes (\pmb{\beta}(t+1) \bigcirc \pmb{\omega}(t+1))^\top \right) & t = 1\dots T-1
+    \pmb{\gamma}(t) & = \pmb{\alpha}(t) \bigcirc \pmb{\beta}(t)) / P[\mathbf{o} | \mathcal{M}]                                                                   \\%& t = 1\dots T   \\
+    \pmb{\xi}(t)    & = (P[\mathbf{o} | \mathcal{M}] \cdot P) \bigcirc \left( \pmb{\alpha}(t) \otimes (\pmb{\beta}(t+1) \bigcirc \pmb{\omega}(t+1))^\top \right) %& t = 1\dots T-1
 \end{align*}
 
 Here, $\otimes$ is the Kronecker product and the probability $P[\mathbf{o} | \mathcal{M}]$ to observe $\mathbf{o}$ in $\mathcal{M}$ is computed as $\mathbf{1}^\top \pmb{\alpha}(T)$, Here $\top$ describes the transposed vector, i.e., $\mathbf{1}^\top$ is a row vector of ones.
+We calculate $\pmb{\gamma}(t)$ from $t= 1$ to $T$ and $\pmb{\xi}(t)$ from $t= 1$ to $T-1$.
 
 Finally, the initial probability vector, the transition probability matrix and emission matrix and are updated as follows:
 
