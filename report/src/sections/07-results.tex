@@ -1,3 +1,10 @@
+\begin{figure*}[htb!]
+    \centering
+    \input{figures/results/3d-scalability.pgf}
+    \caption{Plot of the run time of \Jajapy\ and \Cupaal\ for the leader sync models, given the number of states and the length of the observations. The planes are linear regression fits to indicate the directions of the trends for the datapoints of similar color.}
+    \label{fig:leader_results}
+\end{figure*}
+
 \section{Results}\label{sec:results}
 In this section, we present the results of our experiments, which are divided into two main parts: the first part focuses on the scalability of \Jajapy\ and \Cupaal\ in terms of time and scalability, while the second part evaluates the accuracy of both tools.
 
@@ -10,7 +17,7 @@ These results are the time taken to train a model, based on two parameters: the 
 
 \begin{table}[htb!]
     \centering
-    \caption{Leader Sync model variations training times in seconds.}
+    \caption{Leader Sync model variations in training time in seconds.}
     \label{tab:leader_results}
     \begin{tabular}{lrrrr}
         \toprule
@@ -48,31 +55,49 @@ These results are the time taken to train a model, based on two parameters: the 
 The results for the leader sync model are displayed in \autoref{tab:leader_results} and \autoref{fig:leader_results}, and show the time it takes to train a model, given the number of states and observation length.
 Only the training time is considered; the initialization of the programs is not a factor in these numbers.
 
+In \autoref{fig:leader_results}, simple planes are fit with linear regression from the data in \autoref{tab:leader_results}.
+This is not an attempt to say anything definitive about the degrees of the scaling, but instead to show the generally observable trend.
+
 Contrary to our expectations, the data does not show a clear difference in the time taken to train the leader sync model between \Jajapy\ and \Cupaal\ for \glspl{dtmc}.
 
 For very small models, the running time does not matter too much, but we observe an initial overhead related to \Jajapy. This is likely related to the general consensus that Python is a slower language than C in general.
 
-in general, more states mean longer running time, but interestingly, variations with similar number of states may have very different training times. The most obvious example is the 3.4 and 5.2 models, with 147 and 141 states respectively, but the 5.2 is much slower, especially in \Cupaal.
+Generally, more states mean longer running time, but interestingly, variations with similar number of states may have very different training times.
+The most obvious example is the 3.4 and 5.2 models, with 147 and 141 states respectively.
+The 5.2 model is much slower, especially in \Cupaal, showing a \textasciitilde10 times increase in training time, despite having slightly fewer states.
 
-Initially, we only had data for observations of length 25, and the data under those conditions suggested that \Jajapy scaled quite a bit better than \Cupaal.
+Initially, we only had data for observations of length 25, and the data under those conditions suggested that \Jajapy\ scaled quite a bit better than \Cupaal.
+
+\begin{figure}[htb!]
+    \input{figures/results/cupaal-length-to-runtime.pgf}
+    \caption{\Cupaal\ runtimes with increasing observation length.}
+    \label{fig:cupaal-length-to-runtime}
+\end{figure}
+
+
+\begin{figure}[htb!]
+    \input{figures/results/jajapy-length-to-runtime.pgf}
+    \caption{\Jajapy\ runtimes with increasing observation length.}
+    \label{fig:jajapy-length-to-runtime}
+\end{figure}
+
 
 To explore this behaviour, we extended the experiment to contain data for observations of different lengths, and now our observations are more in line with our expectations.
 \Jajapy gets slower at a pace roughly linear with the length of the observations; doubling the observation length doubles the run time of \Jajapy.
-This is not the case for \Cupaal.
+This is not the case for \Cupaal, where we do not see any particular increase in running time as the observation length increases.
+
+In fact, looking at \autoref{fig:cupaal-length-to-runtime} and \autoref{fig:jajapy-length-to-runtime}, the \Cupaal\ runtimes look a little strange.
+
 
 
 
 % This is likely due to the smaller size of the model, not having as much redundant calculations to avoid, which is the main advantage of the symbolic approach used in CuPAAL.
+% Mention the repeat calculations of a model that has reached a steady-state, and therefore have infinitely repeated observations.
 
 
 From \autoref{fig:leader_results}
 
-\begin{figure*}[htb!]
-    \centering
-    \input{figures/results/3d-scalability.pgf}
-    \caption{Plot of the run time of \Jajapy\ and \Cupaal\ for the leader sync models, given the number of states and the length of the observations.}
-    \label{fig:leader_results}
-\end{figure*}
+
 
 
 \subsection{Accuracy}\label{subsec:accuracy}
