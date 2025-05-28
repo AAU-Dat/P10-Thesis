@@ -55,13 +55,16 @@ These results are the time taken to train a model, based on two parameters: the 
 The results for the leader sync model are displayed in \autoref{tab:leader_results} and \autoref{fig:leader_results}, and show the time it takes to train a model, given the number of states and observation length.
 Only the training time is considered; the initialization of the programs is not a factor in these numbers.
 
-Simple planes are fit with linear regression in \autoref{fig:leader_results} to show the generally observable trend in the data seen in \autoref{tab:leader_results}, but this is not an actual attempt to say anything definitive about the actual degrees of scaling.
+In \autoref{fig:leader_results}, simple planes are fit with linear regression from the data in \autoref{tab:leader_results}.
+This is not an attempt to say anything definitive about the degrees of the scaling, but instead to show the generally observable trend.
 
 Contrary to our expectations, the data does not show a clear difference in the time taken to train the leader sync model between \Jajapy\ and \Cupaal\ for \glspl{dtmc}.
 
 For very small models, the running time does not matter too much, but we observe an initial overhead related to \Jajapy. This is likely related to the general consensus that Python is a slower language than C in general.
 
-Generally, more states mean longer running time, but interestingly, variations with similar number of states may have very different training times. The most obvious example is the 3.4 and 5.2 models, with 147 and 141 states respectively, but the 5.2 is much slower, especially in \Cupaal, showing a \~10 times increase in training time, despite having slightly fewer states.
+Generally, more states mean longer running time, but interestingly, variations with similar number of states may have very different training times.
+The most obvious example is the 3.4 and 5.2 models, with 147 and 141 states respectively.
+The 5.2 model is much slower, especially in \Cupaal, showing a \textasciitilde10 times increase in training time, despite having slightly fewer states.
 
 Initially, we only had data for observations of length 25, and the data under those conditions suggested that \Jajapy\ scaled quite a bit better than \Cupaal.
 
