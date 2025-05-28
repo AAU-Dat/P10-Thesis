@@ -127,45 +127,146 @@ This is done as follows:
 
 Hereby showing that the Hadamard product can be used to compute the Kronecker product between two matrices, by using the row and column duplication method.
 
+
+
+
 \subsection{Implementation to Jajapy}\label{subsec:implementation-to-jajapy}
-This section will give an overview of how CuPAAL is implemented into Jajapy, using bindings between C++ and Python.
+This section will give an overview of how \Cupaal is implemented into \Jajapy, using bindings between C++ and Python.
 
-To implement CuPAAL into Jajapy, we create bindings between C++ and Python using the \texttt{pybind11} library~\cite{pybind11github}.
-This allows us to call C++ functions from Python, enabling us to use CuPAAL in Jajapy.
+figure \todo{add ref to architecture ~\ref{fig:cupaal-implementation}} shows the overall architecture of the implementation.
 
-We create a C++ bindings file, that defines the function we want to expose to Python, we call this function $bw\_wrapping\_function$, which can be seen in~\autoref{lst:cupaal-bw-wrapping-function}.
-This function takes model parameters from a Jajapy model as input, and transforms them to be used in CuPAAL.
-We then calculate the Baum-Welch algorithm using CuPAAL, and return the results to Jajapy, as a tuple with the relevant values.
+\Cupaal consists of two main componenets, the main function and the \gls{bw} library.
+Both of these are compiled to an executable program, called \texttt{cupaal.exe}, which can be used to run the Baum-Welch algorithm on a given model.
+
+To implement \Cupaal into \Jajapy, we create bindings between C++ and Python using the \texttt{pybind11} library~\cite{pybind11github}.
+This allows us to call C++ functions from Python, enabling us to use \Cupaal in \Jajapy.
+
+We create a C++ bindings file, that uses the \gls{bw} library from \Cupaal and defines the function we want to expose to Python, we call this function $cupaal\_bw\_symbolic$, seen in~\autoref{lst:cupaal-bindings}.
+This function takes model parameters from a \Jajapy model as input, and transforms them to be used in \Cupaal.
+
+\autoref{lst:cupaal-bindings} calculates the Baum-Welch algorithm using~\autoref{lst:baum-welch-multiple-observations} from \Cupaal, and returns the results to Jajapy, as a tuple with the relevant values.
 These being the initial distribution, the transitions and the emissions.
 
 The C++ bindings file is then compiled to a shared library, which can be imported in Jajapy.
-Jajapy can call the $bw\_wrapping\_function$ function, which will then call the CuPAAL implementation of the Baum-Welch algorithm.
-In Jajapy, we add a nem boolean parameter for called symbolic to the fit function, which by default is false, and is set to true when the CuPAAL implementation is used.
+Jajapy can call the $cupaal\_bw\_symbolic$ function, which will then call the CuPAAL implementation of the Baum-Welch algorithm.
 
-When the parameter is true, the Jajapy model will call the $bw_wrapping_function$ function, which will then call the CuPAAL implementation of the Baum-Welch algorithm.
+We create a new function in Jajapy, called \texttt{\_bw\_symbolic}, which is used to call the \Cupaal implementation of the Baum-Welch algorithm, as seen in~\autoref{lst:jajapy-bw-symbolic}.
 
-\lstdefinestyle{mymatstyle}{%
-      style=Matlab-editor,
-      basicstyle=\mlttfamily,
-      frame=leftline,
-      numberstyle=\scriptsize,
-      xleftmargin=1.8em,
-}
+The fit function in Jajapy is modified to call the \texttt{\_bw\_symbolic} function when a new parameter called \texttt{symbolic} is set to true, as seen in~\autoref{lst:jajapy-fit-cupaal}.
 
-\begin{lstlisting}[style=mymatstyle, caption={The C++ function that wraps the CuPAAL implementation of the Baum-Welch algorithm.}, label={lst:cupaal-bw-wrapping-function}]
-Markov_model bw_wrapping_function(Jajapy_model jajayp_model){
-      cupaal_markov_model model = convert_to_cupaal_markov_model(jajayp_model);
-      if(model.observations > 1){
-            model.baum_welch_multiple_observations();
-      }
-      else{
-            model.baum_welch();
-      }
+When the parameter is true, the Jajapy model will call the~\autoref{lst:jajapy-bw-symbolic} function, which will then call the CuPAAL implementation of the Baum-Welch algorithm.
+
+
+\begin{listing*}[htb!]
+      \begin{minted}{cpp}
+// Some parameters have been removed for brevity
+cupaal_markov_model cupaal_bw_symbolic(
+      const std::vector<std::string>& states,
+      const std::vector<std::string>& labels, 
+      const std::vector<std::vector<std::string>>& observations, 
+      const std::vector<double>& initial_distribution, 
+      const std::vector<double>& transitions, 
+      const std::vector<double>& emissions, 
+      unsigned int max_iterations = 100, 
+      double epsilon = 1e-2)
+      {
+
+      cupaal::MarkovModel model(states, labels, initial_distribution, transitions, emissions, observations);
       cupaal_markov_model model_data;
+      std::chrono::seconds time = std::chrono::seconds(3600);
+
+    
+      if (model.observations.size() > 1) {
+            model.baum_welch_multiple_observations(max_iterations, epsilon, time);
+      } else {
+            model.baum_welch(max_iterations, epsilon, time);
+      }
+
+      // Removed output and result path for brevity
       model_data.initial_distribution = model.initial_distribution;
       model_data.transitions = model.transitions;
       model_data.emissions = model.emissions;
-      
+
+      Cudd_Quit(model.manager);
       return model_data;
-      }
-\end{lstlisting}
+}
+      \end{minted}
+      \caption{C++ bindings file for CuPAAL}
+      \label{lst:cupaal-bindings}
+\end{listing*}
+
+\begin{listing*}[htb!]
+      \begin{minted}{python}
+def _bw_symbolic(self, max_iteration = 100, epsilon = 1e-2, outputPath = "", resultPath = ""):
+      try:
+      import libcupaal_bindings
+      except ModuleNotFoundError:
+      print("Cannot find module")
+      
+      states = [str(i) for i in range (self.h.nb_states)]
+      labels = list(set(self.h.labelling))
+      
+      observations = []
+      for times, sequences in zip(self.training_set.times, self.training_set.sequences):
+      for i in range(times):
+            observations.append(list(sequences))
+
+      initial_state = self.h.initial_state.tolist()
+      
+      transitions = self.h.matrix.flatten().tolist()
+
+      emissions = zeros((len(labels), self.h.nb_states))
+      for row in range(len(labels)):
+      for col in range(self.h.nb_states):
+            if self.h.labelling[col] == labels[row]:
+                  emissions[row][col] = 1
+      emissions = emissions.flatten().tolist()
+      
+      cupaal_model = libcupaal_bindings.cupaal_bw_symbolic(states, labels, observations, initial_state, transitions, emissions, max_iteration, epsilon, outputPath, resultPath)
+      self.h.initial_state = array(cupaal_model.initial_distribution)
+      self.h.matrix = array(cupaal_model.transitions).reshape(self.h.nb_states, self.h.nb_states)
+      self.h.emissions = array(cupaal_model.emissions).reshape(len(labels), self.h.nb_states)
+
+      return self.h
+      \end{minted}
+      \caption{Jajapy's implementation of the Baum-Welch algorithm using CuPAAL.}
+      \label{lst:jajapy-bw-symbolic}
+\end{listing*}
+
+\begin{listing*}[htb!]
+      \begin{minted}{python}
+# Some parameters have been removed for brevity
+def fit(
+      self,
+      output_file: str = None,
+      output_file_prism: str = None,
+      epsilon: float = 0.01,
+      max_it: int = inf,
+      symbolic: bool = False,
+      ):
+      # Removed preparation and settings number of processes, for brevity
+      if symbolic :
+            return self._bw_symbolic(max_it, epsilon, output_file, output_file_prism)
+      else:
+            return self._bw(
+                  max_it,
+                  pp,
+                  epsilon,
+                  output_file,
+                  output_file_prism,
+                  verbose,
+                  stormpy_output,
+                  return_data,
+            )
+      \end{minted}
+      \caption{Jajapy's fit function, which calls the CuPAAL implementation of the Baum-Welch algorithm when symbolic is set to true.}
+      \label{lst:jajapy-fit-cupaal}
+\end{listing*}
+
+\begin{listing*}
+      \begin{minted}{cpp}
+      void baum_welch_multiple_observations(unsigned int max_iterations = 100, double epsilon = 1e-6, std::chrono::seconds time = std::chrono::seconds(3600));
+      \end{minted}
+      \caption{Prototype of the function used to run the Baum-Welch algorithm on multiple observations in CuPAAL.}
+      \label{lst:baum-welch-multiple-observations}
+\end{listing*}

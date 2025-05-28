@@ -15,9 +15,8 @@
 \usepackage{thm-restate}
 \usepackage{multirow}
 \usepackage{bbm}
-\usepackage{listings}
-\lstset{breaklines}
-\usepackage[numbered]{matlab-prettifier}
+\usepackage{xcolor} % to access the named colour LightGray
+\definecolor{LightGray}{gray}{0.9}
 
 % Packages with options set
 \usepackage[hidelinks]{hyperref}
@@ -55,7 +54,7 @@
 
 % Package setup
 \setlength{\marginparwidth}{2cm} % todonotes width
-\setminted{linenos, autogobble, breaklines, fontsize=\footnotesize, style=friendly, xleftmargin=1em, numbersep=5pt}
+\setminted{linenos=true, autogobble, breaklines, fontsize=\footnotesize, style=friendly, xleftmargin=1em, numbersep=5pt, frame=lines}
 \addbibresource{bib/main.bib}
 
 % Other setup and options
