@@ -28,12 +28,15 @@ An example of a \gls{hmm} is a weather model where the hidden state represents t
 
 \subsection{Markov Chain}\label{subsec:mc}
 A \acrfull{mc}, named after Andrei Markov, is a stochastic model widely used in different fields of study~\cite{Rabiner89}.
+
+
 \begin{definition}[Markov Chain]
-    A Markov Chain (MC) is a tuple $\mathcal{M} = (S, \mathcal{L}, \mathscr{l}, \tau,  \pi)$ identical to the \gls{hmm} structure above except that the emission function is
-    \emph{deterministic}: for every $s\in S$ there is a single label
+    A Markov Chain (MC) is a tuple $\mathcal{M} = (S, \mathcal{L}, \mathscr{l}, \tau,  \pi)$ identical to the \gls{hmm} structure above except that the emission function is \emph{deterministic}: for every $s\in S$ there is a single label
     $l=\mathscr{l}(s)$ emitted with probability 1.
 \end{definition}
-In other words, the emission function $\mathscr{l}$ is a function that maps each state to a single label, meaning that each state emits exactly one label with probability 1.
+
+
+In other words, the emission function $\mathscr{l}$ is a function that maps each state to a single label $l \in L$, meaning that each state emits exactly and only one label.
 
 A common example of a \gls{mc} is a board game where a player moves between squares based on dice rolls.
 Each square corresponds to a state, the dice rolls determine the transition probabilities.
@@ -41,12 +44,17 @@ Each square corresponds to a state, the dice rolls determine the transition prob
 \subsection{Conversion between MCs and HMMs}\label{subsec:mc_hmm_conversion}
 In this section, we will discuss the conversion between \glspl{mc} and \glspl{hmm}.
 This conversion is important because it allows us to use the same algorithms and techniques for both models, even though they have different properties.
-From the definition of a \gls{mc}, we can see that it is a special case of an \gls{hmm} where the emission function is deterministic.
+
+In our case, we're interested in trace-equivalent models.
+By trace-equivalent, we mean that the probability distribution over observed sequences is the same for both models.
+i.e.\ the labels emitted by moving through the probabilistic models follow the same distribution.
 
 \subsubsection{Markov Chains to Hidden Markov Models}\label{subsec:mc2hmm}
-This conversion is straightforward because the components of the \gls{mc} and \gls{hmm} are the same.
+From the definition of a \gls{mc}, we can see that it is a special case of an \gls{hmm} where the emission function is deterministic, which makes this conversion very simple.
+
+
 \begin{definition}[Markov Chain to Hidden Markov Model]
-    Given a \gls{hmm} $\mathcal{M} = (S, \mathcal{L}, \mathscr{l}, \tau,  \pi)$, we can convert it into a \gls{mc} $\mathcal{M}' = (S', \mathcal{L}', \mathscr{l}', \tau',  \pi')$ by defining the components as follows:
+    For each \gls{mc} $\mathcal{M} = (S, \mathcal{L}, \mathscr{l}, \tau,  \pi)$, there exists a trace-equivalent \gls{hmm} $\mathcal{M}' = (S', \mathcal{L}', \mathscr{l}', \tau',  \pi')$, where:
     \begin{itemize}
         \item $S' = S$.
         \item $\mathcal{L}' = \mathcal{L}$.
@@ -58,8 +66,9 @@ This conversion is straightforward because the components of the \gls{mc} and \g
         \item $\pi' = \pi$.
     \end{itemize}
 \end{definition}
-The \gls{mc} $\mathcal{M}'$ is equivalent to the \gls{hmm} $\mathcal{M}$, meaning that they have the same transition and emission probabilities.
-The only difference is that the \gls{mc} has a trivial emission function, meaning that each state emits a single label with probability 1.
+
+
+The only difference in this case is the structure of the emission functions.
 
 % \subsubsection{Hidden Markov Models to Markov Chains}\label{subsec:hmm2mc}
 % Converting a \gls{hmm} to an equivalent \gls{mc} is more complex.
@@ -102,21 +111,27 @@ The only difference is that the \gls{mc} has a trivial emission function, meanin
 The Baum-Welch algorithm is a special case of the Expectation-Maximization (EM) framework used to estimate the parameters of a \gls{hmm} given a set of observed sequences.
 Since the underlying states are not directly observable, the algorithm iteratively refines the model parameters $\pi$, $\mathscr{l}$, and $\tau$ to maximize the likelihood of the observations.
 Each iteration of the algorithm consists of two steps:
+
+
 \begin{itemize}
     \item E-step: Compute the expected values of the hidden variable given the current parameters.
     \item M-step: Update the model parameters to maximize the expected complete-data log-likelihood.
 \end{itemize}
+
 
 Convergence is typically achieved when the change in the likelihood (or parameters) between iterations falls below a threshold~\cite{Rabiner89}.
 
 We can represent a \gls{hmm} as matrices for computational efficiency.
 
 They are defined as follows:
+
+
 \begin{itemize}
     \item $\pmb{\pi}$ is the initial state distribution vector, where $\pi_i = \pi(s_i)$ is the probability of starting in state $s_i$, this is a column vector of size $|S|$.
     \item $\pmb{P}$ is the transition matrix, where $P_{ij} = \tau(s_i)(s_j)$ is the probability of transitioning from state $s_i$ to state $s_j$, this is a square matrix of size $|S| \times |S|$.
     \item $\pmb{\omega}$ is the emission matrix, where $\omega_{ij} = \mathscr{l}(s_i)(l_j)$ is the probability of emitting label $l_j$ given state $s_i$, this is a matrix of size $|S| \times |\mathcal{L}|$.
 \end{itemize}
+
 
 To illustrate our symbolic implementation, we describe a single Baum-Welch iteration in terms of matrix operations, assuming familiarity with the algorithm. For an introductory treatment, see~\cite{Baum70,reynouard2024learning}.
 
