@@ -1,16 +1,14 @@
 \section{Implementation}\label{sec:implementation}
-This section will provide an overview of different types of Decision Diagrams, how they each are structured, their differences and how they can be converted from one to another.
+This section will provide an overview of the implementation of \Cupaal.
+This will include the Baum-Welch algorithm, and how \Cupaal~is integrated into \Jajapy, creating \JajapyTwo.
 
-The different approaches that can be taken for the Baum-Welch algorithm will also be discussed, including the recursive, matrix-based, and \gls{add}-based approaches. The advantages and limitations of each approach will be highlighted.
+\subsection{Motivation for CuPAAL}\label{subsec:motivation-for-cupaal}
+The motivation for \Cupaal is to provide a more efficient and scalable implementation of the Baum-Welch algorithm for parameter estimation.
+Specifically, we aim to improve the performance of the algorithm when dealing with large and complex models, and improve upon the existing limitations of the Baum-Welch algorithm in \Jajapy.
 
-Finally, the \gls{cudd} library will be introduced, which is a library for implementing and manipulating \glspl{bdd} and \glspl{add}.
-
-
-
-\subsection{Recursive vs. Matrix vs. ADD-based Approaches}\label{subsec:approaches}
+\subsubsection{Recursive vs. Matrix vs. ADD-based Approaches}\label{subsec:approaches}
 When working with the Baum-Welch algorithm, different approaches can be taken to optimize computational efficiency.
 Three common strategies are recursive, matrix-based, and \gls{add}-based approaches, each with distinct advantages and limitations.
-
 
 \begin{itemize}
     \item \textbf{Recursive Approach:} Conceptually simple, recursion follows a divide-and-conquer strategy, and makes use of a dynamic programming approach. Previous calculations are used to build upon future calculations. These results are stored in a list or a map, so that they can be accessed when needed ~\cite[Chapter 4]{cormen2022introduction}.
@@ -21,11 +19,19 @@ Three common strategies are recursive, matrix-based, and \gls{add}-based approac
           Compared to matrices, \glspl{add} can offer a more space-efficient alternative for structured data while extending \gls{bdd} techniques to handle both Boolean and numerical computations.
 \end{itemize}
 
-
 In this work we explore the benefits of \gls{add}-based approaches for solving complex problems, focusing on parameter estimation in \glspl{dtmc} and \glspl{ctmc}.
 We compare the performance of \gls{add}-based algorithms against recursive-based implementations, highlighting the advantages of using \glspl{add} for efficient computation and memory management.
 
-\subsection{CuDD}\label{subsec:cudd}
+\subsection{CuPAAL}\label{subsec:cupaal}
+\Cupaal is a C++ library that implements the Baum-Welch algorithm for parameter estimation, and has evolved over time.
+
+The initial version of \Cupaal was called \textit{SUDD}, which was a partial implementation of the Baum-Welch algorithm, using \glspl{add}.
+This version was mainly focused on displaying the efficiency of \glspl{add} for parameter estimation problems, and was not fully functional.
+The next version of \Cupaal was called \textit{CuPAAL}, which was a complete implementation of the Baum-Welch algorithm, using \glspl{add}, however this only supported \glspl{hmm}, and was only designed to make use of a single observation.
+
+
+
+\subsubsection{CuDD}\label{subsec:cudd}
 \acrfull{cudd} is a library for implementing and manipulating \glspl{bdd} and \glspl{add} developed at the University of Colorado.
 The \gls{cudd} library~\cite{somenzi1997cudd} is a powerful library for implementing and manipulating various types of decision diagrams, including \glspl{bdd} and \glspl{add}.
 
@@ -35,9 +41,7 @@ By leveraging the \gls{cudd} library, we demonstrate the benefits of \gls{add}-b
 In this project, we use the \gls{cudd} library to store \glspl{add} and perform operations on them.
 Its optimized algorithms and efficient memory management enable symbolic handling of large and complex matrices, significantly improving performance compared to traditional methods.
 
-
-
-\subsection{From Prism to CuPAAL}\label{subsec:from_prism_to_cupaal}
+\subsubsection{From Prism to CuPAAL}\label{subsec:from_prism_to_cupaal}
 The models are encoded from Prism models to CuPAAL models. This is done by parsing the Prism model to Jajapy, using Stormpy.
 
 The Jajapy model contains a matrix for it's transitions, a matrix for it's labels, and a vector for the initial state.
@@ -57,8 +61,7 @@ The Initial state vector is encoded similarly to the label matrix, but only as a
 We have not modified or extended the CUDD library.
 All functionality used in our implementation is available through the standard CUDD library.
 
-
-\subsection{Kronecker Product Implementation}\label{subsec:kronecker-product-implementation}
+\subsubsection{Kronecker Product Implementation}\label{subsec:kronecker-product-implementation}
 This section will provide an overview of how the Kronecker product is implemented in CuPAAL, using the row and column duplication method mentioned in \autoref{subsec:from_prism_to_cupaal}.
 
 The structure of Decision Diagrams in CuPAAL, where keeping track of all the new binary values used for encoding from a matrix to an \gls{add} can add a layer of complexity for calculation.
@@ -115,7 +118,6 @@ This is done as follows:
 
 
 Hereby showing that the Hadamard product can be used to compute the Kronecker product between two matrices, by using the row and column duplication method.
-
 
 \subsection{Implementation to Jajapy}\label{subsec:implementation-to-jajapy}
 This section will give an overview of how \Cupaal\ is implemented into \Jajapy, using bindings between C++ and Python.
@@ -237,6 +239,6 @@ def fit(self, output_file: str, output_file_prism: str, epsilon: float, max_it: 
 
 When the parameter is true, the Jajapy model will call the~\autoref{lst:jajapy-bw-symbolic} function, which will then call the CuPAAL implementation of the Baum-Welch algorithm.
 
-
-
+\subsection{Integration Discussion}\label{subsec:integration-discussion}
+The integration of \Cupaal\ into \Jajapy\ has been successful, allowing us to leverage the Baum-Welch algorithm for parameter estimation in \glspl{dtmc} and \glspl{ctmc}.
 
