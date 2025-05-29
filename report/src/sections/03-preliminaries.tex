@@ -1,9 +1,17 @@
 \section{Preliminaries}\label{sec:preliminaries}
 This section provides an overview of the theoretical background necessary to understand the rest of the article.
+
 We begin by defining the key concepts of a \gls{hmm} and a \gls{mc}, which are the two main models used in this report, then go on to introduce the Baum-Welch algorithm, which is a widely used algorithm for training \glspl{hmm}, and showing how it can be adapted to handle multiple observation sequences using matrix operations.
 
 \subsection{Hidden Markov Model}\label{subsec:hmm}
 \acrfullpl{hmm} were introduced by Baum and Petrie in 1966~\cite{baum1966statistical} and have since been widely used in various fields, such as speech recognition~\cite{chavan2013overview}, bioinformatics~\cite{ciocchetta2009bio}, and finance~\cite{mamon2007hidden}.
+
+A \gls{hmm} is a statistical model that describes a system that evolves over time.
+The system is assumed to hold the Markov property, meaning that the future state of the system only depends on the current state and not on the past states.
+The system is also assumed to be unobservable, meaning that the states are hidden and cannot be directly observed.
+Instead, the system emits observations, which are used to infer the hidden states.
+
+
 \begin{definition}[Hidden Markov Model]
     A Hidden Markov Model (HMM) is a tuple $\mathcal{M} = (S, \mathcal{L}, \mathscr{l}, \tau,  \pi)$, where:
     \begin{itemize}
@@ -15,14 +23,11 @@ We begin by defining the key concepts of a \gls{hmm} and a \gls{mc}, which are t
     \end{itemize}
 \end{definition}
 
-$D(X)$ denotes the set of probability distributions over a  finite set $X$.
+
+$D(X)$ denotes the set of probability distributions over a finite set $X$.
 The emission function $\mathscr{l}$ describes the probability of emitting a label given a state.
 The transition function $\tau$ describes the probability of transitioning from one state to another.
 The initial distribution $\pi$ describes the probability of starting in a given state.
-A \gls{hmm} is a statistical model that describes a system that evolves over time.
-The system is assumed to hold the Markov property, meaning that the future state of the system only depends on the current state and not on the past states.
-The system is also assumed to be unobservable, meaning that the states are hidden and cannot be directly observed.
-Instead, the system emits observations, which are used to infer the hidden states.
 
 An example of a \gls{hmm} is a weather model where the hidden state represents the actual weather (sunny, rainy, or cloudy), but we only observe indirect signals, such as whether someone is carrying an umbrella or wearing sunglasses.
 
@@ -37,19 +42,19 @@ A \acrfull{mc}, named after Andrei Markov, is a stochastic model widely used in 
 
 
 In other words, the emission function $\mathscr{l}$ is a function that maps each state to a single label $l \in L$, meaning that each state emits exactly and only one label.
+Two distinct states may emit the same label.
 
-A common example of a \gls{mc} is a board game where a player moves between squares based on dice rolls.
+An example of a \gls{mc} is a board game where a player moves between squares based on dice rolls.
 Each square corresponds to a state, the dice rolls determine the transition probabilities.
 
 \subsection{Conversion between MCs and HMMs}\label{subsec:mc_hmm_conversion}
 In this section, we will discuss the conversion between \glspl{mc} and \glspl{hmm}.
-This conversion is important because it allows us to use the same algorithms and techniques for both models, even though they have different properties.
+This conversion is important because it allows us to use the same algorithms and techniques from the original \Cupaal\ implementation for both model types, even though they have different properties.
 
 In our case, we're interested in trace-equivalent models.
 By trace-equivalent, we mean that the probability distribution over observed sequences is the same for both models.
 i.e.\ the labels emitted by moving through the probabilistic models follow the same distribution.
 
-\subsubsection{Markov Chains to Hidden Markov Models}\label{subsec:mc2hmm}
 From the definition of a \gls{mc}, we can see that it is a special case of an \gls{hmm} where the emission function is deterministic, which makes this conversion very simple.
 
 
@@ -109,14 +114,15 @@ The only difference in this case is the structure of the emission functions.
 
 \subsection{Baum-Welch Algorithm}\label{subsec:baum-welch}
 The Baum-Welch algorithm is a special case of the Expectation-Maximization (EM) framework used to estimate the parameters of a \gls{hmm} given a set of observed sequences.
+
 Since the underlying states are not directly observable, the algorithm iteratively refines the model parameters $\pi$, $\mathscr{l}$, and $\tau$ to maximize the likelihood of the observations.
 Each iteration of the algorithm consists of two steps:
 
 
-\begin{itemize}
-    \item E-step: Compute the expected values of the hidden variable given the current parameters.
-    \item M-step: Update the model parameters to maximize the expected complete-data log-likelihood.
-\end{itemize}
+\begin{description}
+    \item[E-step] Compute the expected values of the hidden variable given the current parameters.
+    \item[M-step] Update the model parameters to maximize the expected complete-data log-likelihood.
+\end{description}
 
 
 Convergence is typically achieved when the change in the likelihood (or parameters) between iterations falls below a threshold~\cite{Rabiner89}.
@@ -164,17 +170,21 @@ For a given time step $t$, let $\pmb{\omega}(t)$ be the column vector of emissio
     \label{lst:forward-backward}
 \end{listing}
 
+
 The above procedures compute the column vectors $\pmb{\alpha}(t) \text{ and } \pmb{\beta}(t) \in [0,1]^{n}$ for $t = 1\dots T$ which are later used to compute the coefficients $\pmb{\gamma}(t) \in [0,1]^{n}$ and $\pmb{\xi}(t) \in [0,1]^{n \times n}$ as follows:
+
 
 \begin{align*}
     \pmb{\gamma}(t) & = \pmb{\alpha}(t) \bigcirc \pmb{\beta}(t)) / P[\mathbf{o} | \mathcal{M}]                                                                   \\%& t = 1\dots T   \\
     \pmb{\xi}(t)    & = (P[\mathbf{o} | \mathcal{M}] \cdot P) \bigcirc \left( \pmb{\alpha}(t) \otimes (\pmb{\beta}(t+1) \bigcirc \pmb{\omega}(t+1))^\top \right) %& t = 1\dots T-1
 \end{align*}
 
+
 Here, $\otimes$ is the Kronecker product and the probability $P[\mathbf{o} | \mathcal{M}]$ to observe $\mathbf{o}$ in $\mathcal{M}$ is computed as $\mathbf{1}^\top \pmb{\alpha}(T)$, Here $\top$ describes the transposed vector, i.e., $\mathbf{1}^\top$ is a row vector of ones.
 We calculate $\pmb{\gamma}(t)$ from $t= 1$ to $T$ and $\pmb{\xi}(t)$ from $t= 1$ to $T-1$.
 
 Finally, the initial probability vector, the transition probability matrix and emission matrix and are updated as follows:
+
 
 \begin{equation}
     \hat{\pmb{\pi}} = \pmb{\gamma}(1)
@@ -189,13 +199,17 @@ Finally, the initial probability vector, the transition probability matrix and e
     \label{eq:transition-probabilities-update}
 \end{equation}
 
+
 Where $\bullet$ is the transposed Khatri-Rao product (i.e., row-by-row Kronecker product), and $[[o_t]] = ([[o_t=l]])_{l \in \mathcal{L}}$ is the one-hot encoding of the observation $o_t$, meaning that it is a vector of size $|\mathcal{L}|$ with a 1 in the position corresponding to the observation $o_t$ and 0 elsewhere.
 $\oslash$ is the element-wise division, and $\otimes$ is the Kronecker product.
 The $\pmb{\gamma}$ and $\pmb{\xi}$ are defined as follows:
+
+
 \begin{equation}
     \pmb{\gamma} = \sum_{t=1}^{T} \pmb{\gamma}(t) \text{ and } \pmb{\xi} = \sum_{t=1}^{T-1} \pmb{\xi}(t)
     \label{eq:gamma-xi-definitions}
 \end{equation}
+
 
 These update rules form the standard Baum-Welch algorithm for training \glspl{hmm} on a single observation sequence.
 However, the approach can be naturally extended to multiple sequences.
@@ -217,11 +231,13 @@ However, the emission matrix update needs to account for all sequences.
 
 The emission matrix is updated as follows:
 
+
 \begin{equation}
     \pmb{\omega}
     _s(o) = (\mathbbm{1} \oslash \pmb{\gamma}) \bullet (\sum_{i=1}^N \sum_{t=1}^{T} \pmb{\gamma}_{it} \otimes \mathbbm{1}_{[[o_t]]}^{T})
     \label{eq:omega-update}
 \end{equation}
+
 
 This mirrors the single-sequence case (see \autoref{eq:emission-probabilities-update}) but extends the summation in the left side of the Kronecker product to cover all sequences and all time steps.
 This allows us to compute the emission probabilities for each state across all sequences, ensuring that the model captures the overall distribution of observations.
@@ -240,3 +256,21 @@ In this case:
 
 This simplification avoids unnecessary computation and reflects the reduced uncertainty in the model: there is no need to marginalize over emissions, as each state deterministically produces a known label.
 Consequently, the Baum-Welch algorithm becomes more efficient when applied to \glspl{mc}.
+
+\subsection{Decision Diagrams}\label{subsec:decision-diagrams}
+\acrfullpl{bdd} are data structures for efficiently representing and manipulating Boolean functions.
+They are a compressed representation of truth tables, capturing the logical structure of a function in a graph-based format by eliminating redundancy, reducing memory usage, and improving computational efficiency~\cite{bryant1986graph}.
+
+A \gls{bdd} is a directed acyclic graph derived from a decision tree, where each non-terminal node represents a Boolean variable, edges correspond to binary assignments (0 or 1), and terminal nodes store function values (0 or 1).
+To reduce the size of the decision tree, \glspl{bdd} exploit redundancy by merging equivalent substructures, resulting in a canonical form (when reduced and ordered) that allows for efficient operations such as function evaluation, equivalence checking, and Boolean operations~\cite{bryant1986graph}.
+
+\glspl{bdd} have been widely used in formal verification, model checking, and logic synthesis due to their ability to compactly represent large Boolean functions while maintaining efficient computational properties.
+However, in rare cases \glspl{bdd} can suffer from exponential blowup. This can occur particularly when dealing with functions that lack inherent structure or when representing numerical computations that go beyond Boolean logic.
+
+\subsection{ADDs}\label{subsec:adds}
+\acrfullpl{add} generalize the concept of \glspl{bdd} by allowing terminal nodes to take values beyond Boolean constants (0 and 1).
+Instead of restricting values to true/false, \glspl{add} can store arbitrary numerical values, making them useful for representing and manipulating functions over discrete domains~\cite{bahar1997algebric}.
+This generalization enables the efficient representation of functions such as cost functions~\cite{kwiatkowska2004probabilistic}, probabilities~\cite{baier1997symbolic}, and other numerical relationships that arise in probabilistic reasoning.
+
+The fundamental structure of an \gls{add} remains similar to a \gls{bdd}, where a decision tree is compacted by merging redundant substructures.
+However, instead of performing Boolean operations, \glspl{add} allow for arithmetic operations such as addition and multiplication, making them well-suited for applications like dynamic programming, \glspl{mdp}, and linear algebraic computations~\cite{bahar1997algebric}.

@@ -1,27 +1,11 @@
-\section{Methodology}\label{sec:methodology}
+\section{Implementation}\label{sec:implementation}
 This section will provide an overview of different types of Decision Diagrams, how they each are structured, their differences and how they can be converted from one to another.
 
 The different approaches that can be taken for the Baum-Welch algorithm will also be discussed, including the recursive, matrix-based, and \gls{add}-based approaches. The advantages and limitations of each approach will be highlighted.
 
 Finally, the \gls{cudd} library will be introduced, which is a library for implementing and manipulating \glspl{bdd} and \glspl{add}.
 
-\subsection{Decision Diagrams}\label{subsec:decision-diagrams}
-\acrfullpl{bdd} are data structures for efficiently representing and manipulating Boolean functions.
-They are a compressed representation of truth tables, capturing the logical structure of a function in a graph-based format by eliminating redundancy, reducing memory usage, and improving computational efficiency~\cite{bryant1986graph}.
 
-A \gls{bdd} is a directed acyclic graph derived from a decision tree, where each non-terminal node represents a Boolean variable, edges correspond to binary assignments (0 or 1), and terminal nodes store function values (0 or 1).
-To reduce the size of the decision tree, \glspl{bdd} exploit redundancy by merging equivalent substructures, resulting in a canonical form (when reduced and ordered) that allows for efficient operations such as function evaluation, equivalence checking, and Boolean operations~\cite{bryant1986graph}.
-
-\glspl{bdd} have been widely used in formal verification, model checking, and logic synthesis due to their ability to compactly represent large Boolean functions while maintaining efficient computational properties.
-However, in rare cases \glspl{bdd} can suffer from exponential blowup. This can occur particularly when dealing with functions that lack inherent structure or when representing numerical computations that go beyond Boolean logic.
-
-\subsection{ADDs}\label{subsec:adds}
-\acrfullpl{add} generalize the concept of \glspl{bdd} by allowing terminal nodes to take values beyond Boolean constants (0 and 1).
-Instead of restricting values to true/false, \glspl{add} can store arbitrary numerical values, making them useful for representing and manipulating functions over discrete domains~\cite{bahar1997algebric}.
-This generalization enables the efficient representation of functions such as cost functions~\cite{kwiatkowska2004probabilistic}, probabilities~\cite{baier1997symbolic}, and other numerical relationships that arise in probabilistic reasoning.
-
-The fundamental structure of an \gls{add} remains similar to a \gls{bdd}, where a decision tree is compacted by merging redundant substructures.
-However, instead of performing Boolean operations, \glspl{add} allow for arithmetic operations such as addition and multiplication, making them well-suited for applications like dynamic programming, \glspl{mdp}, and linear algebraic computations~\cite{bahar1997algebric}.
 
 \subsection{Recursive vs. Matrix vs. ADD-based Approaches}\label{subsec:approaches}
 When working with the Baum-Welch algorithm, different approaches can be taken to optimize computational efficiency.
@@ -43,9 +27,9 @@ We compare the performance of \gls{add}-based algorithms against recursive-based
 
 \subsection{CuDD}\label{subsec:cudd}
 \acrfull{cudd} is a library for implementing and manipulating \glspl{bdd} and \glspl{add} developed at the University of Colorado.
-The \gls{cudd} library~\cite{somenzi1997cudd} is a powerful tool for implementing and manipulating decision diagrams, including \glspl{bdd} and \glspl{add}.
+The \gls{cudd} library~\cite{somenzi1997cudd} is a powerful library for implementing and manipulating various types of decision diagrams, including \glspl{bdd} and \glspl{add}.
 
-Implemented in C, the \gls{cudd} library ensures high-performance execution and can be seamlessly integrated into C++ programs, which we utilize in this paper.
+Implemented in C, the \gls{cudd} library ensures high-performance execution and can be seamlessly integrated into C++ programs, which we utilize in \Cupaal.
 By leveraging the \gls{cudd} library, we demonstrate the benefits of \gls{add}-based approaches for solving parameter estimation problems in \glspl{dtmc} and \glspl{ctmc}.
 
 In this project, we use the \gls{cudd} library to store \glspl{add} and perform operations on them.
@@ -199,7 +183,7 @@ Jajapy can call the $cupaal\_bw\_symbolic$ function, which will then call the Cu
 We create a new function in Jajapy, called \texttt{\_bw\_symbolic}, which is used to call the \Cupaal\ implementation of the Baum-Welch algorithm, as seen in~\autoref{lst:jajapy-bw-symbolic}.
 
 
-\begin{listing}[htb!]
+\begin{listing*}[htb!]
     \begin{minted}{python}
 def _bw_symbolic(self, max_iteration = 100, epsilon = 1e-2, outputPath = "", resultPath = ""):
     try:
@@ -230,7 +214,7 @@ def _bw_symbolic(self, max_iteration = 100, epsilon = 1e-2, outputPath = "", res
       \end{minted}
     \caption{Jajapy's implementation of the Baum-Welch algorithm using CuPAAL.}
     \label{lst:jajapy-bw-symbolic}
-\end{listing}
+\end{listing*}
 
 
 The fit function in Jajapy is modified to call the \texttt{\_bw\_symbolic} function when a new parameter called \texttt{symbolic} is set to true, as seen in~\autoref{lst:jajapy-fit-cupaal}.
