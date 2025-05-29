@@ -1,5 +1,6 @@
 \section{Preliminaries}\label{sec:preliminaries}
 This section provides an overview of the theoretical background necessary to understand the rest of the article.
+
 We begin by defining the key concepts of a \gls{hmm} and a \gls{mc}, which are the two main models used in this report, then go on to introduce the Baum-Welch algorithm, which is a widely used algorithm for training \glspl{hmm}, and showing how it can be adapted to handle multiple observation sequences using matrix operations.
 
 \subsection{Hidden Markov Model}\label{subsec:hmm}
@@ -54,7 +55,6 @@ In our case, we're interested in trace-equivalent models.
 By trace-equivalent, we mean that the probability distribution over observed sequences is the same for both models.
 i.e.\ the labels emitted by moving through the probabilistic models follow the same distribution.
 
-\subsubsection{Markov Chains to Hidden Markov Models}\label{subsec:mc2hmm}
 From the definition of a \gls{mc}, we can see that it is a special case of an \gls{hmm} where the emission function is deterministic, which makes this conversion very simple.
 
 

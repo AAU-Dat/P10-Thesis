@@ -1,19 +1,21 @@
 \section{Previous Work}\label{sec:jajapy_and_cupaal}
 In this section, we provide a brief overview of previous work that has influenced our research and has been iterated upon.
 Specifically, we discuss what these tools are, how they function, who utilizes them, and the motivations behind integrating them into our research.
-The focus will be on two primary tools: Jajapy and CuPAAL.
+The focus will be on four primary tools: \Prism\, \Storm\, \Jajapy\ and \Cupaal.
 
 
 \subsection{Jajapy}\label{sec:jajapy}
 \Jajapy\ provides learning algorithms designed to construct accurate models of a system under learning (SUL) from observed traces.
 Once learned, these models can be directly exported for formal analysis in tools such as \Storm~and \Prism.
 
-\begin{figure}[!htb]
+
+\begin{figure}[htb!]
     \centering
     \includegraphics[width=\columnwidth]{figures/workflow.pdf}
     \caption{Modeling and verification workflow using \Jajapy. Phases involving \Jajapy\ are highlighted in green, while the blue phase represents verification using \Storm~or \Prism.}
     \label{fig:workflow}
 \end{figure}
+
 
 In this context, we refer to the \textit{training set} as the collection of observation traces used to infer a model of the SUL, and the \textit{test set} as a separate set of traces used to evaluate the quality of the learned model.
 
@@ -22,6 +24,7 @@ For clarity, this paper focuses specifically on the new features introduced in \
 However, these improvements are equally applicable to other classes of Markov models supported by the tool.
 
 At the core of \Jajapy's learning capabilities are several variants of the Baum-Welch (BW) algorithm~\cite{Baum70,Rabiner89}, adapted for discrete-time Markov chains (MCs), Markov decision processes (MDPs)\cite{BacciILR21}, and continuous-time Markov chains (CTMCs)\cite{BacciILR23}.
+
 Each algorithm requires two inputs: a training set and the desired number of states for the output model.
 The process begins with the creation of a randomly initialized model (e.g., a Markov chain) and iteratively updates its transition probabilities, increasing the likelihood of transitions that better explain the observed traces.
 
@@ -30,20 +33,22 @@ To improve convergence and model quality, \Jajapy\ allows users to supply a cust
 
 An example of using \Jajapy\ to learn a 10-state Markov chain from a training set, starting from a random initial hypothesis, is shown in \autoref{fig:run-bw}.
 
-\begin{listing}
+
+\begin{listing}[htb!]
     \begin{minted}{python} 
-    from jajapy import BW 
+    import jajapy
+    training_set = jajapy.loadSet("Path/to/data")
     type(training_set) # list 
-    output_model = BW().fit(training_set, nb_states=10) type(output_model) # stormpy.SparseDtmc 
+
+    learned_model = jajapy.BW().fit(training_set, nb_states=10)
+    type(learned_model) # stormpy.SparseDtmc 
     \end{minted}
     \caption{Example of using \Jajapy's BW implementation to learn a 10-state Markov chain from a training set.}
     \label{fig:run-bw}
 \end{listing}
 
-%Beyond the Baum-Welch algorithm, \Jajapy\ also includes implementations of Alergia~\cite{CarrascoO94,CarrascoO99} and IOAlergia~\cite{Mao11,MaoCJNLN16}, which are alternative algorithms for learning MCs and MDPs, respectively.
-%These approaches require both a training set and a user-defined \textit{confidence} parameter.
 
-Once a model has been learned, \Jajapy\ supports direct verification of properties using \Storm, provided the properties are supported.
+Jajapy supports reading prism files, using \Storm\ (through \Stormpy), as well as direct verification of learned model, through properties, provided the properties are supported.
 Alternatively, the model can be exported to \Prism's format for verification using the \Prism\ model checker.
 
 
@@ -51,13 +56,15 @@ Alternatively, the model can be exported to \Prism's format for verification usi
 CuPAAL is a tool developed in C++ that extends the work done in Jajapy by implementing the Baum-Welch algorithm with an \gls{add}-based approach instead of a recursive method.
 The goal of CuPAAL is to leverage \glspl{add} to improve the efficiency of learning Markov models, particularly in large-scale applications where traditional recursive methods may become computationally expensive.
 
-CuPAAL has undergone multiple iterations. Initially, it implemented a partial \gls{add}-based approach, where only certain components of the Baum-Welch algorithm were optimized using \glspl{add}.
+CuPAAL has undergone multiple iterations.
+Initially, it implemented a partial \gls{add}-based approach, where only the calculation of the alpha and beta values of the Baum-Welch algorithm were implemented using \glspl{add}.
 This partial implementation served as an initial proof-of-concept to determine whether incorporating \glspl{add} could yield performance benefits compared to the recursive approach employed by Jajapy.
 
-Following promising results from the partial implementation, further development led to a fully \gls{add}-based version of CuPAAL.
+Following promising results from the partial implementation, further development led to a fully \gls{add}-based version of CuPAAL for \glspl{hmm}.
 This iteration replaced all recursive computations with \glspl{add}, enabling more efficient execution, particularly for large models.
 The transition to a fully \gls{add}-based approach demonstrated the potential for significant computational savings and scalability improvements, reinforcing the viability of this method for broader applications beyond our initial research scope.
 
+Because there is no notion of \gls{hmm} in the \Prism\ formalism, we've implemented the \gls{bw} algorithm for use with \glspl{mc}.
+Given the similarities between these model types, we've reused a lot of the previous work in the implementation.
+
 By building upon Jajapy and developing CuPAAL, we have been able to evaluate the impact of using \glspl{add} in probabilistic model learning.
-
-
