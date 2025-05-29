@@ -56,6 +56,14 @@
 \addbibresource{bib/main.bib}
 
 % Other setup and options
+\usetikzlibrary{shapes.geometric, arrows, fit, calc, automata, positioning, tikzmark,chains, scopes}
+%%% done
+% Events
+\usetikzlibrary{shapes.multipart}
+\tikzstyle{arrow} = [thick,->,>=stealth]
+
+\tikzstyle{state} = [rectangle, minimum width=2cm, minimum height=0.7cm, text centered, draw=black, fill=white!30, align=center]
+\tikzstyle{cluster} = [line width=0.4pt, draw=black, inner sep=0.5em, rounded corners=0.1cm]
 \declaretheorem{theorem}
 \declaretheorem{lemma}
 \declaretheorem{corollary}

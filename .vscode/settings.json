@@ -28,7 +28,7 @@
       "name": "pdflatex",
       "command": "pdflatex",
       "args": [
-        "--shell-escape",
+        "-shell-escape",
         "-synctex=1",
         "-output-directory=%OUTDIR%",
         "-interaction=nonstopmode",
