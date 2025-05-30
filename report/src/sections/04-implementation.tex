@@ -22,30 +22,35 @@ Three common strategies are recursive, matrix-based, and \gls{add}-based approac
 In this work we explore the benefits of \gls{add}-based approaches for solving complex problems, focusing on parameter estimation in \glspl{dtmc} and \glspl{ctmc}.
 We compare the performance of \gls{add}-based algorithms against recursive-based implementations, highlighting the advantages of using \glspl{add} for efficient computation and memory management.
 
-\subsection{Evolution of \Cupaal}\label{subsec:evolution_of_cupaal}
+\subsection{What is \Cupaal}\label{subsec:what_is_cupaal}
 \Cupaal is a C++ library that implements the Baum-Welch algorithm for parameter estimation, and has evolved over time.
 
-The initial version of \Cupaal was called \textit{SUDD}, which was a partial implementation of the Baum-Welch algorithm, using \glspl{add}.
+The initial version of \Cupaal was written in C and called \textit{SUDD}, which was a partial implementation of the Baum-Welch algorithm, using \glspl{add}.
 This version was mainly focused on displaying the efficiency of \glspl{add} for parameter estimation problems, and was not fully functional.
-The next version of \Cupaal was called \textit{CuPAAL}, which was a complete implementation of the Baum-Welch algorithm, using \glspl{add}, however this only supported \glspl{hmm}, and was only designed to make use of a single observation.
+The next iteration was called \Cupaal, which was a complete implementation of the Baum-Welch algorithm, using \glspl{add}, however it only supported \glspl{hmm}, and was only designed to make use of a single observation.
 
+The current version of \Cupaal has been extended to support \glspl{dmtc} and can handle multiple observations.
+This version of \Cupaal is designed to be used in conjunction with \Jajapy, allowing for easy integration and use in parameter estimation problems.
 
+The following sections will provide an overview of what \Cupaal is, and what it can do.
 
-\subsubsection{CuDD}\label{subsec:cudd}
+\subsubsection{What Does \Cupaal Contain}\label{subsec:what_does_cupaal_contain}
+Throughout all its iterations, \Cupaal has made use of \gls{cudd}.
 \acrfull{cudd} is a library for implementing and manipulating \glspl{bdd} and \glspl{add} developed at the University of Colorado.
 The \gls{cudd} library~\cite{somenzi1997cudd} is a powerful library for implementing and manipulating various types of decision diagrams, including \glspl{bdd} and \glspl{add}.
 
 Implemented in C, the \gls{cudd} library ensures high-performance execution and can be seamlessly integrated into C++ programs, which we utilize in \Cupaal.
-By leveraging the \gls{cudd} library, we demonstrate the benefits of \gls{add}-based approaches for solving parameter estimation problems in \glspl{dtmc} and \glspl{ctmc}.
+By leveraging the \gls{cudd} library, we demonstrate the benefits of \gls{add}-based approaches for solving parameter estimation problems in \glspl{dtmc}.
 
-In this project, we use the \gls{cudd} library to store \glspl{add} and perform operations on them.
+The \gls{cudd} library is used to store \glspl{add} and perform operations on them.
 Its optimized algorithms and efficient memory management enable symbolic handling of large and complex matrices, significantly improving performance compared to traditional methods.
 
-\subsubsection{From Prism to CuPAAL}\label{subsec:from_prism_to_cupaal}
-The models are encoded from Prism models to CuPAAL models. This is done by parsing the Prism model to Jajapy, using Stormpy.
+\subsubsection{From Prism to \Cupaal}\label{subsec:from_prism_to_cupaal}
+In the current iteration of \Cupaal, it is possible to use Prism models as input to the Baum-Welch algorithm.
+The models are encoded from Prism models to \Cupaal models. This is done by parsing the Prism model to Jajapy, using Stormpy.
 
 The Jajapy model contains a matrix for it's transitions, a matrix for it's labels, and a vector for the initial state.
-The model is passed to CuPAAL where these matrices and vectors are encoded into \glspl{add}, as a function $f \colon {0,1}^n \times {0,1}^n \to R$.
+The model is passed to \Cupaal where these matrices and vectors are encoded into \glspl{add}, as a function $f \colon {0,1}^n \times {0,1}^n \to R$.
 
 The Transition matrix is a $S\times S$ matrix, where $S=States$, and is encoded to an \gls{add}, by each row and column with a binary value. This value is determined based on the size of the matrix,
 $n = \ceil{log_2(S)}$.
@@ -246,11 +251,11 @@ The integration of \Cupaal\ into \Jajapy\ has been successful, allowing us to le
 
 % Implementation
 % Motivation for CuPAAL
-% recursive vs. matrix vs. ADD-based approaches
+%% recursive vs. matrix vs. ADD-based approaches
 % CuPAAL and how it evolved and what it is now
-%Sudd for HMMs
-% CuDD and how it is used in CuPAAL
-% Kronecker product implementation - Remember code and math
+%% Sudd for HMMs
+%% CuDD and how it is used in CuPAAL
+%% Kronecker product implementation - Remember code and math
 % Implementation of CuPAAL in Jajapy
-% Bindings
-%Discussion of the implementation
+%% Bindings
+%% Discussion of the implementation
