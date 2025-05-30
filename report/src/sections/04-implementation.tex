@@ -22,7 +22,7 @@ Three common strategies are recursive, matrix-based, and \gls{add}-based approac
 In this work we explore the benefits of \gls{add}-based approaches for solving complex problems, focusing on parameter estimation in \glspl{dtmc} and \glspl{ctmc}.
 We compare the performance of \gls{add}-based algorithms against recursive-based implementations, highlighting the advantages of using \glspl{add} for efficient computation and memory management.
 
-\subsection{CuPAAL}\label{subsec:cupaal}
+\subsection{Evolution of \Cupaal}\label{subsec:evolution_of_cupaal}
 \Cupaal is a C++ library that implements the Baum-Welch algorithm for parameter estimation, and has evolved over time.
 
 The initial version of \Cupaal was called \textit{SUDD}, which was a partial implementation of the Baum-Welch algorithm, using \glspl{add}.
@@ -242,3 +242,15 @@ When the parameter is true, the Jajapy model will call the~\autoref{lst:jajapy-b
 \subsection{Integration Discussion}\label{subsec:integration-discussion}
 The integration of \Cupaal\ into \Jajapy\ has been successful, allowing us to leverage the Baum-Welch algorithm for parameter estimation in \glspl{dtmc} and \glspl{ctmc}.
 
+
+
+% Implementation
+% Motivation for CuPAAL
+% recursive vs. matrix vs. ADD-based approaches
+% CuPAAL and how it evolved and what it is now
+%Sudd for HMMs
+% CuDD and how it is used in CuPAAL
+% Kronecker product implementation - Remember code and math
+% Implementation of CuPAAL in Jajapy
+% Bindings
+%Discussion of the implementation
