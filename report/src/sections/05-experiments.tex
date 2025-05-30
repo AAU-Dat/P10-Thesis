@@ -1,30 +1,44 @@
 \section{Experiments}\label{sec:experiments}
 In this section, we present an evaluation comparing the performance of two implementations of the \gls{bw} algorithm: the original version from \Jajapy\ and the new symbolic implementation introduced in \JajapyTwo.
+
 For this comparison, we use a \gls{mc} model, taken from the QComp benchmark set~\cite{hartmanns2019quantitative}, which is a collection of models used for quantitative verification and learning tasks.
-The goal of this evaluation is to assess scalability of the symbolic implementation and its performance in terms of runtime and accuracy.
+The goal is to assess scalability of the symbolic implementation and its performance in terms of runtime and accuracy.
 
 We designed three experiments to evaluate the performance of the symbolic implementation of the \gls{bw} algorithm in \JajapyTwo:
+
+
 \begin{itemize}
     \item \textbf{Scalability} — Evaluating how the symbolic implementation scales with increasing model size.
     \item \textbf{Accuracy} — Comparing the accuracy of the symbolic implementation against the original recursive implementation.
     \item \textbf{Extra Scalability} — Evaluating the scalability of the symbolic implementation when adjusting the initialization of the model hypothesis.
 \end{itemize}
+
+
 The experiments are designed to answer the following research questions:
+
+
 \begin{itemize}
     \item \textbf{Question 1}: How does runtime scale as model size increases for \JajapyTwo\ vs \Jajapy?
     \item \textbf{Question 2}: What is the relative estimation accuracy of the symbolic implementation in \JajapyTwo\ compared to the original recursive implementation in \Jajapy?
     \item \textbf{Question 3}: How much does an informed initialization accelerate \JajapyTwo?
 \end{itemize}
+
+
 The experiments are designed to provide insights into the performance and scalability of the symbolic implementation of the \gls{bw} algorithm in \JajapyTwo, and to compare it with the original recursive implementation in \Jajapy.
+
 
 \subsection{Model}
 The model used in the experiments is "leader\_sync", which is a \gls{dtmc} model from the QComp benchmark set~\cite{hartmanns2019quantitative}.
 The model is from the PRISM case study~\cite{kwiatkowska2012prism}, which is a collection of models used for quantitative verification and learning tasks.
+
 The "leader\_sync" model is a distributed system model that simulates the behavior of a group of processors that need to choose a leader among themselves.
 The model's size ranges from 26 to 1050 states, depending on the number of processors in the system, the states increase $\{26, 69, 147, 61, 274, 812, 141, 1050\}$.
+
 The non-linear progression in model size arises because the QComp benchmark defines model variants using two parameters: the number of processors and the maximum number a leader can select to be elected.
+
 The model is chosen because of its scalability, making it suitable for evaluating the performance of the symbolic implementation of the \gls{bw} algorithm in \JajapyTwo.
 The model was also simple to understand and analyze, allowing us to add more labels to the model to make it suitable for the experiments.
+
 The labels added to the model are shown in \autoref{lst:leader_sync_labels}.
 
 \begin{listing}[htb!]
@@ -39,16 +53,19 @@ The labels added to the model are shown in \autoref{lst:leader_sync_labels}.
 
 
 \subsection{Experimental Setup}
-All experiments were conducted on the same machine, see \autoref{sec:machine_specs} for details, for the python environment see \autoref{subsec:python_env}.
+All experiments were conducted on the same machine, see Appendix~\ref{sec:machine_specs} for full specs and the python environment.
 
 The following steps were taken to set up the experiments:
+
+
 \begin{enumerate}
     \item Load the PRISM model
     \item Generate $N_\text{seq}\in\{25,50,100\}$ observation sequences of length $20$.
     \item Create a random initial \gls{mc} using \texttt{MC\_random}.
-    \item Run \gls{bw} for up to 4 hours or until the log-likelihood converges to a threshold of $0.01$.
+    \item Run \gls{bw} for up to 4 hours or until the log-likelihood difference converges to a threshold of $0.01$.
     \item Record runtime and save the model.
 \end{enumerate}
+
 
 We save both the initial models and observations in files, to ensure both implementations use inputs by default.
 The generation of the training set and the randomization of the model is done using \Jajapy, which provides a convenient way to generate random models and training sets.
@@ -77,7 +94,9 @@ where $e$ is the estimated transition probability and $r$ is the reference value
 We use the results from the first experiment, and compare the log-likelihood and absolute error of the properties estimated by the symbolic implementation against the original recursive implementation.
 
 The properties used in this experiment are shown in \autoref{lst:leader_sync_properties}, the properties are taken from the QComp benchmark set~\cite{hartmanns2019quantitative}.
-\begin{listing}
+
+
+\begin{listing}[htb!]
     \begin{minted}{text}
     P>=1 [ F "elected" ]
     R{"num_rounds"}=? [ F "elected" ]
@@ -86,11 +105,18 @@ The properties used in this experiment are shown in \autoref{lst:leader_sync_pro
     \label{lst:leader_sync_properties}
 \end{listing}
 
+
 \subsection{Experiment 3: Extra Scalability}\label{sec:exp_extra_scalability}
 The third experiment evaluates the scalability of the symbolic implementation in \JajapyTwo\ when adjusting the initialization of the model hypothesis.
-This experiment aims to measure the runtime performance of the symbolic implementation when using an information-based initialization of the model hypothesis, meaning that the initial transition probabilities are a little less random, by setting some initial transition probabilities to the same value as other transitions in the model.
-This is achieved by identifying pairs of transitions whose initial probabilities differ by at most 0.00001; in such cases, one value is duplicated to the other, resulting in a more structured initialization.
-The goal is to measure the runtime performance of the symbolic implementation when using a more informed initialization of the model hypothesis, which is expected to improve the convergence speed of the \gls{bw} algorithm, as it reduces the number of computations the symbolic implementation has to perform.
+
+This experiment aims to measure the scalability of \JajapyTwo\ under circumstances that are theoretically good for the symbolic implementation.
+The more repeated values values the transition matrix contains, the sparser the \gls{add} representing it will be.
+By initializing the transition matrix with a reduced amount of different values, we hope that the symbolic approach might benefit.
+
+For the first experiment, the transition matrix was initialized randomly.
+For this experiment instead, we only use $|S|$ different values in the transition matrix.
+It is expected that this improves the speed of each iteration of the \gls{bw} algorithm, as it reduces the number of unique computations necessary for the symbolic implementation.
+
 
 % \subsection{Experiment 1: Performance Comparison of Implementations}
 % The first experiment is based on the ideas from the experiment conducted in~\cite{reynouard2024learning}.

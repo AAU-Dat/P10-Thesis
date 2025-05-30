@@ -231,6 +231,13 @@ The $\pmb{\gamma}$ and $\pmb{\xi}$ are defined as follows:
 These update rules form the standard \gls{bw} for training \glspl{hmm} on a single observation sequence.
 However, the approach can be naturally extended to multiple sequences.
 
+The \gls{bw} algorithm runs until convergence, in this case until the difference in log-likelihood between iterations is less than $\ell(\mathcal{M};O) - \ell(\hat{\mathcal{M}};O) < \epsilon$.
+The log-likelihood of an iteration can be calculated using the $\alpha$ probabilities in this way:
+
+\begin{equation}
+    \ell(\mathcal{M};O) = \sum_{s=1}^{S} \text{log}(\pmb{\alpha}(T)_s)
+\end{equation}
+
 
 \subsection{Multiple Observation Sequences}\label{subsec:multiple-observation-sequences}
 Suppose we are given a multiset of \gls{iid} observation sequences $\mathcal{O} = {O_1, O_2, \ldots, O_{|\mathcal{O}|}}$, where each $O_i = (o_{i1}, o_{i2}, \ldots, o_{iT})$ is of length $T$.
