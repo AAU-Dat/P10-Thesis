@@ -51,7 +51,7 @@ All functionality used in our implementation is available through the standard C
 \subsubsection{From Prism to Cupaal}\label{subsec:from_prism_to_cupaal}
 In the current iteration of \Cupaal, it is possible to use Prism models as input to the Baum-Welch algorithm.
 
-The models are encoded from Prism models to \Cupaal\ models. This is done by parsing the Prism model to Jajapy, using Stormpy.
+The models are encoded from Prism models to \Cupaal\ models. This is done by parsing the Prism model to \Jajapy, using Stormpy.
 
 The Jajapy model contains a matrix for it's transitions, a matrix for it's labels, and a vector for the initial state.
 The model is passed to \Cupaal\ where these matrices and vectors are encoded into \glspl{add}, as a function $f \colon \{0,1\}^n \times \{0,1\}^n \to R$.
@@ -144,7 +144,7 @@ Both of these are compiled to an executable program, called \texttt{cupaal.exe},
 To implement \Cupaal\ into \Jajapy, we create bindings between C++ and Python using the \texttt{pybind11} library~\cite{pybind11github}.
 This allows us to call C++ functions from Python, enabling us to use \Cupaal\ in \Jajapy.
 
-If the code examples, some parts have been removed for brevity and clarity.
+In the code examples, some parts have been removed for brevity and clarity.
 
 
 \begin{listing}[htb!]
@@ -172,8 +172,8 @@ cupaal_markov_model cupaal_bw_symbolic(vector<string>& states, vector<string>& l
 
 We create a C++ bindings file, that uses the \gls{bw} library from \Cupaal\ and define the function we want to expose to Python, we call this function $cupaal\_bw\_symbolic$, seen in~\autoref{lst:cupaal-bindings}.
 This function takes model parameters from a \Jajapy\ model as input, and transforms them to be used in \Cupaal.
-The transformation is done at line 3, where all the parameters are inputed to create a Markov Model object, which is then used to run the Baum-Welch algorithm at line 6.
-Each of the values that are relevant from the \gls{bw} algorithm are then passed into the \texttt{model\_data} object, which is then returned to Jajapy, seen in lines 10 through 15.
+The transformation is done at line 3, where all the parameters are inputed to create a \texttt{Markov Model} object, which is then used to run the Baum-Welch algorithm at line 6.
+Each of the values that are relevant from the \gls{bw} algorithm are then passed into the \texttt{model\_data} object, which is then returned to \Jajapy, seen in lines 10 through 15.
 
 These being the initial distribution, the transitions and the emissions.
 
@@ -186,10 +186,10 @@ These being the initial distribution, the transitions and the emissions.
 \end{listing}
 
 
-The C++ bindings file is then compiled to a shared library, which can be imported in Jajapy.
-Jajapy can call the $cupaal\_bw\_symbolic$ function, which will then call the \Cupaal\ implementation of the Baum-Welch algorithm.
+The C++ bindings file is then compiled to a shared library, which can be imported in \Jajapy.
+\Jajapy\ can call the $cupaal\_bw\_symbolic$ function, which will then call the \Cupaal\ implementation of the Baum-Welch algorithm.
 
-We create a new function in Jajapy, called \texttt{\_bw\_symbolic}, which is used to call the \Cupaal\ implementation of the Baum-Welch algorithm, as seen in~\autoref{lst:jajapy-bw-symbolic}.
+We create a new function in \Jajapy, called \texttt{\_bw\_symbolic}, which is used to call the \Cupaal\ implementation of the Baum-Welch algorithm, as seen in~\autoref{lst:jajapy-bw-symbolic}.
 This function is used to prepare the model parameters from \Jajapy, so they are in the correct format for \Cupaal.
 The preperation is done at lines 7 through 20, after this the \Cupaal\ implementation is called at line 22, where the \texttt{cupaal\_bw\_symbolic} function is called with the prepared parameters, giving the \Cupaal\ model as a return value.
 
@@ -229,7 +229,7 @@ def _bw_symbolic(self, max_iteration = 100, epsilon = 1e-2, outputPath = "", res
 \end{listing*}
 
 
-The fit function in Jajapy is modified to call the \texttt{\_bw\_symbolic} function when a new parameter called \texttt{symbolic} is set to true, as seen in~\autoref{lst:jajapy-fit-cupaal}.
+The fit function in \Jajapy\ is modified to call the \texttt{\_bw\_symbolic} function when a new parameter called \texttt{symbolic} is set to true, as seen in~\autoref{lst:jajapy-fit-cupaal}.
 
 
 \begin{listing}[htb!]
@@ -246,14 +246,14 @@ def fit(self, output_file: str, output_file_prism: str, epsilon: float, max_it: 
     \label{lst:jajapy-fit-cupaal}
 \end{listing}
 
-A check is made to see if the \texttt{symbolic} parameter is set to true at line 4, and when the parameter is true, the Jajapy model will call the~\autoref{lst:jajapy-bw-symbolic} function, which will then call the \Cupaal\ implementation of the Baum-Welch algorithm.
+A check is made to see if the \texttt{symbolic} parameter is set to true at line 4, and when the parameter is true, the \Jajapy\ model will call the~\autoref{lst:jajapy-bw-symbolic} function, which will then call the \Cupaal\ implementation of the Baum-Welch algorithm.
 
 \subsection{Integration Discussion}\label{subsec:integration-discussion}
 The integration of \Cupaal\ into \Jajapy\ has been successful, allowing us to leverage the Baum-Welch algorithm for parameter estimation for \glspl{hmm} and \glspl{dtmc}.
 
 The decision to use pybind11 for creating bindings between C++ and Python has proven to be effective, as it allows us to call C++ functions from Python, but further considerations should be made for the future if this is the best approach.
 
-The exact implementation of the symbolic fit function in Jajapy is shown in~\autoref{lst:jajapy-fit-cupaal}, is to be discussed with the \Jajapy\ creator and some changes are expected to be made.
+The exact implementation of the symbolic fit function in \Jajapy\ is shown in~\autoref{lst:jajapy-fit-cupaal}, is to be discussed with the \Jajapy\ creator and some changes are expected to be made.
 
 % Implementation
 % Motivation for CuPAAL
