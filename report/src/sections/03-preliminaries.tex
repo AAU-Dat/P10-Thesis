@@ -2,7 +2,7 @@
 This section provides an overview of the theoretical background necessary to understand the rest of the article.
 For ease of reference Appendix~\ref{sec:cheatsheet} contains a table of symbols used in the paper.
 
-We begin by defining the key concepts of a \gls{hmm} and a \gls{mc}, which are the two main models used in this report, then go on to introduce the Baum-Welch algorithm, which is a widely used algorithm for training \glspl{hmm}, and showing how it can be adapted to handle multiple observation sequences using matrix operations.
+We begin by defining the key concepts of a \gls{hmm} and a \gls{mc}, which are the two main models used in this report, then go on to introduce the \gls{bw}, which is a widely used algorithm for training \glspl{hmm}, and showing how it can be adapted to handle multiple observation sequences using matrix operations.
 
 \subsection{Hidden Markov Model}\label{subsec:hmm}
 \acrfullpl{hmm} were introduced by Baum and Petrie in 1966~\cite{baum1966statistical} and have since been widely used in various fields, such as speech recognition~\cite{chavan2013overview}, bioinformatics~\cite{ciocchetta2009bio}, and finance~\cite{mamon2007hidden}.
@@ -114,7 +114,7 @@ The only difference in this case is the structure of the emission functions, thu
 % The conversion between \glspl{mc} and \glspl{hmm} is important because it allows us to use the same algorithms and techniques for both models, even though they have different properties.
 
 \subsection{Baum-Welch Algorithm}\label{subsec:baum-welch}
-The Baum-Welch algorithm is a special case of the Expectation-Maximization (EM) framework used to estimate the parameters of a \gls{hmm} given a set of observed sequences.
+The \gls{bw} is a special case of the Expectation-Maximization (EM) framework used to estimate the parameters of a \gls{hmm} given a set of observed sequences.
 
 Since the underlying states are not directly observable, the algorithm iteratively refines the model parameters $\pi$, $\omega$, and $\tau$ to maximize the likelihood of the observations.
 Each iteration of the algorithm consists of two steps:
@@ -228,7 +228,7 @@ The $\pmb{\gamma}$ and $\pmb{\xi}$ are defined as follows:
 \end{align}
 
 
-These update rules form the standard Baum-Welch algorithm for training \glspl{hmm} on a single observation sequence.
+These update rules form the standard \gls{bw} for training \glspl{hmm} on a single observation sequence.
 However, the approach can be naturally extended to multiple sequences.
 
 
@@ -261,7 +261,7 @@ This mirrors the single-sequence case (see \autoref{eq:emission-probabilities-up
 This allows us to compute the emission probabilities for each state across all sequences, ensuring that the model captures the overall distribution of observations.
 
 \subsection{Baum-Welch Algorithm for Markov Chains}\label{subsec:baum-welch-mc}
-Since \glspl{mc} can be seen as \glspl{hmm} with deterministic emissions, where each state emits a unique observation with probability 1, the Baum-Welch algorithm simplifies accordingly when applied to \glspl{mc}.
+Since \glspl{mc} can be seen as \glspl{hmm} with deterministic emissions, where each state emits a unique observation with probability 1, the \gls{bw} simplifies accordingly when applied to \glspl{mc}.
 
 In this case:
 
@@ -273,7 +273,7 @@ In this case:
 \end{itemize}
 
 This simplification avoids unnecessary computation and reflects the reduced uncertainty in the model: there is no need to marginalize over emissions, as each state deterministically produces a known label.
-Consequently, the Baum-Welch algorithm becomes more efficient when applied to \glspl{mc}.
+Consequently, the \gls{bw} becomes more efficient when applied to \glspl{mc}.
 
 \subsection{Decision Diagrams}\label{subsec:decision-diagrams}
 \acrfullpl{bdd} are data structures for efficiently representing and manipulating Boolean functions.
