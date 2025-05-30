@@ -1,96 +1,145 @@
 \section{Experiments}\label{sec:experiments}
-In this section, we present an empirical evaluation comparing the performance of two implementations of the Baum-Welch algorithm: the original version from \Jajapy\ and the new symbolic implementation introduced in \JajapyTwo.
-For this comparison, we use a selection of discrete-time Markov chains taken from the QComp benchmark set~\cite{hartmanns2019quantitative}.
+In this section, we present an evaluation comparing the performance of two implementations of the Baum-Welch algorithm: the original version from \Jajapy\ and the new symbolic implementation introduced in \JajapyTwo.
+For this comparison, we use a \gls{mc} model, taken from the QComp benchmark set~\cite{hartmanns2019quantitative}, which is a collection of models used for quantitative verification and learning tasks.
+The goal of this evaluation is to assess scalability of the symbolic implementation and its performance in terms of runtime and accuracy.
 
-Our evaluation focuses on two primary criteria: execution time and estimation accuracy.
-
-We designed two experiments to address these aspects:
-
+We designed three experiments to evaluate the performance of the symbolic implementation of the Baum-Welch algorithm in \JajapyTwo:
 \begin{itemize}
-    \item \textbf{Performance Comparison} — Assessing runtime and accuracy across a variety of models.
-    \item \textbf{Scalability Analysis} — Examining how performance is affected as the model size, specifically the number of states, increases.
+    \item \textbf{Scalability} — Evaluating how the symbolic implementation scales with increasing model size.
+    \item \textbf{Accuracy} — Comparing the accuracy of the symbolic implementation against the original recursive implementation.
+    \item \textbf{Extra Scalability} — Evaluating the scalability of the symbolic implementation when adjusting the initialization of the model hypothesis.
 \end{itemize}
-
-The goal of these experiments is to answer the following research questions:
-
+The experiments are designed to answer the following research questions:
 \begin{itemize}
-    \item \textbf{Question 1}: How does the symbolic implementation of the Baum-Welch algorithm in CuPAAL perform in terms of runtime and accuracy compared to the recursive implementation in \Jajapy?
-    \item \textbf{Question 2}: How does the runtime performance of CuPAAL scale as the size of the model increases?
+    \item \textbf{Question 1}: How does runtime scale as model size increases for \JajapyTwo\ vs \Jajapy?
+    \item \textbf{Question 2}: What is the relative estimation accuracy of the symbolic implementation in \JajapyTwo\ compared to the original recursive implementation in \Jajapy?
+    \item \textbf{Question 3}: How much does an informed initialization accelerate \JajapyTwo?
 \end{itemize}
+The experiments are designed to provide insights into the performance and scalability of the symbolic implementation of the Baum-Welch algorithm in \JajapyTwo, and to compare it with the original recursive implementation in \Jajapy.
+
+\subsection{Model}
+The model used in the experiments is "leader\_sync", which is a \gls{dtmc} model from the QComp benchmark set~\cite{hartmanns2019quantitative}.
+The model is from the PRISM case study~\cite{kwiatkowska2012prism}, which is a collection of models used for quantitative verification and learning tasks.
+The "leader\_sync" model is a distributed system model that simulates the behavior of a group of processors that need to choose a leader among themselves.
+The model's size ranges from 26 to 1050 states, depending on the number of processors in the system, the states increase $\{26, 69, 147, 61, 274, 812, 141, 1050\}$.
+The non-linear progression in model size arises because the QComp benchmark defines model variants using two parameters: the number of processors and the maximum number a leader can select to be elected.
+The model is chosen because of its scalability, making it suitable for evaluating the performance of the symbolic implementation of the Baum-Welch algorithm in \JajapyTwo.
+The model was also simple to understand and analyze, allowing us to add more labels to the model to make it suitable for the experiments.
+The labels added to the model are shown in \autoref{lst:leader_sync_labels}.
+
+\begin{listing}[htb!]
+    \begin{minted}{python}
+    label "reading" = s1=1;
+    label "deciding" = s1=2;
+    label "elected" = s1=3&s2=3&s3=3;
+    \end{minted}
+    \caption{Labels added to the "leader\_sync" model.}
+    \label{lst:leader_sync_labels}
+\end{listing}
+
 
 \subsection{Experimental Setup}
-All experiments were conducted on a machine equipped with a Ryzen 5 3600 processor, 64 GB of RAM, running Ubuntu Linux.
+All experiments were conducted on the same machine, see \autoref{sec:machine_specs} for details, for the python environment see \autoref{subsec:python_env}.
 
-For each model from the benchmark set, we selected a subset of observable atomic propositions\footnote{{\color{red} link to models with description of the chosen observable atomic propositions}} and generated a training dataset consisting of $30$ observation sequences, each of length $10$.
+The following steps were taken to set up the experiments:
+\begin{enumerate}
+    \item Load the PRISM model
+    \item Generate $N_\text{seq}\in\{25,50,100\}$ observation sequences of length $20$.
+    \item Create a random initial \gls{mc} using \texttt{MC\_random}.
+    \item Run Baum-Welch for up to 4 hours or until the log-likelihood converges to a threshold of $0.01$.
+    \item Record runtime and save the model.
+\end{enumerate}
 
-In each case, the output model was configured to match the state size of the original benchmark, and all transition probabilities were treated as parameters to be estimated.
+We save both the initial models and observations in files, to ensure both implementations use inputs by default.
+The generation of the training set and the randomization of the model is done using \Jajapy, which provides a convenient way to generate random models and training sets.
+The training set is generated by creating a set of observation sequences from the original model, which is then used to train the randomized model.
 
-Each training session was allowed to run until either the default convergence threshold of $0.01$ was reached or a maximum runtime of $4$ hours elapsed.
-Every experiment was repeated 10 times. During each run, we recorded the runtime, the absolute error $\epsilon_i$ for each estimated parameter $x_i$\footnote{The absolute error is defined as $|e - r|$, where $e$ is the estimated value and $r$ is the real value.}, and the log-likelihood value achieved in the final iteration.
+We then run the Baum-Welch algorithm on the randomized model and the training set for both the original recursive implementation in \Jajapy and the symbolic implementation in \JajapyTwo.
+We run each implementation for each model size and number of observation sequences ten times to obtain average results.
 
-\subsection{Experiment 1: Performance Comparison of Implementations}
-The first experiment is based on the ideas from the experiment conducted in~\cite{reynouard2024learning}.
-The models used are shown in \autoref{tab:dtmc_models}.
-The experiment evaluate the efficiency and accuracy of the symbolic approach versus the recursive approach.
-We measure:
-\begin{itemize}
-    \item \textbf{Runtime Efficiency} - The average time per run.
-    \item \textbf{Convergence Speed} - The average number of iterations required.
-    \item \textbf{Accuracy} - Measured using log-likelihood and an average error.
-\end{itemize}
+The results of the experiments are recorded, including the runtime, number of iterations, log-likelihood, and error of the estimated transition probabilities.
 
-\begin{table}[!htb]
-    \centering
-    \caption{DTMC models}
-    \label{tab:dtmc_models}
-    \begin{tabular}{ll}
-        \toprule
-        Name         & Number of States \\
-        \midrule
-        Leader\_sync & 274              \\
-        Brp          & 886              \\
-        Crowds       & 1145             \\
-        \bottomrule
-    \end{tabular}
-\end{table}
+We do not measure memory usage, as the symbolic implementation is implemented in C++ using Python bindings making it difficult to measure memory usage accurately, therefore we focus on runtime and accuracy.
 
-\autoref{tab:comparison} reports the aggregated results of the experiments. The column $|S|$ provides the number of states of the model; the columns ``time'' and ``iter'' respectively report the average running time and number of iterations; and the column ``$\epsilon$'' and ``$\log \mathcal{L}$'' respectively report the average error of the estimated transition probabilities and the average log-likelihood valued measured w.r.t. the training set.
+\subsection{Experiment 1: Scalability}\label{sec:exp_scalability}
+The first experiment evaluates the scalability of the symbolic implementation of the Baum-Welch algorithm in \JajapyTwo.
+The goal is to measure the runtime performance of the symbolic implementation as the size of the model increases.
+The experiment measures the average runtime of the Baum-Welch algorithm for each model size and number of observation sequences.
+
+\subsection{Experiment 2: Accuracy}\label{sec:exp_accuracy}
+The second experiment evaluates the accuracy of \JajapyTwo\ compared to the original \Jajapy.
+The goal is to measure the accuracy of the symbolic implementation in terms of log-likelihood and absolute error of the estimated transition probabilities.
+The absolute error is defined as:
+\[
+    \text{Error} = |e - r|,
+\]
+where $e$ is the estimated transition probability and $r$ is the reference value from the original model.
+We use the results from the first experiment, and compare the log-likelihood and absolute error of the properties estimated by the symbolic implementation against the original recursive implementation.
+
+The properties used in this experiment are shown in \autoref{lst:leader_sync_properties}, the properties are taken from the QComp benchmark set~\cite{hartmanns2019quantitative}.
+\begin{listing}
+    \begin{minted}{python}
+    P>=1 [ F "elected" ]
+    R{"num_rounds"}=? [ F "elected" ]
+    \end{minted}
+    \caption{Properties used in the "leader\_sync" model.}
+    \label{lst:leader_sync_properties}
+\end{listing}
+
+\subsection{Experiment 3: Extra Scalability}\label{sec:exp_extra_scalability}
+The third experiment evaluates the scalability of the symbolic implementation in \JajapyTwo\ when adjusting the initialization of the model hypothesis.
+This experiment aims to measure the runtime performance of the symbolic implementation when using an information-based initialization of the model hypothesis, meaning that the initial transition probabilities are a little less random, by setting some initial transition probabilities to the same value as other transitions in the model.
+This is achieved by identifying pairs of transitions whose initial probabilities differ by at most 0.00001; in such cases, one value is duplicated to the other, resulting in a more structured initialization.
+The goal is to measure the runtime performance of the symbolic implementation when using a more informed initialization of the model hypothesis, which is expected to improve the convergence speed of the Baum-Welch algorithm, as it reduces the number of computations the symbolic implementation has to perform.
+
+% \subsection{Experiment 1: Performance Comparison of Implementations}
+% The first experiment is based on the ideas from the experiment conducted in~\cite{reynouard2024learning}.
+% The models used are shown in \autoref{tab:dtmc_models}.
+% The experiment evaluate the efficiency and accuracy of the symbolic approach versus the recursive approach.
+% We measure:
+% \begin{itemize}
+%     \item \textbf{Runtime Efficiency} - The average time per run.
+%     \item \textbf{Convergence Speed} - The average number of iterations required.
+%     \item \textbf{Accuracy} - Measured using log-likelihood and an average error.
+% \end{itemize}
+
+% \autoref{tab:comparison} reports the aggregated results of the experiments. The column $|S|$ provides the number of states of the model; the columns ``time'' and ``iter'' respectively report the average running time and number of iterations; and the column ``$\epsilon$'' and ``$\log \mathcal{L}$'' respectively report the average error of the estimated transition probabilities and the average log-likelihood valued measured w.r.t. the training set.
 
 
 %We split this experiment into two separate analyses: one focusing on \glspl{dtmc} and another on \glspl{ctmc}. Since \glspl{dtmc} estimate probabilities while \glspl{ctmc} estimate rates, we use different error measures for accuracy evaluation.
 
 
-\newcommand{\colsep}[0]{\hspace{0.2 em}}
-\begin{table}[htb!]
-    \begin{center}
-        \begin{tabular}{l@{\colsep}|c@{\colsep}|c@{\colsep}c@{\colsep}c@{\colsep}c@{\colsep}|c@{\colsep}c@{\colsep}c@{\colsep}l}
-            %\toprule
-            \multirow{2}{*}{Model} & \multirow{2}{*}{$|S|$} & \multicolumn{4}{|c}{\Jajapy} & \multicolumn{4}{|c}{\JajapyTwo}                                                                                    \\ \cline{3-10}
-                                   &                        & iter                         & time                            & $\log \mathcal{L}$ & $\epsilon$ & iter & time  & $\log \mathcal{L}$ & $\epsilon$ \\ \cline{1-2}
-            Leader sync            & 274                    & 15.6                         & 35.84                           & -0.00165602        & 0.35       & 15.7 & 24.02 & -5.357103          &            \\
-            %BRP                    & 886                    & 2                            & 46.65                           & $2.331 \cdot 10^{-15}$  &            &      &       &                    &            \\
-            %Crowds                 & 1145                   & 2                            & 87.52                           & $-9.659 \cdot 10^{-15}$ &            &      &       &                    &            \\
-            %Oscillators1           & 57                     & 2                            & 0.32                            & $4.33 \cdot 10^{-15}$   &            &      &       &                    &            \\
-            %Oscillators2           & 463                    & 2                            & 11.8                            & $1.33 \cdot 10^{-15}$   &            &      &       &                    &            \\
-            %Oscillators3           & 1717                   & 2                            & 170.7                           & $6.66 \cdot 10^{-16}$   &            &      &       &                    &
-            %\bottomrule
-        \end{tabular}
-    \end{center}
-    \caption{Experimental comparison between the original and symbolic implementation of the BW algorithm in \Jajapy.}
-    \label{tab:comparison}
-\end{table}
+% \newcommand{\colsep}[0]{\hspace{0.2 em}}
+% \begin{table}[htb!]
+%     \begin{center}
+%         \begin{tabular}{l@{\colsep}|c@{\colsep}|c@{\colsep}c@{\colsep}c@{\colsep}c@{\colsep}|c@{\colsep}c@{\colsep}c@{\colsep}l}
+%             %\toprule
+%             \multirow{2}{*}{Model} & \multirow{2}{*}{$|S|$} & \multicolumn{4}{|c}{\Jajapy} & \multicolumn{4}{|c}{\JajapyTwo}                                                                                    \\ \cline{3-10}
+%                                    &                        & iter                         & time                            & $\log \mathcal{L}$ & $\epsilon$ & iter & time  & $\log \mathcal{L}$ & $\epsilon$ \\ \cline{1-2}
+%             Leader sync            & 274                    & 15.6                         & 35.84                           & -0.00165602        & 0.35       & 15.7 & 24.02 & -5.357103          &            \\
+%             %BRP                    & 886                    & 2                            & 46.65                           & $2.331 \cdot 10^{-15}$  &            &      &       &                    &            \\
+%             %Crowds                 & 1145                   & 2                            & 87.52                           & $-9.659 \cdot 10^{-15}$ &            &      &       &                    &            \\
+%             %Oscillators1           & 57                     & 2                            & 0.32                            & $4.33 \cdot 10^{-15}$   &            &      &       &                    &            \\
+%             %Oscillators2           & 463                    & 2                            & 11.8                            & $1.33 \cdot 10^{-15}$   &            &      &       &                    &            \\
+%             %Oscillators3           & 1717                   & 2                            & 170.7                           & $6.66 \cdot 10^{-16}$   &            &      &       &                    &
+%             %\bottomrule
+%         \end{tabular}
+%     \end{center}
+%     \caption{Experimental comparison between the original and symbolic implementation of the BW algorithm in \Jajapy.}
+%     \label{tab:comparison}
+% \end{table}
 
-\subsection{Scalability Experiment}
-The primary objective of this experiment is to evaluate the scalability of the proposed symbolic implementation of the Baum-Welch algorithm in comparison to the recursive implementation in Jajapy.
-Specifically, we aim to measure the time required to learn \glspl{dtmc} over the number of states.
-We measure:
-\begin{itemize}
-    \item \textbf{Runtime efficiency} - The average time per run.
-\end{itemize}
+% \subsection{Scalability Experiment}
+% The primary objective of this experiment is to evaluate the scalability of the proposed symbolic implementation of the Baum-Welch algorithm in comparison to the recursive implementation in Jajapy.
+% Specifically, we aim to measure the time required to learn \glspl{dtmc} over the number of states.
+% We measure:
+% \begin{itemize}
+%     \item \textbf{Runtime efficiency} - The average time per run.
+% \end{itemize}
 
 %For this experiment, we selected the model \textit{leader\_sync}, as it represents those used in the performance comparison experiment and scale well to large state spaces.
-We use the \textit{leader\_sync} model, scaling from 26 to 1050 states.
-This experiment provides insights into how the symbolic approach scales as model complexity increases.
+% We use the \textit{leader\_sync} model, scaling from 26 to 1050 states.
+% This experiment provides insights into how the symbolic approach scales as model complexity increases.
 
 % \subsection{Experimental Setup}
 % All experiments are conducted using a set of \glspl{dtmc} and \glspl{ctmc} obtained from publicly available benchmarks~\cite{hartmanns2019quantitative}
@@ -118,49 +167,3 @@ This experiment provides insights into how the symbolic approach scales as model
 % \end{equation}
 % where $P(O_t|M)$ is the probability of observing $O_t$ given the model.
 
-%\subsubsection{Experiment 1A: Accuracy Comparison for DTMCs}
-%For \glspl{dtmc}, we use the absolute error as the measure of accuracy, because in \glspl{dtmc} we are estimating probabilities, and we are interested in the absolute difference between the real value and the estimated value.
-
-% The absolute error is calculated as follows:
-% \begin{equation}
-%     \begin{aligned}
-%         \text{Absolute Error} = |r - e|
-%     \end{aligned}
-% \end{equation}
-% where $r$ is the real value and $e$ is the expected value.
-
-% \subsubsection{Experiment 1B: Accuracy Comparison for CTMCs}
-% For \glspl{ctmc}, the models used are shown in \autoref{tab:ctmc_models}.
-
-% For \glspl{ctmc}, we use relative error as the measure of accuracy, since rates in CTMCs can vary significantly in magnitude, an absolute difference may not properly reflect the accuracy.
-% For example, a difference of 0.1 in a transition rate of 0.2 is a large error, whereas the same difference in a rate of 10 is negligible.
-% Using relative error ensures that errors are proportional to the expected value.
-
-% The relative error is calculated as follows:
-% \begin{equation}
-%     \begin{aligned}
-%         \text{Relative Error} = \cfrac{|r - e|}{e}
-%     \end{aligned}
-% \end{equation}
-% where $r$ is the real value and $e$ is the expected value.
-
-% \begin{table}[!htb]
-%     \centering
-%     \caption{CTMC models}
-%     \label{tab:ctmc_models}
-%     \begin{tabular}{lll}
-%         \toprule
-%         Name     & Number of States \\
-%         \midrule
-%         Mapk     & 118              \\
-%         Cluster  & 820              \\
-%         Embedded & 3480             \\
-%         \bottomrule
-%     \end{tabular}
-% \end{table}
-
-% \subsubsection{Experiment 2B: Scalability for CTMCs}
-% In this experiment, we evaluate the scalability of CuPAAL for \glspl{ctmc} by measuring runtime efficiency as the number of states increases.
-% We use the \textit{polling} model, scaling from 36 to 1334 states.
-
-% This experiment provides insights into how the symbolic approach scales as model complexity increases.
