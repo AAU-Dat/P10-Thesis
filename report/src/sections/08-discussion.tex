@@ -1,9 +1,62 @@
 \section{Discussion}\label{sec:discussion}
+This section discusses the results presented in Section~\ref{sec:results} and reflects on the performance of \Cupaal\ compared to \Jajapy.
 
-The accuracy of the models learned with the BW algorithm strongly depends on selecting an appropriate size for the output model. However, increasing this size substantially raises the computational cost of each update iteration, both in terms of time and space complexity.
+The results from \autoref{sec:experiments} display that \Cupaal\ outperforms \Jajapy\ in terms of run time, especially for longer observations.
+For models with few states the run time is similar, and only as the number of states increases the differences become more pronounced.
 
-This is because each iteration requires running the forward-backward algorithm on every trace in the training set. In the original implementation, this step was performed using Jajapy models, incurring a cost of $O(n^2 \cdot K)$ in time and $O(n \cdot K)$ in space per iteration, where $n$ is the number of states in the output model and $K$ is the total number of label occurrences in the training set. Moreover, computing the updated transition probabilities from the forward and backward coefficients added an extra $O(n^2 \cdot K)$ overhead in both time and space.
+The experiment is conducted using a single model, which may not provide a comprehensive view of the performance across different scenarios.
+A better approach would have been to use multiple models with varying characteristics and compare their performance.
+This would allow for a more general overview of the performance of \Cupaal\ compared to \Jajapy.
 
-Unsurprisingly, this had a significant impact on the performance of the BW algorithm as the number of states increased.
+A broader variety of models would give a clear insight in \Cupaal\ and hereby display the strenghs and weaknesses of \Cupaal.
 
-To address this limitation, CuPAAL\ introduces a symbolic engine that efficiently handles both the forward-backward computation and the parameter updates.
+Other models that were looked at were the NAND, and BRP model.....\todo{add other models}
+As with only \texttt{Leader\_Sync} it is only clear that \Cupaal\ performs well with a large number of observations.
+
+The model included could also have made use of a greater number of states and observations, currently the model only contains $\sim$2000 states.
+There are models that contain a far greater amount of states, the impact of this could have been further explored.
+
+In \todo{Ref to experiment 3} the values for the initial model values are not completly random, instead they are designed to have repeated values.
+This was done to display the known strenghs of \Cupaal.
+
+This does scew the model to favor \Cupaal\ as the \gls{add} structure benefits from repeated values and therefore will display results that indicate \Cupaal\ as the stronger implementation.
+
+This was purely done to research what was believed to a strength of \Cupaal\ and to further the discussion of when \Cupaal\ is a good option to use over other tools such as \Jajapy.
+
+
+% Intro to discussion
+% Discussion of the results in section 6.
+% We only use a single model, we should have used multiple models, and then compared them.
+% Mini experiment three, some values are made less random, and instead have repeated values. - Is this a problem?
+% Size of models
+
+% Is there a bottleneck, such as the update step? - We saw that alpha and beta were not a bottleneck, but the update step might be.
+% Would a hybrid approach be better, where we use a recursive implementation for the update step?
+% Cupaal only uses one core, so it is not parallelized.
+% We used Pybind11 to interface with C++, but we could have used other libraries.
+% We could have used a different library for the symbolic engine, such as Sylvan or CUDD.
+% Jajapy is shit, and we should not use it as a benchmark.
+% We have only worked with the Baum-Welch algorithm, would ADDs also prove beneficial in other algorithms such as ****
+% Which decisions were made that could have been made differently? - How was our implementation
+%We dont measure memory, is this an issue and how could the results influence our conclusion of CuPAAL?
+
+% Would we be able to use ADDs for the observations?
+% vi burde også lave en udgave af update steppet lavet til MCer, vi skal jo ikke opdatere omega der
+
+% Did we achieve our goal of creating a symbolic implementation of the Baum-Welch algorithm?
+
+% -----------------------------------------
+
+% The accuracy of the models learned with the BW algorithm strongly depends on selecting an appropriate size for the output model. However, increasing this size substantially raises the computational cost of each update iteration, both in terms of time and space complexity.
+
+% This is because each iteration requires running the forward-backward algorithm on every trace in the training set. In the original implementation, this step was performed using Jajapy models, incurring a cost of $O(n^2 \cdot K)$ in time and $O(n \cdot K)$ in space per iteration, where $n$ is the number of states in the output model and $K$ is the total number of label occurrences in the training set. Moreover, computing the updated transition probabilities from the forward and backward coefficients added an extra $O(n^2 \cdot K)$ overhead in both time and space.
+
+% Unsurprisingly, this had a significant impact on the performance of the BW algorithm as the number of states increased.
+
+% To address this limitation, CuPAAL\ introduces a symbolic engine that efficiently handles both the forward-backward computation and the parameter updates.
+
+
+% As discussed in (Ref to previous section talking about Jajapy), Jajapy uses a recursive implementation of the Baum-Welch algorithm to learn \glspl{hmm}.
+% In contrast, CuPAAL implements the Baum-Welch algorithm using \glspl{add}.
+% By leveraging \glspl{add}, CuPAAL demonstrates significant improvements over the recursive approach used in Jajapy.
+% The discussion of these improvements is based on the experimental results presented in Section~\ref{sec:experiments}.

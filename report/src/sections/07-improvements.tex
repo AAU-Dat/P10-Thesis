@@ -1,10 +1,7 @@
 \section{Improvements}\label{sec:improvements}
 This section outlines the improvements gained by transitioning from the recursive implementation in Jajapy to the symbolic approach in CuPAAL.
 
-As discussed in (Ref to previous section talking about Jajapy), Jajapy uses a recursive implementation of the Baum-Welch algorithm to learn \glspl{hmm}.
-In contrast, CuPAAL implements the Baum-Welch algorithm using \glspl{add}.
-By leveraging \glspl{add}, CuPAAL demonstrates significant improvements over the recursive approach used in Jajapy.
-The discussion of these improvements is based on the experimental results presented in Section~\ref{sec:experiments}.
+
 
 \subsection{Run Time}\label{subsec:improvements_run_time}
 One of the most notable advantages of CuPAAL over Jajapy is the reduction in run time, particularly for models with a large number of states.
