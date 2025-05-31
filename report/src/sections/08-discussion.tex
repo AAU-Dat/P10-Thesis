@@ -23,25 +23,55 @@ This does scew the model to favor \Cupaal\ as the \gls{add} structure benefits f
 
 This was purely done to research what was believed to a strength of \Cupaal\ and to further the discussion of when \Cupaal\ is a good option to use over other tools such as \Jajapy.
 
-
 % Intro to discussion
 % Discussion of the results in section 6.
 % We only use a single model, we should have used multiple models, and then compared them.
 % Mini experiment three, some values are made less random, and instead have repeated values. - Is this a problem?
 % Size of models
 
+\subsection{Implementation Discussion} \label{subsec:implementation_discussion}
+\Cupaal\ displays clear benefits when working with repeated values, but in general it struggels to compete with \Jajapy.
+Previous work indicated that \Cupaal\ overall was a stronger implementation, but with a fully symbolic implementation some potential bottlenecks have been discovered.
+
+Specifically in the update step of the \gls{bw} algorithm, as when working with \glspl{add} for just the Alpha and Beta steps, \Cupaal\ performed very well.
+
+This indicates that there could be some issues when updating the values, when using \glspl{add}.
+To further research this topic, a hybrid implementation could be provided.
+This implementation would make use of \glspl{add} when calculating Alpha and Beta, and then use a recursive approach when updating values.
+An implementation like this, would require a lot of convertion between matrices and \glspl{add}, but by comparing a fully symbolic, a recursive, and a hybrid approach would give further insight to what \Cupaal\ struggels with.
+
+For now \Cupaal\ only measures the time taken for computing the \gls{bw} algorithm, but an interesting metric to compare would be the memory used.
+If \Cupaal\ was discovered to require less memory than \Jajapy, even with more time needed for larger models, it could be a better choice.
+But without any memory metric to compare, the decision can only be made based on the time needed for computing \gls{bw}.
+
+To allow \Cupaal\ and \Jajapy\ to work together, Pybind11 was used to create bindings between the two.
+This decision was done without exploring other options, therefore it might not be the best suited tool.
+For now it was decided that bindings that worked was fine for the current iteration of \Cupaal, but further considerations should be put into whether or not a better tool exists.
+
+The library used to manipulate \glspl{add}, was \gls{cudd} as it was what previous work had built upon.
+A discussion back then was also whether or not this is the best tool for the job, as other tools such as Sylvan exist.
+This discussion is still relevant, and worth exploring.
+
+\Cupaal\ is designed for the \gls{bw} algorithm, but it would looking into other algorithms that could potentially benefit from a symbolic implementation.
+An algorith that could be explored would be the \todo{add an algorithm here} algorithm.
+By exploring other algorithms, general benefits of using a symbolic approach could be covered.
+
 % Is there a bottleneck, such as the update step? - We saw that alpha and beta were not a bottleneck, but the update step might be.
 % Would a hybrid approach be better, where we use a recursive implementation for the update step?
-% Cupaal only uses one core, so it is not parallelized.
+
 % We used Pybind11 to interface with C++, but we could have used other libraries.
 % We could have used a different library for the symbolic engine, such as Sylvan or CUDD.
 % Jajapy is shit, and we should not use it as a benchmark.
 % We have only worked with the Baum-Welch algorithm, would ADDs also prove beneficial in other algorithms such as ****
-% Which decisions were made that could have been made differently? - How was our implementation
 %We dont measure memory, is this an issue and how could the results influence our conclusion of CuPAAL?
+
+\subsection{Future Work Discussion}
+Furthermore \Cupaal\ only makes use of a single core, this is not an issue when comparing it to \Jajapy\ as it can be limited to also only use a single core.
+But an improvement to allow for multiple cores for \Cupaal\ could be a direction worth exploring.
 
 % Would we be able to use ADDs for the observations?
 % vi burde også lave en udgave af update steppet lavet til MCer, vi skal jo ikke opdatere omega der
+% Cupaal only uses one core, so it is not parallelized.
 
 % Did we achieve our goal of creating a symbolic implementation of the Baum-Welch algorithm?
 
