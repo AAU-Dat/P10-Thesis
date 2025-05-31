@@ -1,22 +1,27 @@
 \section{Discussion}\label{sec:discussion}
-This section discusses the results presented in Section~\ref{sec:results} and reflects on the performance of \Cupaal\ compared to \Jajapy.
+This section discusses the results presented in \autoref{sec:results} and reflects on the performance of \Cupaal\ compared to \Jajapy.
 
-The results from \autoref{sec:experiments} display that \Cupaal\ outperforms \Jajapy\ in terms of run time, especially for longer observations.
-For models with few states the run time is similar, and only as the number of states increases the differences become more pronounced.
+The results from \autoref{sec:experiments} display that \Cupaal\ outperforms \Jajapy\ in terms of run time as the observation length grows.
+For models with few states the run time is similar, but as the number of states increases the differences become more pronounced.
+This shows that \Cupaal\  is a better choice for larger observation sequences, but \Jajapy\ is still a better choice for large models.
 
-The experiment is conducted using a single model, which may not provide a comprehensive view of the performance across different scenarios.
+The experiment is conducted using a single model, \texttt{leader\_sync}, which may not provide a comprehensive view of the performance across different scenarios.
 A better approach would have been to use multiple models with varying characteristics and compare their performance.
 This would allow for a more general overview of the performance of \Cupaal\ compared to \Jajapy.
+Other models that were looked at were the \texttt{NAND}, and \texttt{BRP} models. \todo{add other models}
 
 A broader variety of models would give a clear insight in \Cupaal\ and hereby display the strenghs and weaknesses of \Cupaal.
 
-Other models that were looked at were the NAND, and BRP model.....\todo{add other models}
-As with only \texttt{Leader\_Sync} it is only clear that \Cupaal\ performs well with a large number of observations.
+%As with only \texttt{Leader\_Sync} it is only clear that \Cupaal\ performs well with a large number of observations.
 
-The model included could also have made use of a greater number of states and observations, currently the model only contains $\sim$2000 states.
-There are models that contain a far greater amount of states, the impact of this could have been further explored.
+The model included could also have made use of a greater number of states and observations, currently largest the model contains $\sim$1050 states and observation sequences of length 10.
+Larger models were looked at, but it was determined, the largest model used were suficent to use, looking at the time it takes for a parameter estimation to be determined.
 
-In \todo{Ref to experiment 3} the values for the initial model values are not completly random, instead they are designed to have repeated values.
+We ran the experiments in a Docker container, which at max can use 16 GB of memory, which also was a limitation in the experiments as when we were experimenting with larger models, we sometimes ran out of memory.
+
+There are models that contain a far greater amount of states, which could be looked further explored.
+
+In \autoref{sec:exp_extra_scalability} the values for the initial model values are not completly random, instead they are designed to have repeated values.
 This was done to display the known strenghs of \Cupaal.
 
 This does scew the model to favor \Cupaal\ as the \gls{add} structure benefits from repeated values and therefore will display results that indicate \Cupaal\ as the stronger implementation.
@@ -53,7 +58,7 @@ A discussion back then was also whether or not this is the best tool for the job
 This discussion is still relevant, and worth exploring.
 
 \Cupaal\ is designed for the \gls{bw} algorithm, but it would looking into other algorithms that could potentially benefit from a symbolic implementation.
-An algorith that could be explored would be the \todo{add an algorithm here} algorithm.
+An algorithm that could be explored would be the Viterbi algorithm.
 By exploring other algorithms, general benefits of using a symbolic approach could be covered.
 
 % Is there a bottleneck, such as the update step? - We saw that alpha and beta were not a bottleneck, but the update step might be.
