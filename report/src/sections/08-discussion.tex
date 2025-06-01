@@ -1,32 +1,33 @@
 \section{Discussion}\label{sec:discussion}
 This section discusses the results presented in \autoref{sec:results} and reflects on the performance of \Cupaal\ compared to \Jajapy.
 
-The results from \autoref{sec:experiments} display that \Cupaal\ outperforms \Jajapy\ in terms of run time as the observation length grows.
-For models with few states the run time is similar, but as the number of states increases the differences become more pronounced.
-This shows that \Cupaal\  is a better choice for larger observation sequences, but \Jajapy\ is still a better choice for large models.
+The results from the \autoref{sec:experiments} show that \Cupaal\ outperforms \Jajapy\ in terms of run time as the observation length increases.
+For models with few states, the run time is similar, but as the number of states increases, the differences become more pronounced.
+This indicates that \Cupaal\ is a better choice for larger observation sequences, but \Jajapy\ remains a better choice for large models.
 
 The experiment is conducted using a single model, \texttt{leader\_sync}, which may not provide a comprehensive view of the performance across different scenarios.
-A better approach would have been to use multiple models with varying characteristics and compare their performance.
-This would allow for a more general overview of the performance of \Cupaal\ compared to \Jajapy.
-Other models that were looked at were the \texttt{NAND}, and \texttt{BRP} models. \todo{add other models}
+A more effective approach would have been to utilize multiple models with varying characteristics and compare their performance.
+This would allow for a more comprehensive overview of \Cupaal 's performance compared to \Jajapy.
+Other models that were considered were the \texttt{NAND} and \texttt{BRP} models.
 
-A broader variety of models would give a clear insight in \Cupaal\ and hereby display the strenghs and weaknesses of \Cupaal.
+A broader variety of models would provide a clearer insight into \Cupaal\ and thereby display the strengths and weaknesses of \Cupaal.
 
 %As with only \texttt{Leader\_Sync} it is only clear that \Cupaal\ performs well with a large number of observations.
 
-The model included could also have made use of a greater number of states and observations, currently largest the model contains $\sim$1050 states and observation sequences of length 10.
-Larger models were looked at, but it was determined, the largest model used were suficent to use, looking at the time it takes for a parameter estimation to be determined.
+The model could also have utilized a greater number of states and observations; currently, the largest model contains $\sim$1,050 states and observation sequences of length 10.
 
-We ran the experiments in a Docker container, which at max can use 16 GB of memory, which also was a limitation in the experiments as when we were experimenting with larger models, we sometimes ran out of memory.
+Larger models were considered, but it was determined that the largest model used was sufficient, given the time required for parameter estimation.
 
-There are models that contain a far greater amount of states, which could be looked further explored.
+We ran the experiments in a Docker container, which has a maximum memory capacity of 16 GB. This limitation also affected the experiments, as we sometimes ran out of memory when experimenting with larger models.
 
-In \autoref{sec:exp_extra_scalability} the values for the initial model values are not completly random, instead they are designed to have repeated values.
-This was done to display the known strenghs of \Cupaal.
+Some models contain a far greater amount of states, which could be further explored.
 
-This does scew the model to favor \Cupaal\ as the \gls{add} structure benefits from repeated values and therefore will display results that indicate \Cupaal\ as the stronger implementation.
+In \autoref{sec:exp_extra_scalability}, the values for the initial model values are not entirely random. Instead, they are designed to have repeated values.
+This was done to display the known strengths of \Cupaal.
 
-This was purely done to research what was believed to a strength of \Cupaal\ and to further the discussion of when \Cupaal\ is a good option to use over other tools such as \Jajapy.
+This skews the model to favor \Cupaal, as the \gls{add}structure benefits from repeated values and, therefore, will display results that indicate \Cupaal\ as the stronger implementation.
+
+This was done purely to research what was believed to be a strength of \Cupaal\ and to further the discussion on when \Cupaal\ is a good option to use over other tools, such as \Jajapy.
 
 % Intro to discussion
 % Discussion of the results in section 6.
@@ -35,31 +36,31 @@ This was purely done to research what was believed to a strength of \Cupaal\ and
 % Size of models
 
 \subsection{Implementation Discussion} \label{subsec:implementation_discussion}
-\Cupaal\ displays clear benefits when working with repeated values, but in general it struggels to compete with \Jajapy.
-Previous work indicated that \Cupaal\ overall was a stronger implementation, but with a fully symbolic implementation some potential bottlenecks have been discovered.
+\Cupaal\ displays clear benefits when working with repeated values, but in general, it struggles to compete with \Jajapy.
+Previous work indicated that \Cupaal\ overall was a stronger implementation, but with an entirely symbolic implementation, some potential bottlenecks have been discovered.
 
-Specifically in the update step of the \gls{bw} algorithm, as when working with \glspl{add} for just the Alpha and Beta steps, \Cupaal\ performed very well.
+Specifically in the update step of the \gls{bw} algorithm, as when working with \glspl{add} for just the \$alpha$ and \$beta$ steps, \Cupaal\ performed very well.
 
-This indicates that there could be some issues when updating the values, when using \glspl{add}.
-To further research this topic, a hybrid implementation could be provided.
-This implementation would make use of \glspl{add} when calculating Alpha and Beta, and then use a recursive approach when updating values.
-An implementation like this, would require a lot of convertion between matrices and \glspl{add}, but by comparing a fully symbolic, a recursive, and a hybrid approach would give further insight to what \Cupaal\ struggels with.
+    This suggests that there may be issues when updating the values when using \glspl{add}.
+    To further research this topic, a hybrid implementation could be provided.
+    This implementation would utilize \glspl{add} when calculating $\alpha$ and $\beta$ and then employ a recursive approach when updating values.
+An implementation like this would require much conversation between matrices and \glspl{add}, but comparing a fully symbolic, a recursive, and a hybrid approach would give further insight into what \Cupaal\ struggles with.
 
-For now \Cupaal\ only measures the time taken for computing the \gls{bw} algorithm, but an interesting metric to compare would be the memory used.
+For now, \Cupaal\ only measures the time taken to compute the \gls{bw} algorithm, but an interesting metric to compare would be the memory used.
 If \Cupaal\ was discovered to require less memory than \Jajapy, even with more time needed for larger models, it could be a better choice.
-But without any memory metric to compare, the decision can only be made based on the time needed for computing \gls{bw}.
+However, without a memory metric to compare, the decision can only be made based on the time required for computing \gls{bw}.
 
 To allow \Cupaal\ and \Jajapy\ to work together, Pybind11 was used to create bindings between the two.
-This decision was done without exploring other options, therefore it might not be the best suited tool.
-For now it was decided that bindings that worked was fine for the current iteration of \Cupaal, but further considerations should be put into whether or not a better tool exists.
+This decision was made without exploring other options. Therefore, it might not be the best-suited tool.
+For now, bindings that worked were sufficient for the current iteration of \Cupaal, but further consideration should be given to whether a better tool exists.
 
-The library used to manipulate \glspl{add}, was \gls{cudd} as it was what previous work had built upon.
-A discussion back then was also whether or not this is the best tool for the job, as other tools such as Sylvan exist.
-This discussion is still relevant, and worth exploring.
+The library used to manipulate \glspl{add} was \gls{cudd}, as it was what previous work had built upon.
+A discussion at the time was also whether this is the best tool for the job, as other tools such as Sylvan exist.
+This discussion remains relevant and worth exploring.
 
-\Cupaal\ is designed for the \gls{bw} algorithm, but it would looking into other algorithms that could potentially benefit from a symbolic implementation.
+\Cupaal\ is designed for the \gls{bw} algorithm, but it is worth exploring other algorithms that could benefit from a symbolic implementation.
 An algorithm that could be explored would be the Viterbi algorithm.
-By exploring other algorithms, general benefits of using a symbolic approach could be covered.
+By exploring other algorithms, the general benefits of using a symbolic approach can be better understood.
 
 % Is there a bottleneck, such as the update step? - We saw that alpha and beta were not a bottleneck, but the update step might be.
 % Would a hybrid approach be better, where we use a recursive implementation for the update step?
@@ -70,13 +71,26 @@ By exploring other algorithms, general benefits of using a symbolic approach cou
 % We have only worked with the Baum-Welch algorithm, would ADDs also prove beneficial in other algorithms such as ****
 %We dont measure memory, is this an issue and how could the results influence our conclusion of CuPAAL?
 
-\subsection{Future Work Discussion}
-Furthermore \Cupaal\ only makes use of a single core, this is not an issue when comparing it to \Jajapy\ as it can be limited to also only use a single core.
-But an improvement to allow for multiple cores for \Cupaal\ could be a direction worth exploring.
+\subsection{Future Work}\label{subsec:future_work}
+This section will discuss areas that might be worth exploring in future work.
 
+\Cupaal\ only utilizes a single core. This is not an issue when comparing it to \Jajapy, as it can be limited to using only a single core.
+However, improving \Cupaal\ to support multiple cores could be a worthwhile direction to explore, as it could provide a significant performance increase.
+
+In an observation sequence, observations are grouped if they are identical, meaning that when computing these observations, we can factor in the number of identical observations and only compute one of them.
+
+Expanding upon this idea involves making use of prefixes and suffixes to enhance observations.
+Many observations may not be entirely identical, but they could share a significant number of labels.
+To leverage this, prefixes and suffixes of observations could be considered and grouped as is done currently.
+Given that an observation sequence contains many observations that share prefixes and suffixes of labels, the gain could prove to be significant.
+
+In the update step of \gls{bw} in \Cupaal, consideration is not made to check if the model worked on is an \gls{mc}.
+This might be worth adding, as in these cases, unnecessary computation is made, as \glspl{mc} do not require the Emission function to be updated.
+This is a minor consideration, as these values are ignored after they are computed, but it could be worth implementing.
+
+% Cupaal only uses one core, so it is not parallelized.
 % Would we be able to use ADDs for the observations?
 % vi burde også lave en udgave af update steppet lavet til MCer, vi skal jo ikke opdatere omega der
-% Cupaal only uses one core, so it is not parallelized.
 
 % Did we achieve our goal of creating a symbolic implementation of the Baum-Welch algorithm?
 
