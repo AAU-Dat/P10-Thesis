@@ -101,6 +101,15 @@ From \autoref{fig:leader_results}
 
 
 \subsection{Accuracy}\label{subsec:accuracy}
+This section will cover the second experiment done for comparing \Cupaal\ and \Jajapy.
+This experiment explores the effect of random and semi-random initial model parameters, as we expect repeated values to be highly beneficial for \Cupaal's implementation.
+
+Table \autoref{tab:leader_results_loglikelihood}, displays three models with a varrying number og states and observation sequences.
+This table is used to highlight that the different methods of initialising model parameters, has an impact of the number of iterations needed, but not showing a clear strength in either method.
+This is to be expected, as depending on how close or far off, the values are to the learned model, has an impact on the number of iterations needed.
+But it also showcases that there is no impact on the loglikelihood, meaning that no matter the method used the model learned is still equally close to the correct model.
+
+
 \begin{table}[htb!]
     \centering
     \caption{Leader Sync model variations in loglikelihood for random and semi-random initial values.}
@@ -124,6 +133,12 @@ From \autoref{fig:leader_results}
         \bottomrule
     \end{tabular}
 \end{table}
+
+\autoref{tab:leader_results_rand_vs_semi} is the table that compares \Cupaal\ to \Jajapy, and the impact of random and semi-random initialization, in regards to the time needed to learn the model.
+
+
+
+
 
 \begin{table}
     \centering
