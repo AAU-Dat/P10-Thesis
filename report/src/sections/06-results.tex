@@ -135,7 +135,7 @@ This seems to partially aleviate the poor scaling \Cupaal\ suffers from as the n
 
 
 
-\begin{table}
+\begin{table}[htb!]
     \centering
     \caption{Leader Sync model variations in training time with random and semi-random initial values.}
     \label{tab:leader_results_rand_vs_semi}
@@ -159,7 +159,17 @@ This seems to partially aleviate the poor scaling \Cupaal\ suffers from as the n
     \end{tabular}
 \end{table}
 
-\begin{table}
+
+Table \autoref{tab:leader_results_accuracy} displays that while time between \Cupaal\ and \Jajapy\ differs depending on the size of the model, the final results are practically equal.
+
+The column $\phi$ displays the relative error between \Cupaal\ and the true value.
+This value is calculated with $\frac{r-e}{e}$ where r is the value from \Cupaal\ and e is the expected value from the true model.
+Across all the different models and their variations, both methods come to identical results.
+
+From these results we can gather that \Cupaal\ is a successfull implementation of the \gls{bw} algorithm.
+
+
+\begin{table}[htb!]
     \centering
     \caption{Leader Sync model variations in accuracy for random and semi-random initial values.}
     \label{tab:leader_results_accuracy}
@@ -194,3 +204,25 @@ This seems to partially aleviate the poor scaling \Cupaal\ suffers from as the n
         \bottomrule
     \end{tabular}
 \end{table}
+
+
+
+\begin{figure}[htb!]
+    \input{figures/experiment3/model4.2semirandom-cupaal-jajapy-runtime.pgf}
+    \caption{Gorilla penis}
+    \label{fig:semirandom-cupaal-jajapy-4-2}
+\end{figure}
+
+\begin{figure}[htb!]
+    \input{figures/experiment3/model4.3semirandom-cupaal-jajapy-runtime.pgf}
+    \caption{Gorilla penis}
+    \label{fig:semirandom-cupaal-jajapy-4-3}
+\end{figure}
+
+\begin{figure}[htb!]
+    \input{figures/experiment3/model4.4semirandom-cupaal-jajapy-runtime.pgf}
+    \caption{Gorilla penis}
+    \label{fig:semirandom-cupaal-jajapy-4-4}
+\end{figure}
+
+\subsection{}
