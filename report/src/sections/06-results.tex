@@ -89,17 +89,8 @@ This is not the case for \Cupaal, where we do not see any particular increase in
 In fact, looking at \autoref{fig:cupaal-length-to-runtime} and \autoref{fig:jajapy-length-to-runtime}, the \Cupaal\ runtimes look a little strange.
 
 
-
-
 % This is likely due to the smaller size of the model, not having as much redundant calculations to avoid, which is the main advantage of the symbolic approach used in CuPAAL.
 % Mention the repeat calculations of a model that has reached a steady-state, and therefore have infinitely repeated observations.
-
-
-From \autoref{fig:leader_results}
-
-
-
-
 \subsection{Accuracy}\label{subsec:accuracy}
 This section will cover the second experiment done for comparing \Cupaal\ and \Jajapy.
 This experiment explores the effect of random and semi-random initial model parameters, as we expect repeated values to be highly beneficial for \Cupaal's implementation.
@@ -136,7 +127,11 @@ But it also showcases that there is no impact on the loglikelihood, meaning that
 
 \autoref{tab:leader_results_rand_vs_semi} is the table that compares \Cupaal\ to \Jajapy, and the impact of random and semi-random initialization, in regards to the time needed to learn the model.
 
+Looking at the columns \texttt{rand-ja} and \texttt{semi-ja} which show the impact of random and semi randon initialization for \Jajapy, there is no major impact between the two.
+But when looking at the differences for \Cupaal\ it is clear that the semi-random approach is generally faster than the completly random, this becomes especially pronounced as the number of states for the model increase.
 
+We expected this to be the case, as with the number of observations meant more repeated values, the semi random initialization had a similar effect.
+This seems to partially aleviate the poor scaling \Cupaal\ suffers from as the number of model states increase.
 
 
 
@@ -168,34 +163,34 @@ But it also showcases that there is no impact on the loglikelihood, meaning that
     \centering
     \caption{Leader Sync model variations in accuracy for random and semi-random initial values.}
     \label{tab:leader_results_accuracy}
-    \begin{tabular}{rrrrr}
+    \begin{tabular}{rrrrrrr}
         \toprule
-        model & obscount & original & jajapy & cupaal \\
+        $\mathcal{M}$ & $|O|$ & rounds & \Jajapy & \Cupaal & $\Delta$ & $\phi$ \\
         \midrule
-        3.2   & 25       & 1.33     & 1.28   & 1.28   \\
-        3.2   & 75       & 1.33     & 1.30   & 1.30   \\
-        3.2   & 100      & 1.33     & 1.28   & 1.28   \\
-        3.3   & 25       & 1.12     & 1.23   & 1.23   \\
-        3.3   & 50       & 1.12     & 1.11   & 1.11   \\
-        3.3   & 100      & 1.12     & 1.13   & 1.13   \\
-        3.4   & 25       & 1.07     & 1.08   & 1.08   \\
-        3.4   & 50       & 1.07     & 1.09   & 1.09   \\
-        3.4   & 100      & 1.07     & 1.11   & 1.11   \\
-        4.2   & 25       & 2.00     & 2.11   & 2.12   \\
-        4.2   & 50       & 2.00     & 2.16   & 2.16   \\
-        4.2   & 100      & 2.00     & 2.00   & 2.00   \\
-        4.3   & 25       & 1.35     & 1.37   & 1.37   \\
-        4.3   & 50       & 1.35     & 1.28   & 1.28   \\
-        4.3   & 100      & 1.35     & 1.25   & 1.28   \\
-        4.4   & 25       & 1.19     & 1.25   & 1.25   \\
-        4.4   & 50       & 1.19     & 1.17   & 1.17   \\
-        4.4   & 100      & 1.19     & 1.27   & 1.27   \\
-        5.2   & 25       & 3.20     & 3.27   & 3.27   \\
-        5.2   & 50       & 3.20     & 3.06   & 3.06   \\
-        5.2   & 100      & 3.20     & 3.50   & 3.50   \\
-        5.3   & 25       & 1.35     & 1.32   & 1.32   \\
-        5.3   & 50       & 1.35     & 1.27   & 1.27   \\
-        5.3   & 100      & 1.35     & 1.33   & 1.33   \\
+        3.2           & 25    & 1.33   & 1.28    & 1.28    & 0.00     & 0.04   \\
+        3.2           & 75    & 1.33   & 1.30    & 1.30    & 0.00     & 0.02   \\
+        3.2           & 100   & 1.33   & 1.28    & 1.28    & 0.00     & 0.04   \\
+        3.3           & 25    & 1.12   & 1.23    & 1.23    & 0.00     & 0.09   \\
+        3.3           & 50    & 1.12   & 1.11    & 1.11    & 0.00     & 0.01   \\
+        3.3           & 100   & 1.12   & 1.13    & 1.13    & 0.00     & 0.00   \\
+        3.4           & 25    & 1.07   & 1.08    & 1.08    & 0.00     & 0.01   \\
+        3.4           & 50    & 1.07   & 1.09    & 1.09    & 0.00     & 0.02   \\
+        3.4           & 100   & 1.07   & 1.11    & 1.11    & 0.00     & 0.04   \\
+        4.2           & 25    & 2.00   & 2.11    & 2.12    & -0.00    & 0.06   \\
+        4.2           & 50    & 2.00   & 2.16    & 2.16    & 0.00     & 0.08   \\
+        4.2           & 100   & 2.00   & 2.00    & 2.00    & 0.00     & 0.00   \\
+        4.3           & 25    & 1.35   & 1.37    & 1.37    & 0.00     & 0.01   \\
+        4.3           & 50    & 1.35   & 1.28    & 1.28    & 0.00     & 0.05   \\
+        4.3           & 100   & 1.35   & 1.25    & 1.25    & 0.00     & 0.07   \\
+        4.4           & 25    & 1.19   & 1.25    & 1.25    & 0.00     & 0.05   \\
+        4.4           & 50    & 1.19   & 1.17    & 1.17    & 0.00     & 0.01   \\
+        4.4           & 100   & 1.19   & 1.27    & 1.27    & 0.00     & 0.07   \\
+        5.2           & 25    & 3.20   & 3.27    & 3.27    & -0.00    & 0.02   \\
+        5.2           & 50    & 3.20   & 3.06    & 3.06    & -0.00    & 0.04   \\
+        5.2           & 100   & 3.20   & 3.50    & 3.50    & 0.00     & 0.09   \\
+        5.3           & 25    & 1.35   & 1.32    & 1.32    & 0.00     & 0.02   \\
+        5.3           & 50    & 1.35   & 1.27    & 1.27    & 0.00     & 0.06   \\
+        5.3           & 100   & 1.35   & 1.33    & 1.33    & 0.00     & 0.01   \\
         \bottomrule
     \end{tabular}
 \end{table}
