@@ -101,3 +101,50 @@ From \autoref{fig:leader_results}
 
 
 \subsection{Accuracy}\label{subsec:accuracy}
+\begin{table}[htb!]
+    \centering
+    \caption{Leader Sync model variations in loglikelihood for random and semi-random initial values.}
+    \label{tab:leader_results_loglikelihood}
+    \begin{tabular}{rrrrrrrrrrr}
+        \toprule
+        $\mathcal{M}$ & $|S|$ & $|O|$ & iter(rand) & iter(semi) & $\ell$ rand & $\ell$ semi \\
+        \midrule
+        4.2           & 61    & 25    & 18         & 16         & -140.41     & -140.41     \\
+        4.2           & 61    & 50    & 17         & 20         & -149.13     & -149.13     \\
+        4.2           & 61    & 75    & 17         & 18         & -117.80     & -117.80     \\
+        4.2           & 61    & 100   & 17         & 18         & -138.63     & -138.63     \\
+        4.3           & 274   & 25    & 18         & 18         & -79.92      & -79.92      \\
+        4.3           & 274   & 50    & 18         & 18         & -67.24      & -67.25      \\
+        4.3           & 274   & 75    & 18         & 18         & -65.71      & -65.71      \\
+        4.3           & 274   & 100   & 18         & 18         & -62.55      & -62.55      \\
+        4.4           & 812   & 25    & 18         & 18         & -62.55      & -62.55      \\
+        4.4           & 812   & 50    & 18         & 18         & -48.49      & -48.49      \\
+        4.4           & 812   & 75    & 17         & 18         & -52.26      & -52.26      \\
+        4.4           & 812   & 100   & 18         & 18         & -65.71      & -65.71      \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{table}
+    \centering
+    \caption{Leader Sync model variations in training time with random and semi-random initial values.}
+    \label{tab:leader_results_rand_vs_semi}
+    \begin{tabular}{rrrrrrrrrrr}
+        \toprule
+        $\mathcal{M}$ & $|S|$ & $|O|$ & rand-ja & rand-cup & semi-ja & semi-cup \\
+        \midrule
+        4.2           & 61    & 25    & 15.68   & 11.12    & 13.26   & 7.87     \\
+        4.2           & 61    & 50    & 24.87   & 13.56    & 28.32   & 12.54    \\
+        4.2           & 61    & 75    & 36.02   & 9.72     & 38.62   & 10.54    \\
+        4.2           & 61    & 100   & 52.11   & 11.24    & 53.75   & 10.95    \\
+        4.3           & 274   & 25    & 194.88  & 231.28   & 190.65  & 194.04   \\
+        4.3           & 274   & 50    & 414.30  & 379.21   & 414.95  & 308.81   \\
+        4.3           & 274   & 75    & 476.68  & 232.21   & 486.04  & 206.67   \\
+        4.3           & 274   & 100   & 447.83  & 117.78   & 441.40  & 118.17   \\
+        4.4           & 812   & 25    & 1846.67 & 3324.83  & 1793.90 & 3087.66  \\
+        4.4           & 812   & 50    & 2290.28 & 1848.44  & 2239.18 & 1526.81  \\
+        4.4           & 812   & 75    & 3017.72 & 1597.78  & 3177.81 & 1512.33  \\
+        4.4           & 812   & 100   & 5652.14 & 3447.56  & 5586.23 & 2959.75  \\
+        \bottomrule
+    \end{tabular}
+\end{table}
