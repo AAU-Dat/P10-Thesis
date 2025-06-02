@@ -2,8 +2,14 @@
 %! Date = 29-12-2023
 
 \begin{abstract}
-    This is a placeholder abstract.
-    The whole template is used in semester projects at \gls{aau}.
+    The \gls{bw} algorithm is a widely used method for training \glspl{hmm} and \glspl{mc} from observation sequences.
+    However, traditional implementations using recursive or matrix-based methods often struggle with scalability due to redundancy and high memory consumption.
+    This thesis proposes a novel, symbolic implementation of the \gls{bw} algorithm using \glspl{add}, which provide a compact and efficient representation of probabilistic models.
+    We present \Cupaal, a C++ library that implements the \gls{bw} algorithm entirely with \glspl{add}, and integrate it into the \Jajapy\ library, resulting in a new symbolic learning tool referred to as \JajapyTwo.
+
+    Our approach enables efficient learning from multiple observation sequences and supports both \glspl{hmm} and \glspl{mc}.
+    Through experiments on models from the QComp benchmark set, we demonstrate that the symbolic implementation significantly improves performance for larger observation sets and models with repeated structures, while maintaining learning accuracy.
+    These results affirm the potential of \gls{add}-based symbolic computation as a scalable alternative for probabilistic model learning.
 \end{abstract}
 
 %\begin{IEEEkeywords}
