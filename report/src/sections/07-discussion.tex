@@ -1,31 +1,28 @@
 \section{Discussion}\label{sec:discussion}
-This section discusses the results presented in \autoref{sec:results} and reflects on the performance of \Cupaal\ compared to \Jajapy.
+In this section we discuss the results presented in \autoref{sec:results} and reflect on the performance of \Cupaal\ compared to \Jajapy.
 
 The results from the \autoref{sec:results} show that \Cupaal\ outperforms \Jajapy\ in terms of run time as the observation length increases.
 For models with few states, the run time is similar, but as the number of states increases, the differences become more pronounced.
 This indicates that \Cupaal\ is a better choice for larger observation sequences, but \Jajapy\ remains a better choice for large models.
 
-The experiment is conducted using a single model, \texttt{leader\_sync}, which may not provide a comprehensive view of the performance across different scenarios.
+The experiment is conducted using a single model, leader sync, which may not provide a comprehensive view of the performance across different scenarios.
+
 A more effective approach would have been to utilize multiple models with varying characteristics and compare their performance.
 This would allow for a more comprehensive overview of \Cupaal 's performance compared to \Jajapy.
-Other models that were considered were the \texttt{NAND} and \texttt{BRP} models.
 
+Other models that were considered were the NAND and BRP models, also from the qcomp benchmark set~\cite{hartmanns2019quantitative}.
 A broader variety of models would provide a clearer insight into \Cupaal\ and thereby display the strengths and weaknesses of \Cupaal.
 
-%As with only \texttt{Leader\_Sync} it is only clear that \Cupaal\ performs well with a large number of observations.
-
-The model could also have utilized a greater number of states and observations; currently, the largest model contains $\sim$1,050 states and observation sequences of length 10.
+The model could also have utilized a greater number of states and observations; currently, the largest model contains 1,050 states and observation sequences of length 10.
 
 Larger models were considered, but it was determined that the largest model used was sufficient, given the time required for parameter estimation.
 
-We ran the experiments in a Docker container, which has a maximum memory capacity of 16 GB. This limitation also affected the experiments, as we sometimes ran out of memory when experimenting with larger models.
-
-Some models contain a far greater amount of states, which could be further explored.
+We ran the experiments in a Docker container, which has a maximum memory capacity of 16 GB. This limitation also affected the experiments, as we sometimes ran out of memory when experimenting with larger models - some models contain a far greater amount of states, which could be further explored.
 
 In \autoref{sec:exp_extra_scalability}, the values for the initial model values are not entirely random. Instead, they are designed to have repeated values.
 This was done to display the known strengths of \Cupaal.
 
-This skews the model to favor \Cupaal, as the \gls{add}structure benefits from repeated values and, therefore, will display results that indicate \Cupaal\ as the stronger implementation.
+This skews the model to favor \Cupaal, as the \gls{add} structure benefits from repeated values and, therefore, will display results that indicate \Cupaal\ as the stronger implementation.
 
 This was done purely to research what was believed to be a strength of \Cupaal\ and to further the discussion on when \Cupaal\ is a good option to use over other tools, such as \Jajapy.
 
@@ -37,6 +34,7 @@ This was done purely to research what was believed to be a strength of \Cupaal\ 
 
 \subsection{Implementation Discussion} \label{subsec:implementation_discussion}
 \Cupaal\ displays clear benefits when working with repeated values, but in general, it struggles to compete with \Jajapy.
+
 Previous work indicated that \Cupaal\ overall was a stronger implementation, but with an entirely symbolic implementation, some potential bottlenecks have been discovered.
 
 Specifically in the update step of the \gls{bw} algorithm, as when working with \glspl{add} for just the $alpha$ and $beta$ steps, \Cupaal\ performed very well.
@@ -45,6 +43,7 @@ Much better than what is indicated for the full \gls{bw} algorithm implemented h
 This suggests that there may be issues when updating the values when using \glspl{add}.
 To further research this topic, a hybrid implementation could be provided.
 This implementation would utilize \glspl{add} when calculating $\alpha$ and $\beta$ and then employ a recursive approach when updating values.
+
 An implementation like this would require much conversion between matrices and \glspl{add}, but comparing a fully symbolic, a recursive, and a hybrid approach would give further insight into what \Cupaal\ struggles with.
 
 For now, \Cupaal\ only measures the time taken to compute the \gls{bw} algorithm, but an interesting metric to compare would be the memory used.
@@ -63,14 +62,6 @@ This discussion remains relevant and worth exploring.
 An algorithm that could be explored could be the Viterbi algorithm.
 By exploring other algorithms, the general benefits of using a symbolic approach can be better understood.
 
-% Is there a bottleneck, such as the update step? - We saw that alpha and beta were not a bottleneck, but the update step might be.
-% Would a hybrid approach be better, where we use a recursive implementation for the update step?
-
-% We used Pybind11 to interface with C++, but we could have used other libraries.
-% We could have used a different library for the symbolic engine, such as Sylvan or CUDD.
-% Jajapy is shit, and we should not use it as a benchmark.
-% We have only worked with the Baum-Welch algorithm, would ADDs also prove beneficial in other algorithms such as ****
-%We dont measure memory, is this an issue and how could the results influence our conclusion of CuPAAL?
 
 \subsection{Future Work}\label{subsec:future_work}
 This section will discuss areas that might be worth exploring in future work.
@@ -82,6 +73,7 @@ In an observation sequence, observations are grouped if they are identical, mean
 
 Expanding upon this idea involves making use of prefixes and suffixes to enhance observations.
 Many observations may not be entirely identical, but they could share a significant number of labels.
+
 To leverage this, prefixes and suffixes of observations could be considered and grouped as is done currently.
 Given that an observation sequence contains many observations that share prefixes and suffixes of labels, the gain could prove to be significant.
 
