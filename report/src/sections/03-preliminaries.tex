@@ -192,10 +192,10 @@ Finally, the initial probability vector, the transition probability matrix and e
 
 \begin{align}
     \hat{\pmb{\pi}}    & = \pmb{\gamma}(1)
-    \label{eq:initial-probabilities-update}                                                                                          \\
-    \hat{\pmb{\omega}} & = ( \mathbf{1} \oslash \pmb{\gamma}) \bullet \left(\sum_{t=1}^{T} \pmb{\gamma}(t) \otimes {[[o_t]]} \right)
-    \label{eq:emission-probabilities-update}                                                                                         \\
-    \hat{\pmb{\tau}}   & = (\mathbf{1} \oslash \pmb{\gamma} ) \bullet \pmb{\xi}
+    \label{eq:initial-probabilities-update}                                                                                               \\
+    \hat{\pmb{\omega}} & = ( \mathbf{1} \oslash \pmb{\gamma}) \smblkcircle \left(\sum_{t=1}^{T} \pmb{\gamma}(t) \otimes {[[o_t]]} \right)
+    \label{eq:emission-probabilities-update}                                                                                              \\
+    \hat{\pmb{\tau}}   & = (\mathbf{1} \oslash \pmb{\gamma} ) \smblkcircle \pmb{\xi}
     \label{eq:transition-probabilities-update}
 \end{align}
 
@@ -206,17 +206,17 @@ Finally, the initial probability vector, the transition probability matrix and e
 % \end{equation}
 
 % \begin{equation}
-%     \hat{\pmb{\omega}} = ( \mathbf{1} \oslash \pmb{\gamma}) \bullet \left(\sum_{t=1}^{T} \pmb{\gamma}(t) \otimes {[[o_t]]} \right)
+%     \hat{\pmb{\omega}} = ( \mathbf{1} \oslash \pmb{\gamma}) \smblkcircle \left(\sum_{t=1}^{T} \pmb{\gamma}(t) \otimes {[[o_t]]} \right)
 %     \label{eq:emission-probabilities-update}
 % \end{equation}
 
 % \begin{equation}
-%     \hat{\pmb{\tau}} = (\mathbf{1} \oslash \pmb{\gamma} ) \bullet \pmb{\xi}
+%     \hat{\pmb{\tau}} = (\mathbf{1} \oslash \pmb{\gamma} ) \smblkcircle \pmb{\xi}
 %     \label{eq:transition-probabilities-update}
 % \end{equation}
 
 
-Where $\bullet$ is the transposed Khatri-Rao product (i.e., row-by-row Kronecker product), and $[[o_t]] = ([[o_t=l]])_{l \in L}$ is the one-hot encoding of the observation $o_t$, meaning that it is a row vector of size $|L|$ with a 1 in the position corresponding to the observation $o_t$ and 0 elsewhere.
+Where $\smblkcircle$ is the transposed Khatri-Rao product (i.e., row-by-row Kronecker product), and $[[o_t]] = ([[o_t=l]])_{l \in L}$ is the one-hot encoding of the observation $o_t$, meaning that it is a row vector of size $|L|$ with a 1 in the position corresponding to the observation $o_t$ and 0 elsewhere.
 $\oslash$ is the element-wise division, and $\otimes$ is the Kronecker product.
 The $\pmb{\gamma}$ and $\pmb{\xi}$ are defined as follows:
 
@@ -259,7 +259,7 @@ The emission matrix is updated as follows:
 
 \begin{equation}
     \pmb{\omega}
-    _s(o) = (\mathbf{1} \oslash \pmb{\gamma}) \bullet \left( \sum_{i=1}^{|\mathcal{O}|} \sum_{t=1}^{T} \pmb{\gamma}_i(t) \otimes [[o_{it}]] \right)
+    _s(o) = (\mathbf{1} \oslash \pmb{\gamma}) \smblkcircle \left( \sum_{i=1}^{|\mathcal{O}|} \sum_{t=1}^{T} \pmb{\gamma}_i(t) \otimes [[o_{it}]] \right)
     \label{eq:omega-update}
 \end{equation}
 
