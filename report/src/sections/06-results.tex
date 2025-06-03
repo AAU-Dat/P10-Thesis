@@ -130,30 +130,21 @@ In fact, looking at \autoref{fig:cupaal-length-to-runtime} and \autoref{fig:jaja
 
 
 \subsection{Accuracy}\label{subsec:accuracy}
-This section will showcase the results from the accuracy experiment.
-\autoref{tab:leader-results-accuracy} displays that while time between \Cupaal\ and \Jajapy\ differs depending on the size of the model, the final results are practically equal.
+This experiment compares the accuracy of \Cupaal\ and \Jajapy\ in learning the \texttt{Leader Sync} model.
+Specifically, we model check how many rounds it takes, for each model to select a new leader, from the original model, \Jajapy\ and \Cupaal\ using properties from \autoref{lst:leader-sync-additions}.
 
-The experiment makes use of the \texttt{Leader Sync} model, which is a model tool used to select a new leader for a given protocol.
+\autoref{tab:leader-results-accuracy} shows the results.
+The table includes the number of rounds for the original model (column \textbf{rounds}), and the learned models from \Jajapy, and \Cupaal.
+The column $\Delta$ shows the difference between \Cupaal\ and \Jajapy, while $\phi$ shows the relative error between \Jajapy\ and the true value from the original model.
 
-For this experiment the thing we were interested how similar \Cupaal\ was to the original model.
-We did this by checking the model of how long time it took for the original model to select a new leader on average, measured in number of average rounds.
+The results show that both \Cupaal\ and \Jajapy\ closely match the true model.
+For example, in the row for model 3.2 with 25 observations, the original model takes 1.33 rounds, and both \Cupaal\ and \Jajapy\ predict 1.28 rounds.
 
-The properties checked can be seen in \autoref{lst:leader-sync-additions}.
-For model 3.2 it took on average $1.33$ rounds, and for both \Cupaal\ and \Jajapy\ it took $1.28$ rounds.
-All the models true values can be found in~\cite{kwiatkowska2012prism}.
-Both \Cupaal\ and \Jajapy\ have identical values for the rounds, hereby showing that they both are equally good at learning a model based on the training set.
-Importantly, the models learned by \Cupaal\ and \Jajapy\ are the same models.
+In the same row, the difference $\Delta$ is 0.00, meaning the both implementations learned the same model.
+The relative error $\phi$ is 0.04, indicating a very small deviation from the true value.
+This pattern hold across all models, with \Cupaal\ and \Jajapy\ producing nearly identical results, with only minor differences compared to the true values.
 
-The column $\phi$ in \autoref{tab:leader-results-accuracy} displays the relative error between \Cupaal\ and the true value.
-This value is calculated with $\frac{r-e}{e}$ where r is the value from \Cupaal\ and e is the expected value from the true model.
-Across all the different models and their variations, both methods come to identical results.
-
-
-
-
-From these results we can gather that \Cupaal\ is a successfull implementation of the \gls{bw} algorithm.
-
-
+In conclusion, these results show that \Cupaal\ is a reliable and accurate implementation of the \gls{bw} algorithm, matching the performance of \Jajapy\ in learning the model.
 
 \subsection{Extra Scalability}\label{subsec:extra_scalability}
 This section will cover the second experiment done for comparing \Cupaal\ and \Jajapy.
