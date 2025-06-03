@@ -5,7 +5,7 @@ For ease of reference Appendix~\ref{sec:cheatsheet} contains a table of symbols 
 We begin by defining the key concepts of a \gls{hmm} and a \gls{mc}, which are the two main models used in this report, then go on to introduce the \gls{bw}, which is a widely used algorithm for training \glspl{hmm}, and showing how it can be adapted to handle multiple observation sequences using matrix operations.
 
 \subsection{Hidden Markov Model}\label{subsec:hmm}
-\acrfullpl{hmm} were introduced by Baum and Petrie in 1966~\cite{baum1966statistical} and have since been widely used in various fields, such as speech recognition~\cite{chavan2013overview}, bioinformatics~\cite{ciocchetta2009bio}, and finance~\cite{mamon2007hidden}.
+\glspl{hmm} were introduced by Baum and Petrie in 1966~\cite{baum1966statistical} and have since been widely used in various fields, such as speech recognition~\cite{chavan2013overview}, bioinformatics~\cite{ciocchetta2009bio}, and finance~\cite{mamon2007hidden}.
 
 A \gls{hmm} is a statistical model that describes a system that evolves over time.
 The system is assumed to hold the Markov property, meaning that the future state of the system only depends on the current state and not on the past states.
@@ -14,7 +14,7 @@ Instead, the system emits observations, which are used to infer the hidden state
 
 
 \begin{definition}[Hidden Markov Model]
-    A Hidden Markov Model (HMM) is a tuple $\mathcal{M} = (S, L, \omega, \tau, \pi)$, where:
+    A \gls{hmm} is a tuple $\mathcal{M} = (S, L, \omega, \tau, \pi)$, where:
     \begin{itemize}
         \item $S$ is a finite set of states.
         \item $L$ is a finite set of labels.
@@ -33,11 +33,11 @@ The initial distribution $\pi$ describes the probability of starting in a given 
 An example of a \gls{hmm} is a weather model where the hidden state represents the actual weather (sunny, rainy, or cloudy), but we only observe indirect signals, such as whether someone is carrying an umbrella or wearing sunglasses.
 
 \subsection{Markov Chain}\label{subsec:mc}
-A \acrfull{mc}, named after Andrei Markov, is a stochastic model widely used in different fields of study~\cite{Rabiner89}.
+A \glspl{mc}, named after Andrei Markov, is a stochastic model widely used in different fields of study~\cite{Rabiner89}.
 
 
 \begin{definition}[Markov Chain]
-    A Markov Chain (MC) is a tuple $\mathcal{M} = (S, L, \omega, \tau, \pi)$ identical to the \gls{hmm} structure above except that the emission function is \emph{deterministic}: for every $s\in S$ there is a single label
+    A \gls{mc} is a tuple $\mathcal{M} = (S, L, \omega, \tau, \pi)$ identical to the \gls{hmm} structure above except that the emission function is \emph{deterministic}: for every $s\in S$ there is a single label
     $l=\omega(s)$ emitted with probability 1.
 \end{definition}
 
@@ -283,7 +283,7 @@ This simplification avoids unnecessary computation and reflects the reduced unce
 Consequently, the \gls{bw} becomes more efficient when applied to \glspl{mc}.
 
 \subsection{Decision Diagrams}\label{subsec:decision-diagrams}
-\acrfullpl{bdd} are data structures for efficiently representing and manipulating Boolean functions.
+\glspl{bdd} are data structures for efficiently representing and manipulating Boolean functions.
 They are a compressed representation of truth tables, capturing the logical structure of a function in a graph-based format by eliminating redundancy, reducing memory usage, and improving computational efficiency~\cite{bryant1986graph}.
 
 A \gls{bdd} is a directed acyclic graph derived from a decision tree, where each non-terminal node represents a Boolean variable, edges correspond to binary assignments (0 or 1), and terminal nodes store function values (0 or 1).
@@ -293,7 +293,7 @@ To reduce the size of the decision tree, \glspl{bdd} exploit redundancy by mergi
 However, in rare cases \glspl{bdd} can suffer from exponential blowup. This can occur particularly when dealing with functions that lack inherent structure or when representing numerical computations that go beyond Boolean logic.
 
 \subsection{ADDs}\label{subsec:adds}
-\acrfullpl{add} generalize the concept of \glspl{bdd} by allowing terminal nodes to take values beyond Boolean constants (0 and 1).
+\glspl{add} generalize the concept of \glspl{bdd} by allowing terminal nodes to take values beyond Boolean constants (0 and 1).
 Instead of restricting values to true/false, \glspl{add} can store arbitrary numerical values, making them useful for representing and manipulating functions over discrete domains~\cite{bahar1997algebric}.
 This generalization enables the efficient representation of functions such as cost functions~\cite{kwiatkowska2004probabilistic}, probabilities~\cite{baier1997symbolic}, and other numerical relationships that arise in probabilistic reasoning.
 
