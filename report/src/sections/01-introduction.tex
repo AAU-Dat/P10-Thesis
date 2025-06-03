@@ -27,6 +27,6 @@ Secondly, our approach extends previous work on symbolic calculation by accommod
 Thirdly, we conduct an experimental evaluation of the scalability of the symbolic Baum-Welch algorithm for a \gls{mc} from the QComp benchmark set~\cite{HartmannsKPQR19}, which serves as a standard reference for evaluating the performance of probabilistic model checking algorithms.
 Our findings suggest that replacing matrices and recursive formulations with \glspl{add} offers a scalable alternative, making Markov model-based learning feasible for larger and more complex datasets.
 
-Additionally, we implement Python bindings for the \Cupaal\ tool, making it accessible and usable within Python-based machine learning and model-checking workflows, such as \Jajapy.
+Additionally, we implement Python bindings for the \Cupaal\ tool, making it accessible and usable within Python-based machine learning and model-checking workflows, such as \Jajapy\footnote{Source code avaliable at: \url{https://github.com/AAU-Dat/CuPAAL}}.
 
 Finally, using theses python bindings we integrate \Cupaal\ into \Jajapy\ as \JajapyTwo, enabling users to seamlessly run symbolic probabilistic learning algorithms within \Jajapy.
