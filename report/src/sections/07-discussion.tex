@@ -1,7 +1,7 @@
 \section{Discussion}\label{sec:discussion}
 This section discusses the results presented in \autoref{sec:results} and reflects on the performance of \Cupaal\ compared to \Jajapy.
 
-The results from the \autoref{sec:experiments} show that \Cupaal\ outperforms \Jajapy\ in terms of run time as the observation length increases.
+The results from the \autoref{sec:results} show that \Cupaal\ outperforms \Jajapy\ in terms of run time as the observation length increases.
 For models with few states, the run time is similar, but as the number of states increases, the differences become more pronounced.
 This indicates that \Cupaal\ is a better choice for larger observation sequences, but \Jajapy\ remains a better choice for large models.
 
@@ -39,15 +39,16 @@ This was done purely to research what was believed to be a strength of \Cupaal\ 
 \Cupaal\ displays clear benefits when working with repeated values, but in general, it struggles to compete with \Jajapy.
 Previous work indicated that \Cupaal\ overall was a stronger implementation, but with an entirely symbolic implementation, some potential bottlenecks have been discovered.
 
-Specifically in the update step of the \gls{bw} algorithm, as when working with \glspl{add} for just the \$alpha$ and \$beta$ steps, \Cupaal\ performed very well.
+Specifically in the update step of the \gls{bw} algorithm, as when working with \glspl{add} for just the $alpha$ and $beta$ steps, \Cupaal\ performed very well.
+Much better than what is indicated for the full \gls{bw} algorithm implemented here.
 
-    This suggests that there may be issues when updating the values when using \glspl{add}.
-    To further research this topic, a hybrid implementation could be provided.
-    This implementation would utilize \glspl{add} when calculating $\alpha$ and $\beta$ and then employ a recursive approach when updating values.
-An implementation like this would require much conversation between matrices and \glspl{add}, but comparing a fully symbolic, a recursive, and a hybrid approach would give further insight into what \Cupaal\ struggles with.
+This suggests that there may be issues when updating the values when using \glspl{add}.
+To further research this topic, a hybrid implementation could be provided.
+This implementation would utilize \glspl{add} when calculating $\alpha$ and $\beta$ and then employ a recursive approach when updating values.
+An implementation like this would require much conversion between matrices and \glspl{add}, but comparing a fully symbolic, a recursive, and a hybrid approach would give further insight into what \Cupaal\ struggles with.
 
 For now, \Cupaal\ only measures the time taken to compute the \gls{bw} algorithm, but an interesting metric to compare would be the memory used.
-If \Cupaal\ was discovered to require less memory than \Jajapy, even with more time needed for larger models, it could be a better choice.
+If \Cupaal\ was discovered to require less memory than \Jajapy, even with more time needed for larger models, it could be a better choice in situations where memory was a constraint.
 However, without a memory metric to compare, the decision can only be made based on the time required for computing \gls{bw}.
 
 To allow \Cupaal\ and \Jajapy\ to work together, Pybind11 was used to create bindings between the two.
@@ -59,7 +60,7 @@ A discussion at the time was also whether this is the best tool for the job, as 
 This discussion remains relevant and worth exploring.
 
 \Cupaal\ is designed for the \gls{bw} algorithm, but it is worth exploring other algorithms that could benefit from a symbolic implementation.
-An algorithm that could be explored would be the Viterbi algorithm.
+An algorithm that could be explored could be the Viterbi algorithm.
 By exploring other algorithms, the general benefits of using a symbolic approach can be better understood.
 
 % Is there a bottleneck, such as the update step? - We saw that alpha and beta were not a bottleneck, but the update step might be.
