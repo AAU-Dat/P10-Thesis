@@ -28,10 +28,9 @@ The experiments are designed to provide insights into the performance and scalab
 
 
 \subsection{Model}
-The model used in the experiments is "leader\_sync", which is a \gls{dtmc} model from the QComp benchmark set~\cite{hartmanns2019quantitative}.
-The model is from the PRISM case study~\cite{kwiatkowska2012prism}, which is a collection of models used for quantitative verification and learning tasks.
+The model used in the experiments is the leader sync model~\cite{IR90}, which is a \gls{dtmc} model from the QComp benchmark set~\cite{hartmanns2019quantitative}, which is a collection of models used for quantitative verification and learning tasks.
 
-The "leader\_sync" model is a distributed system model that simulates the behavior of a group of processors that need to choose a leader among themselves.
+The leader sync model is a distributed system model that simulates the behavior of a group of processors that need to choose a leader among themselves.
 The model's size ranges from 26 to 1050 states, depending on the number of processors in the system, the states increase $\{26, 69, 147, 61, 274, 812, 141, 1050\}$.
 
 The non-linear progression in model size arises because the QComp benchmark defines model variants using two parameters: the number of processors and the maximum number a leader can select to be elected.
@@ -50,7 +49,7 @@ The labels added to the model are shown in \autoref{lst:leader-sync-additions}.
     P>=1 [ F "elected" ]
     R{"num_rounds"}=? [ F "elected" ]
     \end{minted}
-    \caption{Labels added to the "leader\_sync" model and properties checked.}
+    \caption{Labels added to the leader sync model and properties checked.}
     \label{lst:leader-sync-additions}
 \end{listing}
 
@@ -109,80 +108,3 @@ By initializing the transition matrix with a reduced amount of different values,
 For the first experiment, the transition matrix was initialized randomly.
 For this experiment instead, we only use $|S|$ different values in the transition matrix.
 It is expected that this improves the speed of each iteration of the \gls{bw} algorithm, as it reduces the number of unique computations necessary for the symbolic implementation.
-
-
-% \subsection{Experiment 1: Performance Comparison of Implementations}
-% The first experiment is based on the ideas from the experiment conducted in~\cite{reynouard2024learning}.
-% The models used are shown in \autoref{tab:dtmc_models}.
-% The experiment evaluate the efficiency and accuracy of the symbolic approach versus the recursive approach.
-% We measure:
-% \begin{itemize}
-%     \item \textbf{Runtime Efficiency} - The average time per run.
-%     \item \textbf{Convergence Speed} - The average number of iterations required.
-%     \item \textbf{Accuracy} - Measured using log-likelihood and an average error.
-% \end{itemize}
-
-% \autoref{tab:comparison} reports the aggregated results of the experiments. The column $|S|$ provides the number of states of the model; the columns ``time'' and ``iter'' respectively report the average running time and number of iterations; and the column ``$\epsilon$'' and ``$\log \mathcal{L}$'' respectively report the average error of the estimated transition probabilities and the average log-likelihood valued measured w.r.t. the training set.
-
-
-%We split this experiment into two separate analyses: one focusing on \glspl{dtmc} and another on \glspl{ctmc}. Since \glspl{dtmc} estimate probabilities while \glspl{ctmc} estimate rates, we use different error measures for accuracy evaluation.
-
-
-% \newcommand{\colsep}[0]{\hspace{0.2 em}}
-% \begin{table}[htb!]
-%     \begin{center}
-%         \begin{tabular}{l@{\colsep}|c@{\colsep}|c@{\colsep}c@{\colsep}c@{\colsep}c@{\colsep}|c@{\colsep}c@{\colsep}c@{\colsep}l}
-%             %\toprule
-%             \multirow{2}{*}{Model} & \multirow{2}{*}{$|S|$} & \multicolumn{4}{|c}{\Jajapy} & \multicolumn{4}{|c}{\JajapyTwo}                                                                                    \\ \cline{3-10}
-%                                    &                        & iter                         & time                            & $\log \mathcal{L}$ & $\epsilon$ & iter & time  & $\log \mathcal{L}$ & $\epsilon$ \\ \cline{1-2}
-%             Leader sync            & 274                    & 15.6                         & 35.84                           & -0.00165602        & 0.35       & 15.7 & 24.02 & -5.357103          &            \\
-%             %BRP                    & 886                    & 2                            & 46.65                           & $2.331 \cdot 10^{-15}$  &            &      &       &                    &            \\
-%             %Crowds                 & 1145                   & 2                            & 87.52                           & $-9.659 \cdot 10^{-15}$ &            &      &       &                    &            \\
-%             %Oscillators1           & 57                     & 2                            & 0.32                            & $4.33 \cdot 10^{-15}$   &            &      &       &                    &            \\
-%             %Oscillators2           & 463                    & 2                            & 11.8                            & $1.33 \cdot 10^{-15}$   &            &      &       &                    &            \\
-%             %Oscillators3           & 1717                   & 2                            & 170.7                           & $6.66 \cdot 10^{-16}$   &            &      &       &                    &
-%             %\bottomrule
-%         \end{tabular}
-%     \end{center}
-%     \caption{Experimental comparison between the original and symbolic implementation of the BW algorithm in \Jajapy.}
-%     \label{tab:comparison}
-% \end{table}
-
-% \subsection{Scalability Experiment}
-% The primary objective of this experiment is to evaluate the scalability of the proposed symbolic implementation of the \gls{bw} algorithm in comparison to the recursive implementation in Jajapy.
-% Specifically, we aim to measure the time required to learn \glspl{dtmc} over the number of states.
-% We measure:
-% \begin{itemize}
-%     \item \textbf{Runtime efficiency} - The average time per run.
-% \end{itemize}
-
-%For this experiment, we selected the model \textit{leader\_sync}, as it represents those used in the performance comparison experiment and scale well to large state spaces.
-% We use the \textit{leader\_sync} model, scaling from 26 to 1050 states.
-% This experiment provides insights into how the symbolic approach scales as model complexity increases.
-
-% \subsection{Experimental Setup}
-% All experiments are conducted using a set of \glspl{dtmc} and \glspl{ctmc} obtained from publicly available benchmarks~\cite{hartmanns2019quantitative}
-% \footnote{The models are available at \url{https://qcomp.org/benchmarks/}. The models are Leader\_sync, Brp, Crowds, Mapk, Cluster, and Embedded.}~\cite{hartmanns2019quantitative}.
-
-% Each experiment is run ten times.
-% We report the average runtime (full run and per iteration), the average number of iterations, log-likelihood per iteration, and the type of error based on the model type.
-
-% Experiments stop when reaching a convergence threshold of 0.05 (the Jajapy default) or a 4-hour runtime limit. The final iteration's results are recorded.
-
-% The training data is randomly generated based on these models, consisting of 30 observation sequences of length 10 for each model.
-
-% The implementations used are:
-% \begin{enumerate}
-%     \item The original Jajapy implementation.
-%     \item The symbolic CuPAAL implementation.
-% \end{enumerate}
-
-% \textbf{Log-likelihood:} Measures how well a learned model explains observed data.
-% For a given observation sequence $O$ and model $M$, it is defined as:
-% \begin{equation}
-% \begin{aligned}
-% \log P(O \mid M) = \sum_{t=1}^{T} \log P(O_t \mid M)
-% \end{aligned}
-% \end{equation}
-% where $P(O_t|M)$ is the probability of observing $O_t$ given the model.
-
