@@ -15,6 +15,7 @@
     {
       "name": "pdflatex -> biber -> makeglossaries -> pdflatex * 2",
       "tools": [
+        "summary",
         "pdflatex",
         "biber",
         "makeglossaries",
@@ -51,6 +52,18 @@
       "args": [
         "--output-directory=%OUTDIR%",
         "%DOCFILE%"
+      ]
+    },
+    {
+      "name": "summary",
+      "command": "pdflatex",
+      "args": [
+        "-shell-escape",
+        "-synctex=1",
+        "-output-directory=%OUTDIR%",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "%WORKSPACE_FOLDER%/report/src/summary.tex"
       ]
     }
   ]

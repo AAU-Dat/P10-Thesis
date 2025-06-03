@@ -1,0 +1,52 @@
+\documentclass[a4paper]{article}
+
+\input{setup/preamble}
+\input{setup/acronyms}
+
+\title{Summary of the paper: Symbolic Baum-Welch Algorithm for Learning Probabilistic Models with Algebraic Decision Diagrams}
+\date{\today}
+\author{Daniel Runge Petersen \and Lars Emanuel Hansen \and Sebastian Aaholm}
+\pagestyle{empty}
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+This thesis introduces a symbolic approach to the \gls{bw} algorithm using \glspl{add} for efficiently learning parameters of \glspl{hmm} and \glspl{mc}.
+Traditional recursive or matrix-based implementations of \gls{bw} often suffer from high memory usage and limited scalability.
+To address this, we propose a novel symbolic implementation built into a C++ library named \Cupaal, which is integrated into the Python-based \Jajapy\ library as \JajapyTwo.
+
+The \gls{bw} algorithm is a form of Expectation-Maximization (EM) algorithm commonly used to estimate parameters of \glspl{hmm} from observed sequences.
+Tools like \Jajapy\ implement \gls{bw} recursively or through matrix operations.
+However, these approaches become inefficient for large or repetitive models due to memory constraints and computational redundancy.
+
+The motivation behind \Cupaal\ is to overcome these issues by leveraging \glspl{add}, data structures that compactly represent numerical functions over discrete variables.
+\glspl{add} generalize \glspl{bdd}, allowing them to represent and manipulate probabilities and other numeric values symbolically.
+This symbolic computation reduces redundancy and memory use, making it feasible to train large-scale probabilistic models.
+
+\Cupaal represents transition, emission, and initial state matrices as \glspl{add}.
+Matrix operations, including the Kronecker and Hadamard products, are symbolically implemented.
+This structure is especially beneficial when matrix sparsity or redundancy exists.
+PRISM models are translated into \Jajapy models and then encoded as \glspl{add} for use in \Cupaal.
+
+The main contributions of this work are:
+\begin{enumerate}
+    \item Symbolic Reformulation of the \gls{bw} Algorithm: Each step of the \gls{bw} algorithm (forward-backward, parameter updates) is redefined in terms of \gls{add} operations using the \gls{cudd} library.
+    \item Multi-Sequence Learning Support: The symbolic implementation handles multiple observation sequences for both \glspl{mc} and \glspl{hmm}.
+    \item Integration with \Jajapy: The symbolic implementation is integrated into the \Jajapy library, allowing users to switch between traditional and symbolic learning modes.
+    \item Empirical Evaluation: Using models from the QComp benchmark (specifically, the leader sync model), experiments demonstrate:
+          \begin{itemize}
+              \item Comparable or better runtime performance, especially for models with repeated structural patterns.
+              \item Accuracy on par with traditional methods.
+              \item Improved scalability, especially when models are initialized with repeated values (semi-random initialization).
+          \end{itemize}
+\end{enumerate}
+
+% The experiments address three research questions:
+% \begin{itemize}
+%     \item Scalability: \Cupaal\ performs significantly better than \Jajapy\ for large models and long observation sequences, especially when observation redundancy can be exploited.
+%     \item Accuracy: Both implementations show nearly identical accuracy, with minor variations in log-likelihood and transition probabilities.
+%     \item Initialization Impact: Semi-random initialization (fewer unique values) improves \Cupaal's performance due to its reliance on structure reusability in \glspl{add}.
+% \end{itemize}
+
+The symbolic implementation of the \gls{bw} algorithm using \glspl{add} proves to be a scalable and efficient alternative to traditional approaches.
+With \JajapyTwo, users now have access to a flexible tool for probabilistic model learning that maintains accuracy while improving performance for complex and large-scale models.
+\end{document}
