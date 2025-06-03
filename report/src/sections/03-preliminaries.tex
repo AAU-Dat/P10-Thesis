@@ -74,7 +74,7 @@ From the definition of a \gls{mc}, we can see that it is a special case of an \g
 \end{definition}
 
 
-The only difference in this case is the structure of the emission functions, thus preserving the probabilistic trace equivalence, i.e., for an arbitrary trace $O \in L^*$ we have $P[O \mid \mathcal{M}] = P[O \mid \mathcal{M}]$.
+The only difference in this case is the structure of the emission functions, thus preserving the probabilistic trace equivalence, i.e., for an arbitrary trace $O \in L^*$ we have $P[O \mid \mathcal{M}] = P[O \mid \mathcal{M}^{\prime}]$.
 
 % \subsubsection{Hidden Markov Models to Markov Chains}\label{subsec:hmm2mc}
 % Converting a \gls{hmm} to an equivalent \gls{mc} is more complex.
@@ -156,7 +156,7 @@ The forward and backward algorithms are implemented using dynamic programming, a
 For a given time step $t$, let $\pmb{\omega}(t)$ be the column vector of emission probabilities for label $o_t$ for each state, and $\odot$ the Hadamard (element-wise) product.
 
 
-\begin{listing}[htb!]
+\begin{listing}
     \begin{codebox}
         \Procname{\proc{Forward-Algorithm}}
         \li $\pmb{\alpha}(1) = \pmb{\omega}(1) \odot \pmb{\pi}$
@@ -259,7 +259,7 @@ The emission matrix is updated as follows:
 
 \begin{equation}
     \pmb{\omega}
-    _s(o) = (\mathbf{1} \oslash \pmb{\gamma}) \bullet \left( \sum_{i=1}^N \sum_{t=1}^{T} \pmb{\gamma}_i(t) \otimes [[o_{it}]] \right)
+    _s(o) = (\mathbf{1} \oslash \pmb{\gamma}) \bullet \left( \sum_{i=1}^{|\mathcal{O}|} \sum_{t=1}^{T} \pmb{\gamma}_i(t) \otimes [[o_{it}]] \right)
     \label{eq:omega-update}
 \end{equation}
 
