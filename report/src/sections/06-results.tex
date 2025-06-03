@@ -60,7 +60,8 @@ This is not an attempt to say anything definitive about the degrees of the scali
 
 Contrary to our expectations, the data does not show a clear difference in the time taken to train the leader sync model between \Jajapy\ and \Cupaal\ for \glspl{dtmc}.
 
-For very small models, the running time does not matter too much, but we observe an initial overhead related to \Jajapy. This is likely related to the general consensus that Python is a slower language than C in general.
+For very small models, the running time does not matter too much, but we observe an initial overhead in \Jajapy\ in comparison to \Cupaal.
+This is likely related to the general consensus that Python is a slower language than C in general.
 
 Generally, more states mean longer running time, but interestingly, variations with similar number of states may have very different training times.
 The most obvious example is the 3.4 and 5.2 models, with 147 and 141 states respectively.
@@ -94,7 +95,7 @@ In fact, looking at \autoref{fig:cupaal-length-to-runtime} and \autoref{fig:jaja
 \begin{table}[htb!]
     \centering
     \caption{Leader sync model comparison of the average number of rounds inside. }
-    \label{tab:leader_results_accuracy}
+    \label{tab:leader-results-accuracy}
     \begin{tabular}{rrrrrrr}
         \toprule
         $\mathcal{M}$ & $|O|$ & rounds & \Jajapy & \Cupaal & $\Delta$ & $\phi$ \\
@@ -126,27 +127,24 @@ In fact, looking at \autoref{fig:cupaal-length-to-runtime} and \autoref{fig:jaja
         \bottomrule
     \end{tabular}
 \end{table}
-\subsection{Accuracy}\label{subsec:accuracy}
 
+
+\subsection{Accuracy}\label{subsec:accuracy}
 This section will showcase the results from the accuracy experiment.
-Table \autoref{tab:leader_results_accuracy} displays that while time between \Cupaal\ and \Jajapy\ differs depending on the size of the model, the final results are practically equal.
+\autoref{tab:leader-results-accuracy} displays that while time between \Cupaal\ and \Jajapy\ differs depending on the size of the model, the final results are practically equal.
 
 The experiment makes use of the \texttt{Leader Sync} model, which is a model tool used to select a new leader for a given protocol.
 
 For this experiment the thing we were interested how similar \Cupaal\ was to the original model.
 We did this by checking the model of how long time it took for the original model to select a new leader on average, measured in number of average rounds.
 
-The property looks like this in \Prism :
-\begin{minted}{text}
-    R{"rounds"}=? [ F "elected" ]
-\end{minted}
-
-For model 3.2 i took on average $1.33$ rounds, and for both \Cupaal\ and \Jajapy\ it took $1.28$ rounds.
+The properties checked can be seen in \autoref{lst:leader-sync-additions}.
+For model 3.2 it took on average $1.33$ rounds, and for both \Cupaal\ and \Jajapy\ it took $1.28$ rounds.
 All the models true values can be found in~\cite{kwiatkowska2012prism}.
 Both \Cupaal\ and \Jajapy\ have identical values for the rounds, hereby showing that they both are equally good at learning a model based on the training set.
 Importantly, the models learned by \Cupaal\ and \Jajapy\ are the same models.
 
-The column $\phi$ displays the relative error between \Cupaal\ and the true value.
+The column $\phi$ in \autoref{tab:leader-results-accuracy} displays the relative error between \Cupaal\ and the true value.
 This value is calculated with $\frac{r-e}{e}$ where r is the value from \Cupaal\ and e is the expected value from the true model.
 Across all the different models and their variations, both methods come to identical results.
 

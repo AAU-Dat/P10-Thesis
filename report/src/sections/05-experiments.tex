@@ -39,16 +39,19 @@ The non-linear progression in model size arises because the QComp benchmark defi
 The model is chosen because of its scalability, making it suitable for evaluating the performance of the symbolic implementation of the \gls{bw} algorithm in \JajapyTwo.
 The model was also simple to understand and analyze, allowing us to add more labels to the model to make it suitable for the experiments.
 
-The labels added to the model are shown in \autoref{lst:leader_sync_labels}.
+The labels added to the model are shown in \autoref{lst:leader-sync-additions}.
 
-\begin{listing}[htb!]
+\begin{listing}
     \begin{minted}{text}
     label "reading" = s1=1&s2=1&s3=1;
     label "deciding" = s1=2&s2=2&s3=2;
     label "elected" = s1=3&s2=3&s3=3;
+
+    P>=1 [ F "elected" ]
+    R{"num_rounds"}=? [ F "elected" ]
     \end{minted}
-    \caption{Labels added to the "leader\_sync" model.}
-    \label{lst:leader_sync_labels}
+    \caption{Labels added to the "leader\_sync" model and properties checked.}
+    \label{lst:leader-sync-additions}
 \end{listing}
 
 
@@ -93,17 +96,7 @@ The absolute error is defined as:
 where $e$ is the estimated transition probability and $r$ is the reference value from the original model.
 We use the results from the first experiment, and compare the log-likelihood and absolute error of the properties estimated by the symbolic implementation against the original recursive implementation.
 
-The properties used in this experiment are shown in \autoref{lst:leader_sync_properties}, the properties are taken from the QComp benchmark set~\cite{hartmanns2019quantitative}.
-
-
-\begin{listing}[htb!]
-    \begin{minted}{text}
-    P>=1 [ F "elected" ]
-    R{"num_rounds"}=? [ F "elected" ]
-    \end{minted}
-    \caption{Properties used in the "leader\_sync" model.}
-    \label{lst:leader_sync_properties}
-\end{listing}
+The properties used in this experiment are shown in \autoref{lst:leader-sync-additions}, the properties are taken from the QComp benchmark set~\cite{hartmanns2019quantitative}.
 
 
 \subsection{Experiment 3: Extra Scalability}\label{sec:exp_extra_scalability}

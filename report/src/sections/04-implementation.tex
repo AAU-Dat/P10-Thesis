@@ -124,13 +124,14 @@ This is done as follows:
 
 
 Hereby showing that the Hadamard product can be used to compute the Kronecker product between two matrices, by using the row and column duplication method.
+
 This is a technique that only works for Kronecker products between vectors, specifically one row and one column vector, as it relies on the structure of the vectors being expanded into square matrices.
 
 \subsection{Implementation to Jajapy}\label{subsec:implementation-to-jajapy}
 This section will give an overview of how \Cupaal\ is implemented into \Jajapy, using bindings between C++ and Python.
 \autoref{fig:cupaal-jajapy-architecture} shows the overall architecture of the implementation.
 
-\begin{figure}[htb!]
+\begin{figure}
     \centering
     \input{figures/cupaal-jajapy-architecture.tex}
     \caption{Architecture of \Cupaal\ combined with \Jajapy.}
@@ -147,9 +148,9 @@ This allows us to call C++ functions from Python, enabling us to use \Cupaal\ in
 In the code examples, some parts have been removed for brevity and clarity.
 
 
-\begin{listing}[htb!]
+\begin{listing}
     \begin{minted}{cpp}
-// Some parameters have been removed for brevity
+// Some parameters have been omitted for brevity
 cupaal_markov_model cupaal_bw_symbolic(vector<string>& states, vector<string>& labels, vector<vector<string>>& observations, vector<double>& initial_distribution, vector<double>& transitions, vector<double>& emissions, int max_iterations = 100, double epsilon = 1e-2){
     MarkovModel model(states, labels, initial_distribution, transitions, emissions, observations);
     cupaal_markov_model model_data;
@@ -157,7 +158,7 @@ cupaal_markov_model cupaal_bw_symbolic(vector<string>& states, vector<string>& l
     model.baum_welch_multiple_observations(
         max_iterations, epsilon, time);
 
-    // Removed output and result path for brevity
+    // output and result path omitted for brevity
     model_data.initial_distribution = model.initial_distribution;
     model_data.transitions = model.transitions;
     model_data.emissions = model.emissions;
@@ -177,9 +178,12 @@ Each of the values that are relevant from the \gls{bw} algorithm are then passed
 
 These being the initial distribution, the transitions and the emissions.
 
-\begin{listing}[htb!]
+\begin{listing}
     \begin{minted}{cpp}
-        void baum_welch_multiple_observations(unsigned int max_iterations = 100, double epsilon = 1e-6, chrono::seconds time = chrono::seconds(3600));
+        void baum_welch_multiple_observations(
+            unsigned int max_iterations = 100, 
+            double epsilon = 1e-6, 
+            chrono::seconds time = chrono::seconds(3600));
         \end{minted}
     \caption{Prototype of the function used to run the Baum-Welch algorithm on multiple observations in CuPAAL.}
     \label{lst:baum-welch-multiple-observations}
@@ -195,7 +199,7 @@ The preperation is done at lines 7 through 20, after this the \Cupaal\ implement
 
 The values are then extracted from the \Cupaal\ model and assigned to the \Jajapy\ model, seen in lines 23 through 25. where they are reshaped to be in line with \Jajapy.
 
-\begin{listing*}[htb!]
+\begin{listing*}
     \begin{minted}{python}
 def _bw_symbolic(self, max_iteration = 100, epsilon = 1e-2, outputPath = "", resultPath = ""):
     try:
@@ -232,7 +236,7 @@ def _bw_symbolic(self, max_iteration = 100, epsilon = 1e-2, outputPath = "", res
 The fit function in \Jajapy\ is modified to call the \texttt{\_bw\_symbolic} function when a new parameter called \texttt{symbolic} is set to true, as seen in~\autoref{lst:jajapy-fit-cupaal}.
 
 
-\begin{listing}[htb!]
+\begin{listing}
     \begin{minted}{python}
 # Some parameters have been removed for brevity
 def fit(self, output_file: str, output_file_prism: str, epsilon: float, max_it: int, symbolic: bool):
