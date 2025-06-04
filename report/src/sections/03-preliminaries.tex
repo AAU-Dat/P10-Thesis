@@ -156,7 +156,7 @@ The forward and backward algorithms are implemented using dynamic programming, a
 For a given time step $t$, let $\pmb{\omega}(t)$ be the column vector of emission probabilities for label $o_t$ for each state, and $\odot$ the Hadamard (element-wise) product.
 
 
-\begin{listing}
+\begin{listing}[htb!]
     \begin{codebox}
         \Procname{\proc{Forward-Algorithm}}
         \li $\pmb{\alpha}(1) = \pmb{\omega}(1) \odot \pmb{\pi}$
@@ -176,15 +176,15 @@ For a given time step $t$, let $\pmb{\omega}(t)$ be the column vector of emissio
 \end{listing}
 
 
-The above procedures compute the column vectors $\pmb{\alpha}(t)$ and $\pmb{\beta}(t) \in [0,1]^{n}$ for $t = 1\dots T$ which are later used to compute the coefficients $\pmb{\gamma}(t) \in [0,1]^{n}$ and $\pmb{\xi}(t) \in [0,1]^{n \times n}$ as follows:
+The procedures in \autoref{lst:forward-backward} compute the column vectors $\pmb{\alpha}(t)$ and $\pmb{\beta}(t) \in [0,1]^{n}$ for $t = 1\dots T$ which are later used to compute the coefficients $\pmb{\gamma}(t) \in [0,1]^{n}$ and $\pmb{\xi}(t) \in [0,1]^{n \times n}$ as follows:
 
 \begin{align}
-    \pmb{\gamma}(t) & = \pmb{\tau}[O | \mathcal{M}]^{-1} \cdot \pmb{\alpha}(t) \odot \pmb{\beta}(t)                                                                                 \\
-    \pmb{\xi}(t)    & = (\pmb{\tau}[O | \mathcal{M}]^{-1} \cdot \pmb{\tau}) \odot \left( \pmb{\alpha}(t) \otimes \left(\pmb{\beta}(t+1) \odot \pmb{\omega}(t+1)\right)^\top \right)
+    \pmb{\gamma}(t) & = P[O | \mathcal{M}]^{-1} \cdot \pmb{\alpha}(t) \odot \pmb{\beta}(t)                                                                                 \\
+    \pmb{\xi}(t)    & = (P[O | \mathcal{M}]^{-1} \cdot \pmb{\tau}) \odot \left( \pmb{\alpha}(t) \otimes \left(\pmb{\beta}(t+1) \odot \pmb{\omega}(t+1)\right)^\top \right)
 \end{align}
 
 
-Here, $\otimes$ is the Kronecker product and the probability $\pmb{\tau}[O | \mathcal{M}]$ to observe $O$ in $\mathcal{M}$ is computed as $\mathbf{1}^\top \pmb{\alpha}(T)$.
+Here, $\otimes$ is the Kronecker product and the probability $P[O | \mathcal{M}]$ to observe $O$ in $\mathcal{M}$ is computed as $\mathbf{1}^\top \pmb{\alpha}(T)$.
 We calculate $\pmb{\gamma}(t)$ from $t= 1$ to $T$ and $\pmb{\xi}(t)$ from $t= 1$ to $T-1$.
 
 Finally, the initial probability vector, the transition probability matrix and emission matrix and are updated as follows:
@@ -235,7 +235,7 @@ The \gls{bw} algorithm runs until convergence, in this case until the difference
 The log-likelihood of an iteration can be calculated using the $\alpha$ probabilities in this way:
 
 \begin{equation}
-    \ell(\mathcal{M};O) = \sum_{s=1}^{S} \text{log}(\pmb{\alpha}(T)_s)
+    \ell(\mathcal{M};O) = \log \sum_{s=1}^{S} \pmb{\alpha}(T)_s
 \end{equation}
 
 
