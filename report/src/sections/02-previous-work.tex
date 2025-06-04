@@ -23,7 +23,7 @@ In this context, we refer to the \textit{training set} as the collection of obse
 For clarity, this paper focuses specifically on the new features introduced in \JajapyTwo, which primarily target \glspl{mc}.
 However, these improvements are equally applicable to other classes of Markov models supported by the tool.
 
-At the core of \Jajapy's learning capabilities are several variants of the \gls{bw} algorithm~\cite{Baum70,Rabiner89}, adapted for \gls{mc}, \gls{mdp}~\cite{BacciILR21}, and \gls{ctmc}~\cite{BacciILR23}.
+At the core of \Jajapy's learning capabilities are several variants of the \gls{bw} algorithm~\cite{Baum70,Rabiner89}, adapted for \glspl{mc}, \glspl{mdp}~\cite{BacciILR21}, and \glspl{ctmc}~\cite{BacciILR23}.
 
 Each algorithm requires two inputs: a training set and the desired number of states for the output model.
 The process begins with the creation of a randomly initialized model (e.g., an \gls{mc}). It iteratively updates its transition probabilities, increasing the likelihood of transitions that better explain the observed traces.
