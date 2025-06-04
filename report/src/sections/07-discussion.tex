@@ -1,38 +1,34 @@
 \section{Discussion}\label{sec:discussion}
-In this section we discuss the results presented in \autoref{sec:results} and reflect on the performance of \Cupaal\ compared to \Jajapy.
+In this section, we discuss the results presented in \autoref{sec:results} and reflect on the performance of \Cupaal\ compared to \Jajapy.
 
-The results from the \autoref{sec:results} show that \Cupaal\ outperforms \Jajapy\ in terms of run time as the observation length increases.
-For models with few states, the run time is similar, but as the number of states increases, the differences become more pronounced.
-This indicates that \Cupaal\ is a better choice for larger observation sequences, but \Jajapy\ remains a better choice for large models.
+The results from \autoref{sec:results} show that \Cupaal\ outperforms \Jajapy\ in terms of run time as the observation length increases.
+For models with a small number of states, the runtime is similar.
+However, as the number of states increases, the differences become more pronounced, which indicates that \Cupaal\ is a better choice for larger observation sequences. However, \Jajapy\ might still be a better choice for large models.
 
-The experiment is conducted using a single model, leader sync, which may not provide a comprehensive view of the performance across different scenarios.
+The experiment is conducted using a single model, Leader Sync, which may not provide a comprehensive view of performance across different scenarios.
 
-A more effective approach would have been to utilize multiple models with varying characteristics and compare their performance.
-This would allow for a more comprehensive overview of \Cupaal 's performance compared to \Jajapy.
+A more effective approach would have been to utilize multiple models with varying characteristics and compare their performance, which would allow for a more comprehensive overview of \Cupaal's performance compared to \Jajapy.
 
 Other models that were considered were the NAND and BRP models, also from the qcomp benchmark set~\cite{hartmanns2019quantitative}.
-A broader variety of models would provide a clearer insight into \Cupaal\ and thereby display the strengths and weaknesses of \Cupaal.
+A wider variety of models would provide more and clearer insight into \Cupaal, thereby displaying its strengths and weaknesses.
 
 The model could also have utilized a greater number of states and observations; currently, the largest model contains 1,050 states and observation sequences of length 10.
 
 Larger models were considered, but it was determined that the largest model used was sufficient, given the time required for parameter estimation.
 
-We ran the experiments in a Docker container, which has a maximum memory capacity of 16 GB. This limitation also affected the experiments, as we sometimes ran out of memory when experimenting with larger models - some models contain a far greater amount of states, which could be further explored.
+We ran the experiments in a Docker container, which introduces some level of overhead.
+We have not investigated whether this overhead introduces any bias towards \Jajapy\ or \Cupaal.
+While we do not expect it to do so, we also cannot say that we fully understand the overhead of Docker.
+For completeness, this might have been better explored.
 
-In \autoref{sec:exp_extra_scalability}, the values for the initial model values are not entirely random. Instead, they are designed to have repeated values.
-This was done to display the known strengths of \Cupaal.
-
-This skews the model to favor \Cupaal, as the \gls{add} structure benefits from repeated values and, therefore, will display results that indicate \Cupaal\ as the stronger implementation.
+In \autoref{sec:exp_extra_scalability}, the values for the initial model values are not entirely random. Instead, they are designed to have repeated values, which was done to display the theoretical strengths of \Cupaal.
+This method skews the model to favor \Cupaal, as the \gls{add} structure benefits from repeated values and, therefore, will display results that indicate \Cupaal\ as the stronger implementation.
 
 This was done purely to research what was believed to be a strength of \Cupaal\ and to further the discussion on when \Cupaal\ is a good option to use over other tools, such as \Jajapy.
+It would be interesting to explore the lmits of this initialization strategy for the \gls{bw} in general, as initialization of the \gls{sul} is a point of research on its own.
 
-% Intro to discussion
-% Discussion of the results in section 6.
-% We only use a single model, we should have used multiple models, and then compared them.
-% Mini experiment three, some values are made less random, and instead have repeated values. - Is this a problem?
-% Size of models
 
-\subsection{Implementation Discussion} \label{subsec:implementation_discussion}
+\subsection{Implementation Discussion}\label{subsec:implementation_discussion}
 \Cupaal\ displays clear benefits when working with repeated values, but in general, it struggles to compete with \Jajapy.
 
 Previous work indicated that \Cupaal\ overall was a stronger implementation, but with an entirely symbolic implementation, some potential bottlenecks have been discovered.
