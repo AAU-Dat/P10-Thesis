@@ -82,10 +82,38 @@ The absolute error is defined as:
 \]
 where $e$ is the estimated transition probability and $r$ is the reference value from the original model.
 
+\begin{table*}
+    \centering
+    \caption{Leader sync model variations in training time with random and controlled initial values. $i$ is the number of iterations, $s/i$ represents seconds, and $\Delta$ represents the relative difference between random and controlled initialization.}
+    \label{tab:leader_results_rand_vs_semi}
+    \begin{tabular}{rrrrrrrrrrr}
+        \toprule
+        $\mathcal{M}$ & $T$ & $i$ rand & $i$ semi & $s/i$ rand cup & $s/i$ semi cup & $s/i$ rand ja & $s/i$ semi ja & $\Delta$ cup & $\Delta$ ja \\
+        \midrule
+        4.2           & 25  & 18       & 16       & 0.62           & 0.49           & 0.87          & 0.83          & -20.34       & -4.87       \\
+        4.2           & 50  & 17       & 20       & 0.80           & 0.63           & 1.46          & 1.42          & -21.41       & -3.21       \\
+        4.2           & 75  & 17       & 18       & 0.57           & 0.59           & 2.12          & 2.15          & 2.41         & 1.27        \\
+        4.2           & 100 & 17       & 18       & 0.66           & 0.61           & 3.07          & 2.99          & -8.04        & -2.58       \\
+        4.3           & 25  & 18       & 18       & 12.85          & 10.78          & 10.83         & 10.59         & -16.10       & -2.17       \\
+        4.3           & 50  & 18       & 18       & 21.07          & 17.16          & 23.02         & 23.05         & -18.56       & 0.16        \\
+        4.3           & 75  & 18       & 18       & 12.90          & 11.48          & 26.48         & 27.00         & -11.00       & 1.96        \\
+        4.3           & 100 & 18       & 18       & 6.54           & 6.57           & 24.88         & 24.52         & 0.33         & -1.44       \\
+        4.4           & 25  & 18       & 18       & 184.71         & 171.54         & 102.59        & 99.66         & -7.13        & -2.86       \\
+        4.4           & 50  & 18       & 18       & 102.69         & 84.82          & 127.24        & 124.40        & -17.40       & -2.23       \\
+        4.4           & 75  & 17       & 18       & 93.99          & 84.02          & 177.51        & 176.54        & -10.61       & -0.55       \\
+        4.4           & 100 & 18       & 18       & 191.53         & 164.43         & 314.01        & 310.35        & -14.15       & -1.17       \\
+        \bottomrule
+    \end{tabular}
+\end{table*}
+
 \subsection{Experiment 2: Scalability}\label{sec:exp_scalability}
 This experiment evaluates the scalability of the symbolic implementation of the \gls{bw} algorithm in \Cupaal.
 The goal is to measure the runtime performance of the symbolic implementation as the size of the model increases.
 The experiment measures the average runtime of the \gls{bw} algorithm for each model size and number of observation sequences.
+
+
+
+
 
 \subsection{Experiment 3: Controlled initialization}\label{sec:exp_extra_scalability}
 The third experiment evaluates the scalability of the symbolic implementation in \Cupaal\ when adjusting the initialization of the model hypothesis.
