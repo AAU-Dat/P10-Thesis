@@ -10,7 +10,7 @@ An example of this is the \Jajapy\ library~\cite{ReynouardIB23}, which implement
 This library is designed to learn probabilistic models from partially observable executions, producing observation sequences - also known as traces.
 
 The key strength of \Jajapy\ lies in its flexibility to accommodate various learning scenarios, along with seamless integration into standard verification workflows using tools like \Storm\ and \Prism.
-However, the performance of \Jajapy\'s Baum-Welch algorithm implementation has been a significant limitation due to the inherent redundancy in matrix-based representations, which leads to inefficiencies, particularly in terms of time and memory consumption, thereby restricting its scalability to larger models.
+However, the performance of \Jajapy's Baum-Welch algorithm implementation has been a significant limitation due to the inherent redundancy in matrix-based representations, which leads to inefficiencies, particularly in terms of time and memory consumption, thereby restricting its scalability to larger models.
 
 To address these challenges, we propose a novel approach that replaces conventional matrices and recursive formulations with \glspl{add}.
 \glspl{add} provide a compact, structured representation of numerical functions over discrete variables, enabling efficient manipulation of large probabilistic models.
