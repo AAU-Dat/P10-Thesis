@@ -32,7 +32,7 @@ The main contributions of this work are:
 \begin{enumerate}
     \item Symbolic Reformulation of the \gls{bw} Algorithm: Each step of the \gls{bw} algorithm (forward-backward, parameter updates) is redefined in terms of \gls{add} operations using the \gls{cudd} library.
     \item Multi-Sequence Learning Support: The symbolic implementation handles multiple observation sequences for both \glspl{mc} and \glspl{hmm}.
-    \item Integration with \Jajapy: The symbolic implementation is integrated into the \Jajapy library, allowing users to switch between traditional and symbolic learning modes.
+    \item Integration with \Jajapy: The symbolic implementation is integrated into the \Jajapy\ library, allowing users to switch between traditional and symbolic learning modes.
     \item Empirical Evaluation: Using models from the QComp benchmark (specifically, the leader sync model), experiments demonstrate: Comparable or better runtime performance, especially for models with repeated structural patterns; Accuracy on par with traditional methods; Improved scalability, especially when models are initialized with repeated values (controlled initialization).
 \end{enumerate}
 

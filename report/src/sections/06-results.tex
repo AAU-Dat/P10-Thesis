@@ -1,6 +1,6 @@
 \begin{table}
     \centering
-    \caption{Leader sync learning tool model comparison of \Cupaal, \Jajapy, and the reference model. $R$ represents the reward model from~\autoref{lst:leader-sync-additions}. $\phi$ represents the relative difference to reference model.}
+    \caption{Leader sync learning tool model comparison of \Cupaal, \Jajapy, and the reference model. $R$ represents the reward model from~\autoref{lst:leader-sync-additions}. $\phi$ represents the relative difference to the reference model.}
     \label{tab:leader-results-accuracy}
     \begin{tabular}{rrrrrrrr}
         \toprule
@@ -42,14 +42,14 @@ The first part focuses on the accuracy of \Jajapy\ and \Cupaal\ in terms of log-
 The second and third part evaluates the scalability of both tools, with differences as explained in \autoref{sec:experiments}.
 
 \subsection{Accuracy}\label{subsec:accuracy}
-This experiment compares the accuracy of \Cupaal\ and \Jajapy\ in learning the leader sync model. Specifically, we model-check how many rounds it takes for each model to select a new leader, starting from the original model, \Jajapy\ and \Cupaal\, using properties from \autoref{lst:leader-sync-additions}.
+This experiment compares the accuracy of \Cupaal\ and \Jajapy\ in learning the leader sync model. Specifically, we model-check how many rounds it takes for each model to select a new leader, starting from the original model, \Jajapy, and \Cupaal, using properties from \autoref{lst:leader-sync-additions}.
 
 \autoref{tab:leader-results-accuracy} shows the results. The table includes the number of rounds for the original model (\textbf{rounds} column) and the learned models from \Jajapy\ and \Cupaal.
 The $\phi$ column shows the relative error between \Jajapy\ and the true value from the original model.
 
 The results show that both \Cupaal\ and \Jajapy\  implementations learned the same model, and they both closely match the true model. For example, in the row for model 3.2 with 25 observations, the original model takes 1.33 rounds, and both \Cupaal\ and \Jajapy\  predict 1.28 rounds.
 
-The relative error $\phi$ indicates a minimal deviation from the true value, but to evaluate if this is overfitting or not, additionel test set log-likelihoods should have been calculated.
+The relative error $\phi$ indicates a minimal deviation from the true value, but to evaluate if this is overfitting or not, additional test set log-likelihoods should have been calculated.
 
 In conclusion, these results demonstrate that \Cupaal\ is a reliable and accurate implementation of the \gls{bw} algorithm, achieving performance comparable to that of \Jajapy\ in learning the model.
 
@@ -115,7 +115,7 @@ In conclusion, these results demonstrate that \Cupaal\ is a reliable and accurat
 
 
 \subsection{Scalability}\label{subsec:scalability}
-These results represent the time taken to train a model based on two parameters: the number of states and the length of the observations in the model.
+These results represent the time taken to train a model based on two parameters: the number of states and the length of the observations in the training set.
 
 The results for the leader sync model are presented in \autoref{tab:leader_results} and \autoref{fig:leader_results}, showing the time required to train a model based on the number of states and observation length. Only the training time is considered; the initialization of the programs is not a factor in these numbers.
 
@@ -193,7 +193,7 @@ This experiment explores the effect of random and controlled initial model param
 \autoref{tab:leader_results_rand_vs_semi} presents three variations of the leader sync model with varying numbers of states and observation sequences.
 We notice that the initialization method can have an impact on the number of iterations it takes to learn the model.
 
-This is to be expected, as the initialization of Markov model is known to impact the \gls{bw} algorithm~\cite{Rabiner89}.
+This is to be expected, as the initialization of a Markov model is known to impact the \gls{bw} algorithm~\cite{Rabiner89}.
 We are therefore interested in the time per iteration as a metric for runtime comparison.
 
 \autoref{tab:leader_results_rand_vs_semi} compares \Cupaal\ to \Jajapy\ and the impact of random and controlled initialization on the time needed to learn the model.
