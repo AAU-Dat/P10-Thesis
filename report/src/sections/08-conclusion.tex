@@ -8,7 +8,7 @@ Based on a matrix-derived aggregation of expectations, we implement the correspo
 
 To make this approach practical, we integrate the symbolic implementation into the \Jajapy\ library, resulting in \JajapyTwo. Through Pybind11 bindings, the C++ backend of \Cupaal\ is exposed to Python, allowing users to switch seamlessly between traditional and symbolic learning modes without disrupting existing workflows.
 
-Our experimental evaluation using the Leader Sync model from the QComp benchmark demonstrates that the symbolic implementation in \Cupaal\ achieves significant runtime improvements over \Jajapy's original recursive method, especially in scenarios involving long observation sequences or models with structural redundancy.
+Our experimental evaluation using the leader sync model from the QComp benchmark demonstrates that the symbolic implementation in \Cupaal\ achieves significant runtime improvements over \Jajapy's original recursive method, especially in scenarios involving long observation sequences or models with structural redundancy.
 
 Accuracy remains unaffected, with both implementations converging to equivalent log-likelihoods and parameter estimates.
 

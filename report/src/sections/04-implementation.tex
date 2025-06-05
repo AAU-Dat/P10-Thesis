@@ -3,6 +3,7 @@ This section provides an overview of \Cupaal's implementation, including the \gl
 
 \subsection{Motivation for CuPAAL}\label{subsec:motivation-for-cupaal}
 The motivation for \Cupaal\ is to provide a more efficient and scalable implementation of the \gls{bw} algorithm for parameter estimation.
+
 Specifically, we aim to improve the performance of the algorithm when handling large and complex models, and address the existing limitations of the \gls{bw} algorithm in \Jajapy.
 
 \subsubsection{Recursive vs. Matrix vs. ADD-based Approaches}\label{subsec:approaches}
@@ -25,14 +26,16 @@ In this work, we investigate the advantages of \gls{add}-based approaches for so
 \subsection{What is CuPAAL}\label{subsec:what_is_cupaal}
 \Cupaal\ is a C++ library that implements the \gls{bw} algorithm for parameter estimation, which has evolved over time.
 
-The initial version of \Cupaal\ was written in C and called \textit{SUDD}, a partial implementation of the \gls{bw} algorithm that utilized \glspl{add}. This version was primarily focused on demonstrating the efficiency of \glspl{add} for parameter estimation problems and was not fully functional. The next iteration was called \Cupaal, which was a complete implementation of the \gls{bw} algorithm using \glspl{add}. However, it only supported \glspl{hmm} and was only designed to make use of a single observation.
+The initial version of \Cupaal\ was written in C and called \textit{SUDD}, and was a partial implementation of the \gls{bw} algorithm that utilized \glspl{add}. This version was primarily focused on demonstrating the efficiency of \glspl{add} for parameter estimation problems and was not fully functional.
+
+The next iteration was called \Cupaal, which was a complete implementation of the \gls{bw} algorithm using \glspl{add}. However, it only supported \glspl{hmm} and was only designed to make use of a single observation.
 
 The current version of \Cupaal\ has been extended to support \glspl{mc} and can handle multiple observations. This version of \Cupaal\ is designed for standalone use, as well as in conjunction with \Jajapy, facilitating easy integration and application in parameter estimation problems.
 
 The following sections provide an overview of what \Cupaal\ is and its capabilities.
 
 \subsubsection{What Does Cupaal Contain}\label{subsec:what_does_cupaal_contain}
-Throughout all its iterations, \Cupaal\ has utilized the \gls{cudd} library - a library for implementing and manipulating \glspl{bdd} and \glspl{add} developed at the University of Colorado.
+Throughout all its iterations, \Cupaal\ has utilized the \gls{cudd} library - a library for implementing and manipulating \glspl{bdd} and \glspl{add} developed at the University of Colorado~\cite{somenzi1997cudd}.
 
 Implemented in C, the \gls{cudd} library ensures high-performance execution and can be seamlessly integrated into C++ programs, which we utilize in \Cupaal.
 By leveraging the \gls{cudd} library, we demonstrate the benefits of \gls{add}-based approaches for solving parameter estimation problems in \glspl{mc}.
@@ -46,14 +49,14 @@ All functionality used in our implementation is available through the standard \
 \subsubsection{From Prism to Cupaal}\label{subsec:from_prism_to_cupaal}
 In the current iteration of \Cupaal, it is possible to use \Prism\ models as input to the \gls{bw} algorithm. The models are encoded from \Prism\ models to \Cupaal\ models, which is achieved by parsing the \Prism\ model into \Jajapy\ using \Stormpy.
 
-The Jajapy model comprises a transition matrix, a label matrix, and an initial state vector.
+The \Jajapy\ model comprises a transition matrix, a label matrix, and an initial state vector.
 The model is passed to \Cupaal, where these matrices and vectors are encoded into \glspl{add} as a function $f \colon \{0,1\}^n \times \{0,1\}^n \to R$.
 
 The Transition matrix is a $S\times S$ matrix, where $S=States$, and is encoded to an \gls{add} by each row and column with a binary value. This value is determined based on the size of the matrix,
 $n = \ceil{log_2(S)}$.
 
 The label matrix is a $S\times L$ matrix, where $L=Labels$, and since there is no guarantee that $S = L$, the encoding is handled differently.
-The matrix is instead treated as a list of vectors.
+The matrix is instead treated as a list of vectors, because we want our matrices to be square whenever possible.
 
 Each vector is encoded as square matrices, where each row or column (depending on the vector type) is duplicated, which is then encoded to a list of \glspl{add}.
 
@@ -71,41 +74,52 @@ Especially when computing operations that translate matrices to new dimensions, 
 Here we present a variation of the Kronecker product that only works between vectors - specifically one row and one column vector, as it relies on the structure of the vectors being expanded into square matrices.
 
 This matrix-based approach enables efficient symbolic operations, as the Kronecker product can be calculated by taking the Hadamard product between a column matrix \gls{add} and a row matrix \gls{add}, simplifying what would otherwise be a more complex operation.
+An example of this can be seen with the two vectors:
 
-An example of this can be seen with the two vectors $\hat{A}$ and $\hat{B}$:
-
-Let $\hat{A} = \begin{bmatrix}
+\[
+    \hat{A} = \begin{bmatrix}
         1 \\
         2
-    \end{bmatrix}$
-and $\hat{B}=\begin{bmatrix}
+    \end{bmatrix} \text{ and } \hat{B} = \begin{bmatrix}
         3 & 4
-    \end{bmatrix}$.
+    \end{bmatrix}
+\]
 
 The Kronecker product of these two vectors is computed as follows:
 
 \begin{equation}
-    \hat{A} \otimes \hat{B} = \begin{bmatrix}
+    \hat{A} \otimes \hat{B} =
+    \begin{bmatrix}
+        1 \\
+        2
+    \end{bmatrix}
+    \otimes
+    \begin{bmatrix}
+        3 & 4
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
         1 \cdot 3 & 1 \cdot 4 \\
         2 \cdot 3 & 2 \cdot 4
     \end{bmatrix} = \begin{bmatrix}
         3 & 4 \\
         6 & 8
-    \end{bmatrix}.
+    \end{bmatrix}
     \label{eq:kronecker-product-example}
 \end{equation}
 
 Another way to calculate the Kronecker product is to expand the vectors into matrices.
-$\hat{A}$ and $\hat{B}$ are expanded to be matrices, similar to how the matrix was treated as a list of vectors and then expanded to square matrices, as seen with the Label matrix.
+$\hat{A}$ and $\hat{B}$ are expanded to be matrices, similar to how the matrix was treated as a list of vectors and then expanded to square matrices.
 
-Let $\mathbf{A} = \begin{bmatrix}
+\[ \mathbf{A} = \begin{bmatrix}
         1 & 1 \\
         2 & 2
-    \end{bmatrix}$ and
-$\mathbf{B} = \begin{bmatrix}
+    \end{bmatrix} \text{ and }
+    \mathbf{B} = \begin{bmatrix}
         3 & 4 \\
         3 & 4
-    \end{bmatrix}$.
+    \end{bmatrix}
+\]
 
 The Kronecker product of $\hat{A}$ and $\hat{B}$ can also be calculated, by using the Hadamard product of $\mathbf{A}$ and $\mathbf{B}$.
 This is done as follows:
@@ -118,7 +132,7 @@ This is done as follows:
     \end{bmatrix} = \begin{bmatrix}
         3 & 4 \\
         6 & 8
-    \end{bmatrix}.
+    \end{bmatrix}
 \end{equation}
 
 
@@ -135,11 +149,10 @@ This section provides an overview of how \Cupaal\ is implemented in Jajapy, util
     \label{fig:cupaal-jajapy-architecture}
 \end{figure}
 
-\Cupaal\ consists of two main components: the main function and the \gls{bw} library. Both of these are compiled into an executable program called \texttt{cupaal.exe}, which can be used to run the \gls{bw} algorithm on a given model.
+\Cupaal\ consists of two primary components: the main function and the \gls{bw} library. Both of these are compiled into an executable program called \texttt{cupaal.exe}, which can be used to run the \gls{bw} algorithm on a given model.
 
 \subsubsection{Bindings}\label{subsubsec:bindings}
 To implement \Cupaal\ into \Jajapy, we create bindings between C++ and Python using the \texttt{pybind11} library~\cite{pybind11github}, which allows us to call C++ functions from Python, enabling us to use \Cupaal\ in \Jajapy.
-
 In the code examples, some parts have been removed for brevity and clarity.
 
 
@@ -168,9 +181,9 @@ cupaal_markov_model cupaal_bw_symbolic(vector<string>& states, vector<string>& l
 
 We create a C++ bindings file that uses the \gls{bw} library from \Cupaal\ and define the function we want to expose to Python; we call this function $cupaal\_bw\_symbolic$, seen in~\autoref{lst:cupaal-bindings}.
 This function takes model parameters from a \Jajapy\ model as input and transforms them for use in \Cupaal.
-The transformation is done at line 3, where all the parameters are inputted to create a \texttt{Markov Model} object, which is then used to run the \gls{bw} algorithm at line 6.
+The transformation is done at line 3, where all the parameters are inputted to create a \texttt{Markov Model} object, which is then used to run the \gls{bw} algorithm on line 6.
 
-Each of the values relevant to the \gls{bw} algorithm is then passed into the \texttt{model\_data} object, which is subsequently returned to \Jajapy, as seen in lines 10 through 15. These are the initial distribution, the transitions and the emissions.
+Each of the values relevant to the \gls{bw} algorithm is then passed into the \texttt{model\_data} object, which is an intermediate data object containing the learned model parameters returned to \Jajapy, as seen in lines 10 through 15. These are the initial distribution, the transitions and the emissions.
 
 
 \begin{listing}
@@ -188,12 +201,12 @@ Each of the values relevant to the \gls{bw} algorithm is then passed into the \t
 The C++ bindings file is then compiled to a shared library, which can be imported into \Jajapy.
 \Jajapy\ can call the $cupaal\_bw\_symbolic$ function, which will then call the \Cupaal\ implementation of the \gls{bw} algorithm.
 
-We create a new function in \Jajapy, called \texttt{cupaal\_bw\_symbolic}, which is used to call the \Cupaal\ implementation of the \gls{bw} algorithm, as seen in~\autoref{lst:jajapy-bw-symbolic}.
+We create a new function in \Jajapy, called \texttt{\_bw\_symbolic}, which is used to call the \Cupaal\ implementation of the \gls{bw} algorithm, as seen in~\autoref{lst:jajapy-bw-symbolic}.
 
 This function is used to prepare the model parameters from \Jajapy\ so they are in the correct format for \Cupaal.
-The preparation is done at lines 7 through 20; after this, the \Cupaal\ implementation is called at line 22, where the \texttt{cupaal\_bw\_symbolic} function is called with the prepared parameters, giving the \Cupaal\ model as a return value.
+The preparation is done at lines 7 through 20; after this, the \Cupaal\ implementation is called at line 22, where the \texttt{cupaal\_bw\_symbolic} function is called with the prepared parameters, returning the \texttt{cupaal\_model} data object.
 
-The values are then extracted from the \Cupaal\ model and assigned to the \Jajapy\ model, as seen in lines 23 through 25. where they are reshaped to be in line with \Jajapy.
+The values are then extracted from the \texttt{cupaal\_model} data object and assigned to the \Jajapy\ model, as seen in lines 23 through 25 where they are reshaped to be in line with \Jajapy.
 
 \begin{listing*}
     \begin{minted}{python}
@@ -247,12 +260,3 @@ def fit(self, output_file: str, output_file_prism: str, epsilon: float, max_it: 
 \end{listing}
 
 A check is made to see if the symbolic parameter is set to true at line 4. When the parameter is true, the \Jajapy\ model will call the~\autoref{lst:jajapy-bw-symbolic} function, which will then call the \Cupaal\ implementation of the \gls{bw} algorithm.
-
-\subsection{Integration Discussion}\label{subsec:integration-discussion}
-The integration of \Cupaal\ into \Jajapy\ has been successful, allowing us to leverage the \gls{bw} algorithm for parameter estimation for \glspl{hmm} and \glspl{mc}.
-
-The decision to use pybind11 for creating bindings between C++ and Python has proven effective, as it allows us to easily call C++ functions from Python.
-
-The exact implementation of the symbolic fit function in \Jajapy, shown in~\autoref{lst:jajapy-fit-cupaal}, is to be discussed with the \Jajapy\ creator, and in the final integration into \Jajapy\ some changes are expected to be made.
-
-The integration of \Cupaal\ into \Jajapy\ has been successful, allowing us to leverage the \gls{bw} algorithm for parameter estimation for \glspl{hmm} and \glspl{mc}.

@@ -2,7 +2,7 @@
 This section provides an overview of the theoretical background necessary to understand the rest of the article.
 For ease of reference Appendix~\ref{sec:cheatsheet} contains a table of symbols used in the paper.
 
-We begin by defining the key concepts of a \gls{hmm} and a \gls{mc}, which are the two main models used in this report, then go on to introduce the \gls{bw}, which is a widely used algorithm for training \glspl{hmm}, and showing how it can be adapted to handle multiple observation sequences using matrix operations.
+We begin by defining the key concepts of a \gls{hmm} and a \gls{mc}, which are the two main models used in this report, then go on to introduce the \gls{bw} algorithm, which is a widely used algorithm for training \glspl{hmm}, and showing how it can be adapted to handle multiple observation sequences using matrix operations.
 
 \subsection{Hidden Markov Model}\label{subsec:hmm}
 \glspl{hmm} were introduced by Baum and Petrie in 1966~\cite{baum1966statistical} and have since been widely used in various fields, such as speech recognition~\cite{chavan2013overview}, bioinformatics~\cite{ciocchetta2009bio}, and finance~\cite{mamon2007hidden}.
@@ -33,7 +33,7 @@ The initial distribution $\pi$ describes the probability of starting in a given 
 An example of a \gls{hmm} is a weather model where the hidden state represents the actual weather (sunny, rainy, or cloudy), but we only observe indirect signals, such as whether someone is carrying an umbrella or wearing sunglasses.
 
 \subsection{Markov Chain}\label{subsec:mc}
-A \glspl{mc}, named after Andrei Markov, is a stochastic model widely used in different fields of study~\cite{Rabiner89}.
+A \gls{mc}, named after Andrei Markov, is a stochastic model widely used in different fields of study~\cite{baum1966statistical}.
 
 
 \begin{definition}[Markov Chain]
@@ -52,7 +52,7 @@ Each square corresponds to a state, the dice rolls determine the transition prob
 In this section, we will discuss the conversion between \glspl{mc} and \glspl{hmm}.
 This conversion is important because it allows us to use the same algorithms and techniques from the original \Cupaal\ implementation for both model types, even though they have different properties.
 
-In our case, we're interested in trace-equivalent models.
+In our case, we are interested in trace-equivalent models.
 By trace-equivalent, we mean that the probability distribution over observed sequences is the same for both models.
 i.e.\ the labels emitted by moving through the probabilistic models follow the same distribution.
 
@@ -114,14 +114,14 @@ The only difference in this case is the structure of the emission functions, thu
 % The conversion between \glspl{mc} and \glspl{hmm} is important because it allows us to use the same algorithms and techniques for both models, even though they have different properties.
 
 \subsection{Baum-Welch Algorithm}\label{subsec:baum-welch}
-The \gls{bw} is a special case of the Expectation-Maximization (EM) framework used to estimate the parameters of a \gls{hmm} given a set of observed sequences.
+The \gls{bw} algorithm is a special case of the Expectation-Maximization (EM) framework used to estimate the parameters of a \gls{hmm} given a set of observed sequences.
 
 Since the underlying states are not directly observable, the algorithm iteratively refines the model parameters $\pi$, $\omega$, and $\tau$ to maximize the likelihood of the observations.
 Each iteration of the algorithm consists of two steps:
 
 
 \begin{description}
-    \item[E-step] Compute the expected values of the hidden variable given the current parameters.
+    \item[E-step] Compute the expected values of the hidden variable given the current parameters via the forward-backward algorithm.
     \item[M-step] Update the model parameters to maximize the expected complete-data log-likelihood.
 \end{description}
 
@@ -142,7 +142,7 @@ They are defined as follows:
 
 To illustrate our symbolic implementation, we describe a single Baum-Welch iteration in terms of matrix operations, assuming familiarity with the algorithm. For an introductory treatment, see~\cite{Baum70,reynouard2024learning}.
 
-Let $\mathcal{M}$ denote the current \gls{hmm} hypothesis and let $O = o_1 \dots o_T$ be a sequence of observations, where each $o_t \in L$ and the observation sequence has the length $T$. Suppose $\mathcal{M}$ has $n$ states and $m$ labels, i.e., $S = {s_1, \dots, s_n}$, with parameters represented as follows:
+Let $\mathcal{M}$ denote the current \gls{hmm} hypothesis and let $O = o_1 \dots o_T$ be a sequence of observations, where each $o_t \in L$ and the observation sequence has the length $T$. Suppose $\mathcal{M}$ has $n$ states and $m$ labels, i.e., $S = \{s_1, \dots, s_n\}$, with parameters represented as follows:
 
 
 \begin{itemize}
@@ -217,7 +217,7 @@ Finally, the initial probability vector, the transition probability matrix and e
 
 
 Where $\smblkcircle$ is the transposed Khatri-Rao product (i.e., row-by-row Kronecker product), and $[[o_t]] = ([[o_t=l]])_{l \in L}$ is the one-hot encoding of the observation $o_t$, meaning that it is a row vector of size $|L|$ with a 1 in the position corresponding to the observation $o_t$ and 0 elsewhere.
-$\oslash$ is the element-wise division, and $\otimes$ is the Kronecker product.
+$\oslash$ is the element-wise division.
 The $\pmb{\gamma}$ and $\pmb{\xi}$ are defined as follows:
 
 
@@ -228,11 +228,11 @@ The $\pmb{\gamma}$ and $\pmb{\xi}$ are defined as follows:
 \end{align}
 
 
-These update rules form the standard \gls{bw} for training \glspl{hmm} on a single observation sequence.
+These update rules form the standard \gls{bw} algorithm for training \glspl{hmm} on a single observation sequence.
 However, the approach can be naturally extended to multiple sequences.
 
 The \gls{bw} algorithm runs until convergence, in this case until the difference in log-likelihood between iterations is less than $\ell(\mathcal{M};O) - \ell(\hat{\mathcal{M}};O) < \epsilon$.
-The log-likelihood of an iteration can be calculated using the $\alpha$ probabilities in this way:
+The log-likelihood of an iteration can be calculated using the $\pmb{\alpha}$ probabilities in this way:
 
 \begin{equation}
     \ell(\mathcal{M};O) = \log \sum_{s=1}^{S} \pmb{\alpha}(T)_s
@@ -268,7 +268,7 @@ This mirrors the single-sequence case (see \autoref{eq:emission-probabilities-up
 This allows us to compute the emission probabilities for each state across all sequences, ensuring that the model captures the overall distribution of observations.
 
 \subsection{Baum-Welch Algorithm for Markov Chains}\label{subsec:baum-welch-mc}
-Since \glspl{mc} can be seen as \glspl{hmm} with deterministic emissions, where each state emits a unique observation with probability 1, the \gls{bw} simplifies accordingly when applied to \glspl{mc}.
+Since \glspl{mc} can be seen as \glspl{hmm} with deterministic emissions, where each state emits a unique observation with probability 1, the \gls{bw} algorithm simplifies accordingly when applied to \glspl{mc}.
 
 In this case:
 
@@ -280,21 +280,22 @@ In this case:
 \end{itemize}
 
 This simplification avoids unnecessary computation and reflects the reduced uncertainty in the model: there is no need to marginalize over emissions, as each state deterministically produces a known label.
-Consequently, the \gls{bw} becomes more efficient when applied to \glspl{mc}.
+Consequently, the \gls{bw} algorithm becomes more efficient when applied to \glspl{mc}.
 
 \subsection{Decision Diagrams}\label{subsec:decision-diagrams}
 \glspl{bdd} are data structures for efficiently representing and manipulating Boolean functions.
 They are a compressed representation of truth tables, capturing the logical structure of a function in a graph-based format by eliminating redundancy, reducing memory usage, and improving computational efficiency~\cite{bryant1986graph}.
 
 A \gls{bdd} is a directed acyclic graph derived from a decision tree, where each non-terminal node represents a Boolean variable, edges correspond to binary assignments (0 or 1), and terminal nodes store function values (0 or 1).
+
 To reduce the size of the decision tree, \glspl{bdd} exploit redundancy by merging equivalent substructures, resulting in a canonical form (when reduced and ordered) that allows for efficient operations such as function evaluation, equivalence checking, and Boolean operations~\cite{bryant1986graph}.
 
-\glspl{bdd} have been widely used in formal verification, model checking, and logic synthesis due to their ability to compactly represent large Boolean functions while maintaining efficient computational properties.
-However, in rare cases \glspl{bdd} can suffer from exponential blowup. This can occur particularly when dealing with functions that lack inherent structure or when representing numerical computations that go beyond Boolean logic.
+\glspl{bdd} have been widely used in formal verification, model checking, and logic synthesis due to their ability to represent large Boolean functions efficiently while maintaining compact computational properties. However, in rare cases, \glspl{bdd} can suffer from exponential blowup, which can occur particularly when dealing with functions that lack inherent structure or when representing numerical computations that go beyond Boolean logic.
 
-\subsection{ADDs}\label{subsec:adds}
+\subsection{Algebraic Decision Diagrams}\label{subsec:adds}
 \glspl{add} generalize the concept of \glspl{bdd} by allowing terminal nodes to take values beyond Boolean constants (0 and 1).
-Instead of restricting values to true/false, \glspl{add} can store arbitrary numerical values, making them useful for representing and manipulating functions over discrete domains~\cite{bahar1997algebric}.
+
+Instead of restricting values to the Boolean domain, \glspl{add} can store arbitrary numerical values, making them useful for representing and manipulating functions over discrete domains~\cite{bahar1997algebric}.
 This generalization enables the efficient representation of functions such as cost functions~\cite{kwiatkowska2004probabilistic}, probabilities~\cite{baier1997symbolic}, and other numerical relationships that arise in probabilistic reasoning.
 
 The fundamental structure of an \gls{add} remains similar to a \gls{bdd}, where a decision tree is compacted by merging redundant substructures.
