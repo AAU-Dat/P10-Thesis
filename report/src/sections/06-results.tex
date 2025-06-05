@@ -1,6 +1,6 @@
 \begin{table}
     \centering
-    \caption{Leader sync learning tool model comparison of \Cupaal, \Jajapy, and the reference model. $R$ represents the reward model from~\autoref{lst:leader-sync-additions}. $\phi$ represents the difference between \Cupaal, \Jajapy, and the reference model.}
+    \caption{Leader sync learning tool model comparison of \Cupaal, \Jajapy, and the reference model. $R$ represents the reward model from~\autoref{lst:leader-sync-additions}. $\phi$ represents the relative difference to reference model.}
     \label{tab:leader-results-accuracy}
     \begin{tabular}{rrrrrrrr}
         \toprule
@@ -112,10 +112,6 @@ In conclusion, these results demonstrate that \Cupaal\ is a reliable and accurat
     \caption{Plot of the run time of \Jajapy\ and \Cupaal\ for the leader sync models, given the number of states and the length of the observations. The planes are linear regression fits to indicate the directions of the trends for the datapoints of similar color. This is not an attempt to make any definitive statements about the degrees of scaling but rather to illustrate the generally observable trend.}
     \label{fig:leader_results}
 \end{figure*}
-
-
-
-
 
 
 \subsection{Scalability}\label{subsec:scalability}
