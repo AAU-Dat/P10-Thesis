@@ -1,26 +1,59 @@
-\begin{figure*}
+\begin{table}
     \centering
-    \input{figures/results/3d-scalability.pgf}
-    \caption{Plot of the run time of \Jajapy\ and \Cupaal\ for the leader sync models, given the number of states and the length of the observations. The planes are linear regression fits to indicate the directions of the trends for the datapoints of similar color.}
-    \label{fig:leader_results}
-\end{figure*}
-
+    \caption{Leader sync learning tool model comparison of \Cupaal, \Jajapy, and the reference model. $R$ represents the reward model from~\autoref{lst:leader-sync-additions}. $\phi$ represents the difference between \Cupaal, \Jajapy, and the reference model.}
+    \label{tab:leader-results-accuracy}
+    \begin{tabular}{rrrrrrrr}
+        \toprule
+        $\mathcal{M}$ & $T$ & $R$  & $R_{ja}$ & $R_{cup}$ & $\phi$ & $\ell$ cup & $\ell$ ja \\
+        \midrule
+        3.2           & 25  & 1.33 & 1.28     & 1.28      & 0.04   & -98.72     & -98.72    \\
+        3.2           & 75  & 1.33 & 1.30     & 1.30      & 0.02   & -70.23     & -70.23    \\
+        3.2           & 100 & 1.33 & 1.28     & 1.28      & 0.04   & -67.24     & -67.24    \\
+        3.3           & 25  & 1.12 & 1.23     & 1.23      & 0.09   & -59.27     & -59.27    \\
+        3.3           & 50  & 1.12 & 1.11     & 1.11      & 0.01   & -35.87     & -35.87    \\
+        3.3           & 100 & 1.12 & 1.13     & 1.13      & 0.00   & -40.33     & -40.33    \\
+        3.4           & 25  & 1.07 & 1.08     & 1.08      & 0.01   & -28.52     & -28.52    \\
+        3.4           & 50  & 1.07 & 1.09     & 1.09      & 0.02   & -31.07     & -31.07    \\
+        3.4           & 100 & 1.07 & 1.11     & 1.11      & 0.04   & -35.87     & -35.87    \\
+        4.2           & 25  & 2.00 & 2.11     & 2.12      & 0.06   & -140.41    & -140.41   \\
+        4.2           & 50  & 2.00 & 2.16     & 2.16      & 0.08   & -149.13    & -149.13   \\
+        4.2           & 100 & 2.00 & 2.00     & 2.00      & 0.00   & -138.63    & -138.63   \\
+        4.3           & 25  & 1.35 & 1.37     & 1.37      & 0.01   & -79.92     & -79.92    \\
+        4.3           & 50  & 1.35 & 1.28     & 1.28      & 0.05   & -67.24     & -67.24    \\
+        4.3           & 100 & 1.35 & 1.25     & 1.25      & 0.07   & -62.55     & -62.55    \\
+        4.4           & 25  & 1.19 & 1.25     & 1.25      & 0.05   & -62.55     & -62.55    \\
+        4.4           & 50  & 1.19 & 1.17     & 1.17      & 0.01   & -48.50     & -48.50    \\
+        4.4           & 100 & 1.19 & 1.27     & 1.27      & 0.07   & -65.71     & -65.71    \\
+        5.2           & 25  & 3.20 & 3.27     & 3.27      & 0.02   & -155.11    & -155.11   \\
+        5.2           & 50  & 3.20 & 3.06     & 3.06      & 0.04   & -185.72    & -185.72   \\
+        5.2           & 100 & 3.20 & 3.50     & 3.50      & 0.09   & -208.39    & -208.39   \\
+        5.3           & 25  & 1.35 & 1.32     & 1.32      & 0.02   & -73.11     & -73.11    \\
+        5.3           & 50  & 1.35 & 1.27     & 1.27      & 0.06   & -65.71     & -65.71    \\
+        5.3           & 100 & 1.35 & 1.33     & 1.33      & 0.01   & -74.52     & -74.52    \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
 \section{Results}\label{sec:results}
-In this section, we present the results of our experiments, which are divided into three main parts. The first part focuses on the scalability of \Jajapy\ and \Cupaal\ in terms of time and scalability.
-The second part evaluates the accuracy of both tools, while the third part assesses the impact of using controlled initialization for the initial parameters.
+In this section, we present the results of our experiments, which are divided into three main parts.
 
-The experiments were conducted on a machine with the specifications and environment listed in \autoref{sec:machine_specs}.
+The first part focuses on the accuracy of \Jajapy\ and \Cupaal\ in terms of log-likelihood and model checking properties.
+
+The second and third part evaluates the scalability of both tools, with differences as explained in \autoref{sec:experiments}.
 
 \subsection{Accuracy}\label{subsec:accuracy}
 This experiment compares the accuracy of \Cupaal\ and \Jajapy\ in learning the leader sync model. Specifically, we model-check how many rounds it takes for each model to select a new leader, starting from the original model, \Jajapy\ and \Cupaal\, using properties from \autoref{lst:leader-sync-additions}.
 
-\autoref{tab:leader-results-accuracy} shows the results. The table includes the number of rounds for the original model (column \textbf{rounds}) and the learned models from \Jajapy and \Cupaal.
+\autoref{tab:leader-results-accuracy} shows the results. The table includes the number of rounds for the original model (\textbf{rounds} column) and the learned models from \Jajapy\ and \Cupaal.
 The $\phi$ column shows the relative error between \Jajapy\ and the true value from the original model.
+
 The results show that both \Cupaal\ and \Jajapy\  implementations learned the same model, and they both closely match the true model. For example, in the row for model 3.2 with 25 observations, the original model takes 1.33 rounds, and both \Cupaal\ and \Jajapy\  predict 1.28 rounds.
-The relative error $\phi$ indicates a minimal deviation from the true value.
+
+The relative error $\phi$ indicates a minimal deviation from the true value, but to evaluate if this is overfitting or not, additionel test set log-likelihoods should have been calculated.
 
 In conclusion, these results demonstrate that \Cupaal\ is a reliable and accurate implementation of the \gls{bw} algorithm, achieving performance comparable to that of \Jajapy\ in learning the model.
+
+
 
 \begin{table}
     \centering
@@ -73,14 +106,24 @@ In conclusion, these results demonstrate that \Cupaal\ is a reliable and accurat
 \end{figure}
 
 
+\begin{figure*}
+    \centering
+    \input{figures/results/3d-scalability.pgf}
+    \caption{Plot of the run time of \Jajapy\ and \Cupaal\ for the leader sync models, given the number of states and the length of the observations. The planes are linear regression fits to indicate the directions of the trends for the datapoints of similar color. This is not an attempt to make any definitive statements about the degrees of scaling but rather to illustrate the generally observable trend.}
+    \label{fig:leader_results}
+\end{figure*}
+
+
+
+
+
+
 \subsection{Scalability}\label{subsec:scalability}
-These results represent the time taken to train a model based on two parameters: the number of states and the length of the observations in the model, which increase.
+These results represent the time taken to train a model based on two parameters: the number of states and the length of the observations in the model.
 
 The results for the leader sync model are presented in \autoref{tab:leader_results} and \autoref{fig:leader_results}, showing the time required to train a model based on the number of states and observation length. Only the training time is considered; the initialization of the programs is not a factor in these numbers.
 
-In \autoref{fig:leader_results}, simple planes are fit with linear regression from the data in \autoref{tab:leader_results}.
-This is not an attempt to make any definitive statements about the degrees of scaling but rather to illustrate the generally observable trend.
-Contrary to our expectations, the data does not show a clear difference in the time taken to train the leader sync model between \Jajapy\ and \Cupaal\ for \glspl{dtmc}.
+Contrary to our expectations, the data does not show a clear difference in the time taken to train the leader sync model between \Jajapy\ and \Cupaal\ for \glspl{mc}.
 
 For very small models, the running time does not matter too much; however, we observe an initial overhead in \Jajapy\ compared to \Cupaal. This is likely related to the consensus that Python is generally slower than C.
 
@@ -94,51 +137,13 @@ To explore this behavior, we extended the experiment to include data for observa
 \Jajapy\ gets slower at a pace roughly linear with the length of the observations; doubling the observation length doubles the run time of \Jajapy.
 This is not the case for \Cupaal, where we do not see any particular increase in running time as the observation length increases.
 
-Looking at \autoref{fig:cupaal-length-to-runtime} and \autoref{fig:jajapy-length-to-runtime}, the \Cupaal\ runtimes decrease as the observation length increases.
-This is contrary to what is expected, as one would assume that with more data, the calculations either increase the running time or have no effect on it.
-Our hypotheses as to why this is the case for \autoref{fig:cupaal-length-to-runtime} are due to the model this experiment is based on.
+Looking at \Cref{fig:cupaal-length-to-runtime,fig:jajapy-length-to-runtime}, the \Cupaal\ runtime decreases as the observation length increases.
+This is contrary to what one might intuitively expect, as one would assume that with more data, the calculations either increase the running time or have no effect on it.
 
-Since \texttt{Leader\_Sync} usually ends its observations with the label Elected.
-As the observation length increases, more of this label appears in sequence.
+Our hypotheses as to why this is the case for \autoref{fig:cupaal-length-to-runtime} are due to the model this experiment is based on.
+Since leader sync usually ends its observations with the label \texttt{elected}, as the observation length increases, more of this label appears in sequence.
 
 This leads the \gls{bw} algorithm to learn the final part of the model more quickly and, at a certain point, reach a constant value that it can reuse in future computations, thereby accelerating the learning of part of the model.
-
-
-\begin{table}
-    \centering
-    \caption{Leader sync learning tool model comparison of \Cupaal, \Jajapy, and the reference model. $R$ represents the reward model from~\autoref{lst:leader-sync-additions}. $\phi$ represents the difference between \Cupaal, \Jajapy, and the reference model.}
-    \label{tab:leader-results-accuracy}
-    \begin{tabular}{rrrrrrrr}
-        \toprule
-        $\mathcal{M}$ & $T$ & $R$  & $R_{ja}$ & $R_{cup}$ & $\phi$ & $\ell$ cup & $\ell$ ja \\
-        \midrule
-        3.2           & 25  & 1.33 & 1.28     & 1.28      & 0.04   & -98.72     & -98.72    \\
-        3.2           & 75  & 1.33 & 1.30     & 1.30      & 0.02   & -70.23     & -70.23    \\
-        3.2           & 100 & 1.33 & 1.28     & 1.28      & 0.04   & -67.24     & -67.24    \\
-        3.3           & 25  & 1.12 & 1.23     & 1.23      & 0.09   & -59.27     & -59.27    \\
-        3.3           & 50  & 1.12 & 1.11     & 1.11      & 0.01   & -35.87     & -35.87    \\
-        3.3           & 100 & 1.12 & 1.13     & 1.13      & 0.00   & -40.33     & -40.33    \\
-        3.4           & 25  & 1.07 & 1.08     & 1.08      & 0.01   & -28.52     & -28.52    \\
-        3.4           & 50  & 1.07 & 1.09     & 1.09      & 0.02   & -31.07     & -31.07    \\
-        3.4           & 100 & 1.07 & 1.11     & 1.11      & 0.04   & -35.87     & -35.87    \\
-        4.2           & 25  & 2.00 & 2.11     & 2.12      & 0.06   & -140.41    & -140.41   \\
-        4.2           & 50  & 2.00 & 2.16     & 2.16      & 0.08   & -149.13    & -149.13   \\
-        4.2           & 100 & 2.00 & 2.00     & 2.00      & 0.00   & -138.63    & -138.63   \\
-        4.3           & 25  & 1.35 & 1.37     & 1.37      & 0.01   & -79.92     & -79.92    \\
-        4.3           & 50  & 1.35 & 1.28     & 1.28      & 0.05   & -67.24     & -67.24    \\
-        4.3           & 100 & 1.35 & 1.25     & 1.25      & 0.07   & -62.55     & -62.55    \\
-        4.4           & 25  & 1.19 & 1.25     & 1.25      & 0.05   & -62.55     & -62.55    \\
-        4.4           & 50  & 1.19 & 1.17     & 1.17      & 0.01   & -48.50     & -48.50    \\
-        4.4           & 100 & 1.19 & 1.27     & 1.27      & 0.07   & -65.71     & -65.71    \\
-        5.2           & 25  & 3.20 & 3.27     & 3.27      & 0.02   & -155.11    & -155.11   \\
-        5.2           & 50  & 3.20 & 3.06     & 3.06      & 0.04   & -185.72    & -185.72   \\
-        5.2           & 100 & 3.20 & 3.50     & 3.50      & 0.09   & -208.39    & -208.39   \\
-        5.3           & 25  & 1.35 & 1.32     & 1.32      & 0.02   & -73.11     & -73.11    \\
-        5.3           & 50  & 1.35 & 1.27     & 1.27      & 0.06   & -65.71     & -65.71    \\
-        5.3           & 100 & 1.35 & 1.33     & 1.33      & 0.01   & -74.52     & -74.52    \\
-        \bottomrule
-    \end{tabular}
-\end{table}
 
 
 \begin{figure}
@@ -159,30 +164,59 @@ This leads the \gls{bw} algorithm to learn the final part of the model more quic
     \label{fig:semirandom-cupaal-jajapy-4-4}
 \end{figure}
 
+
+\begin{table*}
+    \centering
+    \caption{Leader sync model variations in training time with random (ran) and controlled (con) initial values. $i$ is the number of iterations, $s$ represents seconds $s/i$ represents seconds per iteration, and $\Delta$ represents the relative difference between random and controlled initialization.}
+    \label{tab:leader_results_rand_vs_semi}
+    \begin{tabular}{rrrrrrrrrrrrrrr}
+        \toprule
+        $\mathcal{M}$ & $T$ & $i$ ran & $i$ con & $s$ ran cup & $s$ con cup & $s$ ran ja & $s$ con ja & $s/i$ ran cup & $s/i$ con cup & $s/i$ ran ja & $s/i$ con ja & $\Delta$ cup & $\Delta$ ja \\
+        \midrule
+        4.2           & 25  & 18      & 16      & 11.12       & 7.87        & 15.68      & 13.26      & 0.62          & 0.49          & 0.87         & 0.83         & -20.34       & -4.87       \\
+        4.2           & 50  & 17      & 20      & 13.56       & 12.54       & 24.87      & 28.32      & 0.80          & 0.63          & 1.46         & 1.42         & -21.41       & -3.21       \\
+        4.2           & 75  & 17      & 18      & 9.72        & 10.54       & 36.02      & 38.62      & 0.57          & 0.59          & 2.12         & 2.15         & 2.41         & 1.27        \\
+        4.2           & 100 & 17      & 18      & 11.24       & 10.95       & 52.11      & 53.75      & 0.66          & 0.61          & 3.07         & 2.99         & -8.04        & -2.58       \\
+        4.3           & 25  & 18      & 18      & 231.28      & 194.04      & 194.88     & 190.65     & 12.85         & 10.78         & 10.83        & 10.59        & -16.10       & -2.17       \\
+        4.3           & 50  & 18      & 18      & 379.21      & 308.81      & 414.30     & 414.95     & 21.07         & 17.16         & 23.02        & 23.05        & -18.56       & 0.16        \\
+        4.3           & 75  & 18      & 18      & 232.21      & 206.67      & 476.68     & 486.04     & 12.90         & 11.48         & 26.48        & 27.00        & -11.00       & 1.96        \\
+        4.3           & 100 & 18      & 18      & 117.78      & 118.17      & 447.83     & 441.40     & 6.54          & 6.57          & 24.88        & 24.52        & 0.33         & -1.44       \\
+        4.4           & 25  & 18      & 18      & 3324.83     & 3087.66     & 1846.67    & 1793.90    & 184.71        & 171.54        & 102.59       & 99.66        & -7.13        & -2.86       \\
+        4.4           & 50  & 18      & 18      & 1848.44     & 1526.81     & 2290.28    & 2239.18    & 102.69        & 84.82         & 127.24       & 124.40       & -17.40       & -2.23       \\
+        4.4           & 75  & 17      & 18      & 1597.78     & 1512.33     & 3017.72    & 3177.81    & 93.99         & 84.02         & 177.51       & 176.54       & -10.61       & -0.55       \\
+        4.4           & 100 & 18      & 18      & 3447.56     & 2959.75     & 5652.14    & 5586.23    & 191.53        & 164.43        & 314.01       & 310.35       & -14.15       & -1.17       \\
+        \bottomrule
+    \end{tabular}
+\end{table*}
+
+
 \subsection{Controlled Initialization}\label{subsec:controled_initialization}
 This section will cover the third experiment, which compares \Cupaal\ and \Jajapy.
 This experiment explores the effect of random and controlled initial model parameters, as we expect repeated values to be highly beneficial for \Cupaal’s implementation.
 
-\autoref{tab:leader_results_rand_vs_semi} compares \Cupaal\ to \Jajapy and the impact of random and controlled initialization on the time needed to learn the model.
+\autoref{tab:leader_results_rand_vs_semi} presents three variations of the leader sync model with varying numbers of states and observation sequences.
+We notice that the initialization method can have an impact on the number of iterations it takes to learn the model.
+
+This is to be expected, as the initialization of Markov model is known to impact the \gls{bw} algorithm~\cite{Rabiner89}.
+We are therefore interested in the time per iteration as a metric for runtime comparison.
+
+\autoref{tab:leader_results_rand_vs_semi} compares \Cupaal\ to \Jajapy\ and the impact of random and controlled initialization on the time needed to learn the model.
 
 Examining the columns \texttt{rand-ja} and \texttt{control-ja}, which show the impact of random and controlled initialization for \Jajapy, reveals no significant difference between the two.
 
 However, when examining the differences for \Cupaal\, it is clear that the controlled approach is generally faster than the completely random one; this becomes especially pronounced as the number of states in the model increases.
+
+The $\Delta$ columns for \Cupaal\ (cup) and \Jajapy\ (ja) show this relative difference between the different initializations. The mean difference for \Cupaal\ is $\sim-11\%$, while it is $\sim-1\%$ for \Jajapy.
+
 We expected this to be the case, as the number of observations resulted in more repeated values, and the controlled initialization had a similar effect.
-This seems to partially alleviate the poor scaling \Cupaal\ suffers from as the number of model states increases.
+This seems to partially alleviate the poorer scaling \Cupaal\ suffers from as the number of model states increases at low observation lengths.
 
-\autoref{tab:leader_results_rand_vs_semi} presents three models with varying numbers of states and observation sequences. This table highlights that the different methods of initializing model parameters have an impact on the number of iterations required but do not demonstrate a clear advantage in either method.
-
-This is to be expected, as the distance between the values and the learned model has an impact on the number of iterations needed.
-Both the random and controlled initialization resulted in identical log-likelihoods, meaning that regardless of the method used, the learned model is still equally close to the correct model.
+Both the random and controlled initialization resulted in identical log-likelihoods, meaning that regardless of the method used, the learned model is still equally close to the correct model, which is still in line with our results from experiment 1.
 
 \Cref{fig:semirandom-cupaal-jajapy-4-2,fig:semirandom-cupaal-jajapy-4-3,fig:semirandom-cupaal-jajapy-4-4} give a visual representation of how \Cupaal\ compares to \Jajapy\ based on the observation counts while using both random and controlled initialization.
 
 These graphs illustrate the general trend of \Cupaal\ performing slightly better with controlled initialization, whereas for \Jajapy, we observe no clear tendency for what performs best.
 
-\autoref{tab:leader_results_rand_vs_semi} also shows the seconds per iteration to compute \Cupaal\ and \Jajapy\ for both random and controlled initialization.
+These results indicate a gain for \Cupaal\ when there are repeated values for the initialization.
 
-\Jajapy\ is not noticeably affected by either method, yielding a gain of about $1\%$ when using the controlled initialization over the random approach; this can be attributed to coincidence, as the differences are negligible.
-\Cupaal\ does have a slight gain when using the controlled approach, showcasing a gain of $\sim 11\%$ less time needed pr. Iteration compared to the completely random approach.
-
-These results indicate a gain for \Cupaal\ when there are repeated values for the initialization. This lines up well with our hypothesis that \Cupaal\ performs better when it can leverage repeated values for its \gls{add} structure.
+This lines up well with our hypothesis that \Cupaal\ performs better when it can leverage repeated values for its \gls{add} structure.

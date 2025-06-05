@@ -1,38 +1,44 @@
 \section{Experiments}\label{sec:experiments}
-In this section, we present an evaluation comparing the performance of two implementations of the \gls{bw} algorithm: the original version from \Jajapy\ and the new symbolic implementation introduced in \Cupaal.
+In this section, we present the experiments for evaluating and comparing the performance of two implementations of the \gls{bw} algorithm: the original version from \Jajapy\ and the new symbolic implementation introduced in \Cupaal.
 
 For this comparison, we use a \gls{mc} model, taken from the QComp benchmark set~\cite{hartmanns2019quantitative}, which is a collection of models used for analysis of quantitative verification.
 The goal is to assess the scalability of the symbolic implementation and its performance in terms of runtime and accuracy.
 
 We designed three experiments to evaluate the performance of the symbolic implementation of the \gls{bw} algorithm in \Cupaal:
 
+
 \begin{itemize}
     \item \textbf{Accuracy} — Comparing the similarity of learned models in terms of log-likelihood and model checking.
-    \item \textbf{Scalability} — Evaluating how the symbolic implementation scales with increasing model size.
+    \item \textbf{Scalability} — Evaluating how the symbolic implementation scales with increasing model size and observation length.
     \item \textbf{Controlled initialization} — Evaluating the scalability of the symbolic implementation when initializing the model hypothesis with fewer unique values.
 \end{itemize}
 
+
 The experiments aim to answer the following research questions:
-\begin{itemize}
-    \item \textbf{Question 1}: How does runtime scale as model size increases for \Cupaal\ vs \Jajapy?
-    \item \textbf{Question 2}: What is the relative estimation accuracy of the symbolic implementation in \Cupaal\ compared to the original recursive implementation in \Jajapy?
-    \item \textbf{Question 3}: How much does an informed initialization accelerate \Cupaal?
-\end{itemize}
+
+
+\begin{enumerate}
+    \item What is the relative estimation accuracy of the symbolic implementation in \Cupaal\ compared to the original recursive implementation in \Jajapy?
+    \item How does runtime scale as model size increases for \Cupaal\ vs \Jajapy?
+    \item How much does an informed initialization accelerate \Cupaal?
+\end{enumerate}
 
 
 The experiments are designed to provide insights into the performance and scalability of the symbolic implementation of the \gls{bw} algorithm in \Cupaal\ and to compare it with the original recursive implementation in \Jajapy.
 
 
 \subsection{Model}
-The model used is the leader sync model~\cite{IR90}, a \gls{dtmc} from the QComp benchmark set~\cite{hartmanns2019quantitative}.
+The model used in the experiments is the leader sync model~\cite{IR90}, a \gls{dtmc} from the QComp benchmark set~\cite{hartmanns2019quantitative}.
 It simulates a group of processors selecting a leader.
+
 The model sizes range from 26 to 1050 states, determined by the number of processors and the maximum number a leader can choose during election: $\{26, 69, 147, 61, 274, 812, 141, 1050\}$.
 
 The non-linear progression in model size arises because the QComp benchmark defines model variants using two parameters: the number of processors and the maximum number a leader can select to be elected.
 
 We selected this model due to its scalability and interpretability. To make it suitable for learning, we extended it with additional labels.
-The original model had only three labels, which was insufficient for training.
-We added three new labels: reading, deciding, and elected which correspond to key phases in the leader election process.
+
+The original model had only a single label, which is insufficient for meaningful training.
+We added two new labels: \texttt{reading} and \texttt{deciding} which correspond to key phases in the leader election process.
 The added labels and properties used for evaluation are shown in \autoref{lst:leader-sync-additions}.
 
 \begin{listing}
@@ -50,19 +56,22 @@ The added labels and properties used for evaluation are shown in \autoref{lst:le
 
 \subsection{Experimental Setup}
 All experiments were conducted on the same machine (see Appendix~\ref{sec:machine_specs} for hardware and environment details).
+Because the \Cupaal\ implementation is not parallelized in anyway, for the most telling comparison we use only a single core for the experiments.
+Technically \Jajapy\ uses a secondary core for printing to the console, but this does not factor in the numbers in anyway.
 
 The experimental steps are as follows:
 
 \begin{enumerate}
     \item Load the \Prism\ model.
-    \item Generate 100 observation sequences of different lenghts, for experiment 1 and 2 we have $\{25, 50, 100\}$, and for experiment 3 we have $\{25, 50, 75, 100\}$.
-    \item Create a random initial \gls{mc} using \texttt{jajapy.MC\_random}.
+    \item Generate 100 observation sequences of different lenghts. For experiment 1 and 2 we have $\{25, 50, 100\}$ and for experiment 3 we have $\{25, 50, 75, 100\}$.
+    \item Create a random initial \gls{mc} using the function \texttt{jajapy.MC\_random}.
     \item Run the \gls{bw} algorithm for up to 4 hours or until the change in log-likelihood is less than 0.01 (default stopping criterion in \Jajapy).
     \item Record runtime, number of iterations, log-likelihood, and save the resulting model.
 \end{enumerate}
 
 We save both the initial models and observations in files to ensure both implementations use the same inputs.
 The generation of the training set and the randomization of the model are done using \Jajapy, which provides a convenient way to generate random models and training sets.
+
 The training set is generated by the \gls{sul}, which is then used to train the randomized model.
 Each configuration (model size and dataset size) is repeated ten times to compute average results.
 
@@ -72,56 +81,38 @@ We do not measure memory usage, as the symbolic implementation is implemented in
 \subsection{Experiment 1: Accuracy}\label{sec:exp_accuracy}
 This experiment evaluates the accuracy of \Cupaal\ compared to the original \Jajapy.
 The goal is to measure the similarity of the symbolic implementation in \Cupaal\ to the original recursive implementation in \Jajapy\ accuracy-wise.
+
 We compare the log-likelihood, which is a measure of how well the model fits the data in the symbolic implementation against the original recursive implementation.
-We also measure the absolute error of model checking properties to the correct model, which is the leader sync model from the QComp benchmark set.
+
+We also measure the relative error of model checking properties to the correct model, which is the leader sync model from the QComp benchmark set.
 The properties can be seen in \autoref{lst:leader-sync-additions}, and the properties are taken from the QComp benchmark set.
 
-The absolute error is defined as:
-\[
-    \text{Error} = |e - r|,
-\]
-where $e$ is the estimated transition probability and $r$ is the reference value from the original model.
+The relative error is defined as:
 
-\begin{table*}
-    \centering
-    \caption{Leader sync model variations in training time with random and controlled initial values. $i$ is the number of iterations, $s/i$ represents seconds, and $\Delta$ represents the relative difference between random and controlled initialization.}
-    \label{tab:leader_results_rand_vs_semi}
-    \begin{tabular}{rrrrrrrrrrr}
-        \toprule
-        $\mathcal{M}$ & $T$ & $i$ rand & $i$ control & $s/i$ rand cup & $s/i$ control cup & $s/i$ rand ja & $s/i$ control ja & $\Delta$ cup & $\Delta$ ja \\
-        \midrule
-        4.2           & 25  & 18       & 16          & 0.62           & 0.49              & 0.87          & 0.83             & -20.34       & -4.87       \\
-        4.2           & 50  & 17       & 20          & 0.80           & 0.63              & 1.46          & 1.42             & -21.41       & -3.21       \\
-        4.2           & 75  & 17       & 18          & 0.57           & 0.59              & 2.12          & 2.15             & 2.41         & 1.27        \\
-        4.2           & 100 & 17       & 18          & 0.66           & 0.61              & 3.07          & 2.99             & -8.04        & -2.58       \\
-        4.3           & 25  & 18       & 18          & 12.85          & 10.78             & 10.83         & 10.59            & -16.10       & -2.17       \\
-        4.3           & 50  & 18       & 18          & 21.07          & 17.16             & 23.02         & 23.05            & -18.56       & 0.16        \\
-        4.3           & 75  & 18       & 18          & 12.90          & 11.48             & 26.48         & 27.00            & -11.00       & 1.96        \\
-        4.3           & 100 & 18       & 18          & 6.54           & 6.57              & 24.88         & 24.52            & 0.33         & -1.44       \\
-        4.4           & 25  & 18       & 18          & 184.71         & 171.54            & 102.59        & 99.66            & -7.13        & -2.86       \\
-        4.4           & 50  & 18       & 18          & 102.69         & 84.82             & 127.24        & 124.40           & -17.40       & -2.23       \\
-        4.4           & 75  & 17       & 18          & 93.99          & 84.02             & 177.51        & 176.54           & -10.61       & -0.55       \\
-        4.4           & 100 & 18       & 18          & 191.53         & 164.43            & 314.01        & 310.35           & -14.15       & -1.17       \\
-        \bottomrule
-    \end{tabular}
-\end{table*}
+
+\begin{equation}
+    \phi = \frac{|e - r|}{r}
+\end{equation}
+
+
+where $e$ is result of the verification of the learned model and $r$ is the reference value from the original model.
 
 \subsection{Experiment 2: Scalability}\label{sec:exp_scalability}
 This experiment evaluates the scalability of the symbolic implementation of the \gls{bw} algorithm in \Cupaal.
 The goal is to measure the runtime performance of the symbolic implementation as the size of the model increases.
+Further we evaluate the runtime as the observation length increases as well.
+
 The experiment measures the average runtime of the \gls{bw} algorithm for each model size and number of observation sequences.
-
-
-
-
 
 \subsection{Experiment 3: Controlled initialization}\label{sec:exp_extra_scalability}
 The third experiment evaluates the scalability of the symbolic implementation in \Cupaal\ when adjusting the initialization of the model hypothesis.
 
-This experiment aims to measure the scalability of \Cupaal\ under circumstances that are theoretically good for the symbolic implementation.
-The more repeated values the transition matrix contains, the sparser the \gls{add} representing it will be.
+This experiment aims to measure the scalability of \Cupaal\ under circumstances that are theoretically good for the symbolic implementation, i.e.\ the more repeated values the transition matrix contains, the sparser the \gls{add} representing it will be.
+
 By initializing the transition matrix with a reduced amount of different values, we hope that the symbolic approach might benefit.
 
 For the first experiment, the transition matrix was initialized randomly.
 For this experiment, instead, we only use $|S|$ different values in the transition matrix.
+Specifically, we use the original first row of the original transition matrix, and shuffle the order for subsequent rows in the transition matrix for this experiment.
+
 It is expected that this improves the speed of each iteration of the \gls{bw} algorithm, as it reduces the number of unique computations necessary for the symbolic implementation.
