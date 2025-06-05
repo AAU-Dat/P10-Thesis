@@ -56,7 +56,7 @@ An example of using \Jajapy\ to learn a 10-state \gls{mc} from a training set, s
 The goal of \Cupaal\ is to leverage \glspl{add} to improve the efficiency of learning Markov models, particularly in large-scale applications where traditional recursive methods may become computationally expensive.
 
 \Cupaal\ has undergone multiple iterations.
-Initially, it implemented a partial \gls{add}-based approach, where only the calculation of the alpha and beta values of the \gls{bw} algorithm were implemented using \glspl{add}.
+Initially, it implemented a partial \gls{add}-based approach, where only the calculation of E-step of the \gls{bw} algorithm were implemented using \glspl{add}.
 This partial implementation served as an initial proof-of-concept to determine whether incorporating \glspl{add} could yield performance benefits compared to the recursive approach employed by \Jajapy.
 
 Following promising results from the partial implementation, further development led to a fully \gls{add}-based version of \Cupaal\ for \glspl{hmm}.
