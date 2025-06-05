@@ -1,6 +1,6 @@
 \section{Conclusion}\label{sec:conclusion}
-%baum-welch algorithm for HMMs and MCs 
 In this work, we present a symbolic implementation of the Baum-Welch algorithm for both \glspl{hmm} and \glspl{mc}, leveraging \glspl{add} to replace traditional matrix and recursive representations.
+
 By reformulating the \gls{bw} algorithm using compact and canonical \gls{add} structures, our approach efficiently handles both the stochastic emissions of \glspl{hmm} and the deterministic emissions of \glspl{mc}, enabling scalable parameter learning across model types.
 
 We extend the \gls{bw} algorithm to support learning from multiple observation sequences.
@@ -8,23 +8,11 @@ Based on a matrix-derived aggregation of expectations, we implement the correspo
 
 To make this approach practical, we integrate the symbolic implementation into the \Jajapy\ library, resulting in \JajapyTwo. Through Pybind11 bindings, the C++ backend of \Cupaal\ is exposed to Python, allowing users to switch seamlessly between traditional and symbolic learning modes without disrupting existing workflows.
 
-Our experimental evaluation using the "leader\_sync" model from the QComp benchmark demonstrates that the symbolic implementation in \Cupaal\ achieves significant runtime improvements over \Jajapy's original recursive method, especially in scenarios involving long observation sequences or models with structural redundancy.
+Our experimental evaluation using the leader sync model from the QComp benchmark demonstrates that the symbolic implementation in \Cupaal\ achieves significant runtime improvements over \Jajapy's original recursive method, especially in scenarios involving long observation sequences or models with structural redundancy.
+
 Accuracy remains unaffected, with both implementations converging to equivalent log-likelihoods and parameter estimates.
 
 These findings underscore the potential of symbolic methods based on \glspl{add} for large-scale probabilistic model learning.
 By exploiting structure and sparsity, symbolic techniques enable efficient manipulation of high-dimensional models, offering promising applications in domains such as formal verification, machine learning, and systems biology.
-Future work may explore a hybrid implementation, parallelization, and extensions of \Cupaal\ to other model types such as \glspl{mdp} and \glspl{ctmc}.
 
-% we presented a symbolic reformulation of the Baum-Welch algorithm for \glspl{hmm} and \glspl{mc} for multiple observations sequences using \glspl{add}, implemented in \Cupaal\ and integrated into the \Jajapy\ library.
-% Our approach replaces traditional recursive and matrix-based methods with symbolic computations, aiming to reduce memory consumption and improve scalability in probabilistic model learning.
-
-% Through our experimental evaluation using the QComp benchmark model "leader\_sync," we demonstrated that the symbolic implementation in \Cupaal\ generally offers significant runtime benefits as the observation length increases, while maintaining the same accuracy to \Jajapy's original recursive implementation.
-
-
-%baum-welch algorithm for multiple observation sequences
-%symbolic computation using ADDs
-%integrated into Jajapy
-%experimental evaluation using QComp benchmark model "leader_sync"
-%runtime benefits of symbolic implementation in CuPAAL
-%accuracy comparison with Jajapy's original recursive implementation
-%symbolic methods based on ADDs for large-scale probabilistic models
+Future work may explore hybrid implementations, parallelization, and extensions of \Cupaal\ to other model types, such as \glspl{mdp} and \glspl{ctmc}.

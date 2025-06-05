@@ -715,10 +715,10 @@
 \pgfsetstrokeopacity{0.800000}%
 \pgfsetdash{}{0pt}%
 \pgfpathmoveto{\pgfqpoint{0.708235in}{2.132554in}}%
-\pgfpathlineto{\pgfqpoint{1.870483in}{2.132554in}}%
-\pgfpathquadraticcurveto{\pgfqpoint{1.898260in}{2.132554in}}{\pgfqpoint{1.898260in}{2.160332in}}%
-\pgfpathlineto{\pgfqpoint{1.898260in}{2.921108in}}%
-\pgfpathquadraticcurveto{\pgfqpoint{1.898260in}{2.948886in}}{\pgfqpoint{1.870483in}{2.948886in}}%
+\pgfpathlineto{\pgfqpoint{2.013195in}{2.132554in}}%
+\pgfpathquadraticcurveto{\pgfqpoint{2.040972in}{2.132554in}}{\pgfqpoint{2.040972in}{2.160332in}}%
+\pgfpathlineto{\pgfqpoint{2.040972in}{2.921108in}}%
+\pgfpathquadraticcurveto{\pgfqpoint{2.040972in}{2.948886in}}{\pgfqpoint{2.013195in}{2.948886in}}%
 \pgfpathlineto{\pgfqpoint{0.708235in}{2.948886in}}%
 \pgfpathquadraticcurveto{\pgfqpoint{0.680457in}{2.948886in}}{\pgfqpoint{0.680457in}{2.921108in}}%
 \pgfpathlineto{\pgfqpoint{0.680457in}{2.160332in}}%
@@ -773,7 +773,7 @@
 \definecolor{textcolor}{rgb}{0.000000,0.000000,0.000000}%
 \pgfsetstrokecolor{textcolor}%
 \pgfsetfillcolor{textcolor}%
-\pgftext[x=1.124902in,y=2.602442in,left,base]{\color{textcolor}{\rmfamily\fontsize{10.000000}{12.000000}\selectfont\catcode`\^=\active\def^{\ifmmode\sp\else\^{}\fi}\catcode`\%=\active\def%{\%}semi-cupaal}}%
+\pgftext[x=1.124902in,y=2.602442in,left,base]{\color{textcolor}{\rmfamily\fontsize{10.000000}{12.000000}\selectfont\catcode`\^=\active\def^{\ifmmode\sp\else\^{}\fi}\catcode`\%=\active\def%{\%}control-cupaal}}%
 \end{pgfscope}%
 \begin{pgfscope}%
 \pgfsetbuttcap%
@@ -821,7 +821,7 @@
 \definecolor{textcolor}{rgb}{0.000000,0.000000,0.000000}%
 \pgfsetstrokecolor{textcolor}%
 \pgfsetfillcolor{textcolor}%
-\pgftext[x=1.124902in,y=2.215109in,left,base]{\color{textcolor}{\rmfamily\fontsize{10.000000}{12.000000}\selectfont\catcode`\^=\active\def^{\ifmmode\sp\else\^{}\fi}\catcode`\%=\active\def%{\%}semi-jajapy}}%
+\pgftext[x=1.124902in,y=2.215109in,left,base]{\color{textcolor}{\rmfamily\fontsize{10.000000}{12.000000}\selectfont\catcode`\^=\active\def^{\ifmmode\sp\else\^{}\fi}\catcode`\%=\active\def%{\%}control-jajapy}}%
 \end{pgfscope}%
 \end{pgfpicture}%
 \makeatother%
